@@ -32,7 +32,7 @@ Augmented OS is an open-source platform that revolutionises how businesses incor
 
 ## How It Works
 
- ![Architecture Pyramid](assets/architecture-pyramid.png)
+ ![Architecture Pyramid](docs/.assets/architecture-pyramid.png)
 
 Augmented OS provides a complete business operating system built on four layers:
 
