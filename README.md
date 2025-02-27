@@ -1,9 +1,6 @@
 # Augmented OS
 
-> ### **Stop Renting, Start Building**
->
-> Seamlessly integrates AI into your everyday workflows
-
+![Augmented OS Header](docs/.assets/header.png)
 
 ---
 
