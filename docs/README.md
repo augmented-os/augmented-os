@@ -8,6 +8,7 @@ This directory contains the documentation for the Augmented OS system.
   * **[Overview](./architecture/overview.md)**: High-level architecture overview
   * **[Components](./architecture/components/README.md)**: Detailed component documentation
   * **[Schemas](./architecture/schemas/README.md)**: Data schema documentation
+  * **[Database Architecture](./architecture/database_architecture.md)**: Database design and implementation
 * **[Deep Research](./deep-research/README.md)**: Technical research methodology and projects
   * **[Process](./deep-research/process/README.md)**: Our 5-step research methodology
   * **[Projects](./deep-research/projects/README.md)**: Completed and ongoing research projects
@@ -21,6 +22,7 @@ This directory contains the documentation for the Augmented OS system.
 ### Architecture
 * [System Architecture Overview](./architecture/overview.md)
 * [Technical Philosophy](./architecture/README.md#technical-philosophy)
+* [Database Architecture](./architecture/database_architecture.md)
 
 ### Components
 * [System Components](./architecture/components/README.md#components)

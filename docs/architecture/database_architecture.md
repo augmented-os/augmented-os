@@ -1,4 +1,4 @@
-# Database Schema
+# Database Architecture
 
 ## Overview
 
@@ -131,14 +131,14 @@ The database is backed up using:
 
 ## Component-Specific Schemas
 
-For detailed schema information about each component, refer to the Schema section in the respective component documentation:
+For detailed schema information about each component, refer to the individual schema documentation:
 
-* [Events Schema](./components/events.md#schema)
-* [Tasks Schema](./components/tasks.md#schema)
-* [Workflows Schema](./components/workflows.md#schema)
-* [Integrations Schema](./components/integrations.md#schema)
-* [UI Components Schema](./components/ui_components.md#schema)
-* [Tests Schema](./components/tests.md#schema)
+* [Events Schema](./schemas/events.md)
+* [Tasks Schema](./schemas/tasks.md)
+* [Workflows Schema](./schemas/workflows.md)
+* [Integrations Schema](./schemas/integrations.md)
+* [UI Components Schema](./schemas/ui_components.md)
+* [Tests Schema](./schemas/tests.md)
 
 ## Migration Strategy
 

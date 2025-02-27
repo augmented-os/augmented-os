@@ -11,16 +11,18 @@ This directory contains detailed documentation for each data schema in the syste
 - [UI Components](./ui_components.md) - UI component definitions
 - [Workflows](./workflows.md) - Workflow definitions and instances
 
-## Schema Design Conventions
+## Schema Design
 
-Our schemas follow these conventions:
+Our schemas follow specific design conventions to balance performance with developer experience. For comprehensive information about our database architecture, including:
 
-1. **Top-Level Fields as Columns** - All top-level fields in component JSON definitions are stored as dedicated database columns with appropriate types
-2. **Nested Structures as JSONB** - Complex nested objects and arrays are stored as JSONB fields
-3. **Standard Columns** - All tables include `id` (UUID), `created_at`, and `updated_at` columns
-4. **Business Identifiers** - Each entity has a business identifier column (e.g., `workflow_id`, `task_id`) with a UNIQUE constraint
+- Database technology stack
+- Schema design principles and conventions
+- Core tables and relationships
+- Indexing and partitioning strategies
+- Migration approach
+- Performance considerations
 
-For more details on our schema design principles, see the [Database Schema](../schema.md) documentation.
+Please refer to the [Database Architecture](../database_architecture.md) documentation.
 
 ## Relationship to System Components
 
