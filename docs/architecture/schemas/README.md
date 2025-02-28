@@ -4,7 +4,7 @@ This directory contains detailed documentation for each data schema in the syste
 
 ## Schemas
 
-- [Events](./events.md) - Event definitions and instances
+- [Events](./events.md) - Event type definitions and event instances
 - [Integrations](./integrations.md) - Integration definitions and instances
 - [Tasks](./tasks.md) - Task definitions and instances
 - [Tests](./tests.md) - Test definitions and results

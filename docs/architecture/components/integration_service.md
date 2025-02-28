@@ -6,13 +6,13 @@ The Integration Service provides a unified interface for connecting to external 
 
 ## Responsibilities
 
-- Managing integration definitions and configurations
-- Securely storing and using authentication credentials
-- Executing integration methods against external systems
-- Transforming data between system formats
-- Handling rate limiting and throttling
-- Monitoring integration health and availability
-- Providing a consistent interface for all integrations
+* Managing integration definitions and configurations
+* Securely storing and using authentication credentials
+* Executing integration methods against external systems
+* Transforming data between system formats
+* Handling rate limiting and throttling
+* Monitoring integration health and availability
+* Providing a consistent interface for all integrations
 
 ## Architecture
 
@@ -39,117 +39,127 @@ The Integration Service is designed as a modular system with a core engine and p
 ### Integration Registry
 
 Responsible for:
-- Storing integration definitions
-- Managing integration versions
-- Providing discovery mechanisms
-- Validating integration configurations
-- Supporting integration lifecycle management
+
+* Storing integration definitions
+* Managing integration versions
+* Providing discovery mechanisms
+* Validating integration configurations
+* Supporting integration lifecycle management
 
 ### Adapter Manager
 
 Handles integration adapters by:
-- Loading appropriate adapters for each integration type
-- Managing adapter lifecycle
-- Providing adapter versioning
-- Supporting custom and third-party adapters
-- Validating adapter compatibility
+
+* Loading appropriate adapters for each integration type
+* Managing adapter lifecycle
+* Providing adapter versioning
+* Supporting custom and third-party adapters
+* Validating adapter compatibility
 
 ### Credential Manager
 
 Secures authentication by:
-- Encrypting sensitive credentials
-- Supporting various authentication methods (API keys, OAuth, etc.)
-- Managing token refresh and rotation
-- Providing secure credential access
-- Implementing credential validation
+
+* Encrypting sensitive credentials
+* Supporting various authentication methods (API keys, OAuth, etc.)
+* Managing token refresh and rotation
+* Providing secure credential access
+* Implementing credential validation
 
 ### Method Executor
 
 Executes integration operations by:
-- Invoking methods on external systems
-- Handling request/response formatting
-- Managing timeouts and retries
-- Implementing circuit breakers
-- Providing execution metrics
+
+* Invoking methods on external systems
+* Handling request/response formatting
+* Managing timeouts and retries
+* Implementing circuit breakers
+* Providing execution metrics
 
 ### Data Transformer
 
 Handles data transformation by:
-- Converting between data formats
-- Applying mapping rules
-- Supporting schema validation
-- Handling data type conversions
-- Providing transformation templates
+
+* Converting between data formats
+* Applying mapping rules
+* Supporting schema validation
+* Handling data type conversions
+* Providing transformation templates
 
 ## Interfaces
 
 ### Input Interfaces
 
-- **Task Execution Layer**: Receives integration method calls
-- **API Endpoints**: Exposes REST endpoints for integration management
-- **Event Processor**: Receives events that trigger integrations
-- **Configuration API**: Receives integration configurations
+* **Task Execution Layer**: Receives integration method calls
+* **API Endpoints**: Exposes REST endpoints for integration management
+* **Event Processor**: Receives events that trigger integrations
+* **Configuration API**: Receives integration configurations
 
 ### Output Interfaces
 
-- **External Systems**: Connects to third-party services and APIs
-- **Event Emitter**: Publishes integration events
-- **Metrics System**: Reports integration performance and health
-- **Credential Store**: Stores and retrieves authentication credentials
+* **External Systems**: Connects to third-party services and APIs
+* **Event Emitter**: Publishes integration events
+* **Metrics System**: Reports integration performance and health
+* **Credential Store**: Stores and retrieves authentication credentials
 
 ## Data Model
 
 The Integration Service primarily interacts with these data schemas:
 
-- [Integrations Schema](../schemas/integrations.md): For integration definitions and instances
-- [Events Schema](../schemas/events.md): For integration events
+* [Integrations Schema](../schemas/integrations.md): For integration definitions and instances
+* [Events Schema](../schemas/events.md): For integration events
 
 ## Operational Considerations
 
 ### Scalability
 
 The service scales horizontally by:
-- Using stateless design for core components
-- Implementing connection pooling for external systems
-- Supporting distributed credential management
-- Caching integration definitions and responses
-- Load balancing across service instances
+
+* Using stateless design for core components
+* Implementing connection pooling for external systems
+* Supporting distributed credential management
+* Caching integration definitions and responses
+* Load balancing across service instances
 
 ### Monitoring
 
 Key metrics to monitor:
-- Integration call volume and latency
-- Error rates by integration and method
-- Authentication failures
-- Rate limit hits and throttling events
-- External system availability
+
+* Integration call volume and latency
+* Error rates by integration and method
+* Authentication failures
+* Rate limit hits and throttling events
+* External system availability
 
 ### Resilience
 
 Failure handling strategies:
-- Circuit breakers for failing integrations
-- Automatic retry with exponential backoff
-- Fallback mechanisms for critical operations
-- Graceful degradation when external systems are unavailable
-- Caching to reduce dependency on external systems
+
+* Circuit breakers for failing integrations
+* Automatic retry with exponential backoff
+* Fallback mechanisms for critical operations
+* Graceful degradation when external systems are unavailable
+* Caching to reduce dependency on external systems
 
 ## Configuration
 
 The service can be configured with:
-- Default timeout settings
-- Retry policies
-- Circuit breaker thresholds
-- Rate limiting parameters
-- Logging levels and destinations
+
+* Default timeout settings
+* Retry policies
+* Circuit breaker thresholds
+* Rate limiting parameters
+* Logging levels and destinations
 
 ## Security
 
 Security considerations:
-- Encryption of credentials at rest and in transit
-- Secure token management
-- Least privilege access to external systems
-- Audit logging of all integration activities
-- Regular credential rotation
+
+* Encryption of credentials at rest and in transit
+* Secure token management
+* Least privilege access to external systems
+* Audit logging of all integration activities
+* Regular credential rotation
 
 ## Implementation Examples
 
@@ -490,4 +500,6 @@ async function processOAuthCallback(
     throw error;
   }
 }
-``` 
+```
+
+

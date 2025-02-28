@@ -49,7 +49,7 @@ The database is organized around these core component types, each with definitio
 
 | Component Type | Definition Table | Instance Table |
 |----|----|----|
-| Events | N/A (events are instances only) | `events` |
+| Events | `event_definitions` | `events` |
 | Tasks | `task_definitions` | `task_instances` |
 | Workflows | `workflow_definitions` | `workflow_instances` |
 | Integrations | `integration_definitions` | `integration_instances` |
@@ -81,11 +81,18 @@ ui_components
     ↓ may use
 integration_definitions
 
+event_definitions
+    ↓ referenced by
+workflow_definitions
+    ↓ (triggers section)
+
 workflow_instances
     ↓ creates
 task_instances
     ↓ may trigger
 events
+    ↓ conforms to
+event_definitions
     ↓ may use
 integration_instances
 ```
@@ -94,6 +101,8 @@ Key relationships include:
 
 * Workflow definitions reference task definitions in their steps
 * Task definitions reference UI components for manual tasks
+* Workflow definitions reference event definitions in their triggers
+* Events conform to event definitions (validate against payload schema)
 * Workflow instances create task instances during execution
 * Task instances may trigger events upon completion
 * Integration instances are used by tasks and workflows to interact with external systems

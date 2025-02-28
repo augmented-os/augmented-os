@@ -217,6 +217,7 @@ Example workflow test:
 
 The test runner should:
 
+
 1. Load the test definition
 2. For each test case:
    * Set up initial state and mocks
@@ -232,7 +233,7 @@ The test runner should:
 **Table: test_definitions**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | test_id | VARCHAR(255) | Unique identifier for the test |
 | name | VARCHAR(255) | Human-readable name |
@@ -247,7 +248,7 @@ The test runner should:
 **Table: test_runs**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | test_definition_id | UUID | Reference to test definition |
 | status | VARCHAR(50) | Overall status (running, passed, failed) |
@@ -259,7 +260,7 @@ The test runner should:
 **Table: test_case_results**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | test_run_id | UUID | Reference to test run |
 | case_id | VARCHAR(255) | Reference to case within test definition |
@@ -273,13 +274,15 @@ The test runner should:
 | completed_at | TIMESTAMP | When case completed |
 
 **Indexes:**
-- `test_definitions_test_id_idx` UNIQUE on `test_id` (for lookups)
-- `test_definitions_target_idx` on `(type, target_id)` (for finding tests for a specific task/workflow)
-- `test_runs_definition_idx` on `test_definition_id` (for finding runs of a test)
-- `test_runs_status_idx` on `status` (for finding tests by status)
-- `test_case_results_run_idx` on `test_run_id` (for finding all case results in a run)
+
+* `test_definitions_test_id_idx` UNIQUE on `test_id` (for lookups)
+* `test_definitions_target_idx` on `(type, target_id)` (for finding tests for a specific task/workflow)
+* `test_runs_definition_idx` on `test_definition_id` (for finding runs of a test)
+* `test_runs_status_idx` on `status` (for finding tests by status)
+* `test_case_results_run_idx` on `test_run_id` (for finding all case results in a run)
 
 **JSON Schema (cases field):**
+
 ```json
 {
   "type": "array",
@@ -345,6 +348,7 @@ The test runner should:
 ```
 
 **JSON Schema (assertions field in test_case_results):**
+
 ```json
 {
   "type": "array",
@@ -363,8 +367,11 @@ The test runner should:
 ```
 
 **Notes:**
-- Test definitions are versioned through Git but also stored in the database
-- Test runs track the execution of tests and their results
-- Test case results provide detailed information about each case's execution
-- The assertions field in test_case_results stores both the expected and actual values
-- Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB 
+
+* Test definitions are versioned through Git but also stored in the database
+* Test runs track the execution of tests and their results
+* Test case results provide detailed information about each case's execution
+* The assertions field in test_case_results stores both the expected and actual values
+* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+
+

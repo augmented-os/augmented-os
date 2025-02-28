@@ -41,6 +41,7 @@ Events are the foundation of the system's event-driven architecture. They repres
 ### External Events
 
 
+
 1. **Webhook Endpoints:**
    * Dedicated endpoints for external services
    * Authentication and validation
@@ -53,6 +54,7 @@ Events are the foundation of the system's event-driven architecture. They repres
    * Message queue consumers
 
 ### Internal Events
+
 
 
 1. **Event Bus:**
@@ -91,6 +93,7 @@ Events are matched to workflows using pattern expressions:
 ### Validation
 
 
+
 1. **Schema Validation:**
    * JSON Schema validation
    * Required field checks
@@ -105,6 +108,7 @@ Events are matched to workflows using pattern expressions:
 ### Event Persistence
 
 Events are stored for:
+
 
 
 1. **Audit Trail:**
@@ -125,6 +129,7 @@ Events are stored for:
 Workflows can emit events:
 
 
+
 1. **Step Completion:**
    * Success/failure events
    * Progress updates
@@ -137,6 +142,7 @@ Workflows can emit events:
 ### Task Events
 
 Tasks can generate events for:
+
 
 
 1. **Task Lifecycle:**
@@ -153,6 +159,7 @@ Tasks can generate events for:
 The system generates events for:
 
 
+
 1. **Operational Events:**
    * Service health
    * Resource utilization
@@ -165,6 +172,64 @@ The system generates events for:
    * Data modifications
 
 ## Implementation Example
+
+### Event Definition Example
+
+```json
+{
+  "event_id": "BookingEvents.created",
+  "name": "Booking Created",
+  "description": "Triggered when a new booking record is created in the system",
+  "pattern": "bookings.created",
+  "version": "1.0",
+  "source_types": ["integration", "system"],
+  "payload_schema": {
+    "type": "object",
+    "properties": {
+      "booking_id": {
+        "type": "string",
+        "description": "Unique identifier for the booking"
+      },
+      "customer_id": {
+        "type": "string",
+        "description": "Identifier of the customer who made the booking"
+      },
+      "service_id": {
+        "type": "string",
+        "description": "Identifier of the service booked"
+      },
+      "appointment_time": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When the appointment is scheduled"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["confirmed", "pending", "cancelled"],
+        "description": "Current status of the booking"
+      }
+    },
+    "required": ["booking_id", "customer_id", "service_id", "appointment_time", "status"]
+  },
+  "examples": [
+    {
+      "booking_id": "BK-12345",
+      "customer_id": "CUST-789",
+      "service_id": "SRV-456",
+      "appointment_time": "2024-03-15T14:30:00Z",
+      "status": "confirmed"
+    }
+  ],
+  "ui_metadata": {
+    "icon": "calendar-plus",
+    "color": "#4CAF50",
+    "category": "Booking Events",
+    "priority": "high"
+  }
+}
+```
+
+### Event Instance Example
 
 ```json
 {
@@ -194,10 +259,58 @@ The system generates events for:
 
 ## Schema
 
+**Table: event_definitions**
+
+| Field | Type | Description |
+|----|----|----|
+| id | UUID | Primary key |
+| event_id | VARCHAR(255) | Unique business identifier for the event type |
+| name | VARCHAR(255) | Human-readable name |
+| description | TEXT | Detailed description of the event |
+| pattern | VARCHAR(255) | Event pattern (e.g., "invoice.created") |
+| version | VARCHAR(50) | Event schema version |
+| source_types | JSONB | Allowed source types for this event |
+| payload_schema | JSONB | JSON Schema for the event payload structure |
+| examples | JSONB | Example payloads for documentation |
+| ui_metadata | JSONB | UI display information (icons, colors, etc.) |
+| created_at | TIMESTAMP | Record creation timestamp |
+| updated_at | TIMESTAMP | Last update timestamp |
+
+**Indexes:**
+
+* `event_definitions_event_id_idx` UNIQUE on `event_id` (for lookups)
+* `event_definitions_pattern_idx` UNIQUE on `pattern` (for event type matching)
+* `event_definitions_source_idx` GIN on `source_types` (for filtering by source)
+
+**JSON Schema (payload_schema field):**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "type": "object",
+    "required": ["type", "properties"],
+    "additionalProperties": false
+  }
+}
+```
+
+**JSON Schema (source_types field):**
+
+```json
+{
+  "type": "array",
+  "items": {
+    "type": "string", 
+    "enum": ["workflow", "task", "integration", "external", "system"]
+  }
+}
+```
+
 **Table: events**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | event_id | VARCHAR(255) | Unique business identifier for the event |
 | pattern | VARCHAR(255) | Event pattern (e.g., "invoice.created") |
@@ -209,13 +322,15 @@ The system generates events for:
 | created_at | TIMESTAMP | Record creation timestamp |
 
 **Indexes:**
-- `events_event_id_idx` UNIQUE on `event_id` (for deduplication)
-- `events_pattern_idx` on `pattern` (for event matching)
-- `events_timestamp_idx` on `timestamp` (for time-based queries)
-- `events_source_idx` GIN on `source` (for filtering by source)
-- `events_metadata_gin_idx` GIN on `metadata` (for searching within metadata)
+
+* `events_event_id_idx` UNIQUE on `event_id` (for deduplication)
+* `events_pattern_idx` on `pattern` (for event matching)
+* `events_timestamp_idx` on `timestamp` (for time-based queries)
+* `events_source_idx` GIN on `source` (for filtering by source)
+* `events_metadata_gin_idx` GIN on `metadata` (for searching within metadata)
 
 **JSON Schema (source field):**
+
 ```json
 {
   "type": "object",
@@ -234,6 +349,7 @@ The system generates events for:
 The payload structure varies by event type but must conform to the JSON schema defined for each event pattern.
 
 **JSON Schema (metadata field):**
+
 ```json
 {
   "type": "object",
@@ -249,4 +365,6 @@ The payload structure varies by event type but must conform to the JSON schema d
     }
   }
 }
-``` 
+```
+
+

@@ -12,6 +12,10 @@ This directory contains the documentation for the Augmented OS system.
 * **[Deep Research](./deep-research/README.md)**: Technical research methodology and projects
   * **[Process](./deep-research/process/README.md)**: Our 5-step research methodology
   * **[Projects](./deep-research/projects/README.md)**: Completed and ongoing research projects
+* **[Task System](./task-system/README.md)**: Task management system documentation
+  * **[Task Format](./task-system/task-format.md)**: Detailed task format documentation
+  * **[Creating Tasks](./task-system/creating-tasks.md)**: Guidelines for creating tasks
+  * **[Executing Tasks](./task-system/executing-tasks.md)**: Instructions for executing tasks
 * **[Format Guidelines](./format.md)**: Documentation format guidelines
 * **[Templates](./.templates/)**: Documentation templates
   * [Component Template](./.templates/component-template.md)
@@ -41,6 +45,12 @@ This directory contains the documentation for the Augmented OS system.
 * [Tests](./architecture/schemas/tests.md)
 * [UI Components](./architecture/schemas/ui_components.md)
 * [Workflows](./architecture/schemas/workflows.md)
+
+### Task System
+* [Task System Overview](./task-system/README.md)
+* [Task Format](./task-system/task-format.md)
+* [Creating Tasks](./task-system/creating-tasks.md)
+* [Executing Tasks](./task-system/executing-tasks.md)
 
 ### Deep Research
 * [Research Methodology](./deep-research/process/README.md)
