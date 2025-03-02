@@ -358,6 +358,7 @@ async function recordDeadLetterWorkflow(
 
 Each workflow step can define its own error handling strategy:
 
+
 1. **Retry Policy**: Configurable retry behavior for transient failures
 2. **Error Handler Step**: Dedicated step to execute when main step fails
 3. **Conditional Transitions**: Different next steps based on error type
@@ -365,6 +366,7 @@ Each workflow step can define its own error handling strategy:
 ### Workflow-Level Recovery
 
 Workflows can implement recovery at the workflow level:
+
 
 1. **Global Error Handlers**: Workflow-wide error handling steps
 2. **Compensation**: Reversing completed steps on workflow failure
@@ -374,6 +376,7 @@ Workflows can implement recovery at the workflow level:
 
 The Workflow Orchestrator implements system-level recovery:
 
+
 1. **Workflow Reconciliation**: Background process to find and recover stuck workflows
 2. **Instance Migration**: Moving problematic workflows to new versions
 3. **Manual Intervention API**: Endpoints for operator-assisted recovery
@@ -382,6 +385,7 @@ The Workflow Orchestrator implements system-level recovery:
 
 The error handling system integrates with the observability stack:
 
+
 1. **Detailed Error Logging**: Structured logging of all errors with context
 2. **Error Metrics**: Tracking error rates, categories, and recovery success
 3. **Alerts**: Threshold-based alerting for error patterns
@@ -389,6 +393,8 @@ The error handling system integrates with the observability stack:
 
 ## Related Documentation
 
-- [State Management](./state_management.md)
-- [Compensation Mechanisms](./compensation.md)
-- [Monitoring Guidelines](../operations/monitoring.md) 
+* [State Management](./state_management.md)
+* [Compensation Mechanisms](./compensation.md)
+* [Monitoring Guidelines](../operations/monitoring.md)
+
+

@@ -16,6 +16,7 @@ The State Manager is a core component of the Workflow Orchestrator Service respo
 
 The state management system follows these design principles:
 
+
 1. **Database as source of truth** - All workflow state is stored in the database
 2. **Optimistic concurrency** - Version numbers prevent concurrent modifications
 3. **Transactional updates** - State changes are performed within transactions
@@ -321,6 +322,7 @@ async function bulkLoadWorkflowInstances(
 
 State management in the Workflow Orchestrator handles these concurrency scenarios:
 
+
 1. **Multiple service instances** - Multiple orchestrator instances can update the same workflow safely due to optimistic concurrency control
 2. **Parallel step execution** - When workflow steps execute in parallel, their results are merged consistently
 3. **Event collisions** - When multiple events could resume a workflow simultaneously, only one will succeed
@@ -328,6 +330,8 @@ State management in the Workflow Orchestrator handles these concurrency scenario
 
 ## Related Documentation
 
-- [Data Model](../data_model.md)
-- [Database Optimization](./database_optimization.md)
-- [Error Handling](./error_handling.md) 
+* [Data Model](../data_model.md)
+* [Database Optimization](./database_optimization.md)
+* [Error Handling](./error_handling.md)
+
+

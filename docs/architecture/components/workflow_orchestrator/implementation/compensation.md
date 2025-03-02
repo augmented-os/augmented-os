@@ -293,6 +293,7 @@ All compensation actions are logged and tracked for compliance and troubleshooti
 
 For workflows that implement business transactions across multiple systems, compensation provides ACID-like guarantees:
 
+
 1. **Atomicity**: Either all steps complete successfully or all are compensated
 2. **Consistency**: The system returns to a consistent state after compensation
 3. **Isolation**: Compensation ensures no partial effects remain visible
@@ -317,6 +318,8 @@ When workflows fail due to business or technical errors, compensation:
 
 ## Related Documentation
 
-- [Event Processing](./event_processing.md)
-- [Error Handling](./error_handling.md)
-- [State Management](./state_management.md) 
+* [Event Processing](./event_processing.md)
+* [Error Handling](./error_handling.md)
+* [State Management](./state_management.md)
+
+

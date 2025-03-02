@@ -358,21 +358,22 @@ async function cleanupWorkflowSubscriptions(
 
 The Workflow Orchestrator integrates with the wider system's event-driven architecture:
 
-1. **Event Publication**: 
-   - Emits events for workflow lifecycle (created, completed, cancelled)
-   - Emits events for step completion
-   - Emits events for compensation actions
 
+1. **Event Publication**:
+   * Emits events for workflow lifecycle (created, completed, cancelled)
+   * Emits events for step completion
+   * Emits events for compensation actions
 2. **Event Consumption**:
-   - Subscribes to events for workflow resumption
-   - Subscribes to events for workflow cancellation
-   - Subscribes to events that trigger new workflow instances
+   * Subscribes to events for workflow resumption
+   * Subscribes to events for workflow cancellation
+   * Subscribes to events that trigger new workflow instances
 
 This allows for loose coupling between the Workflow Orchestrator and other system components.
 
 ## Performance Considerations
 
 When implementing event processing in the Workflow Orchestrator, consider:
+
 
 1. **Subscription Scaling**: Ensure the event subscription system scales with the number of waiting workflows
 2. **Filter Optimization**: Apply filters at the subscription level to minimize unnecessary callbacks
@@ -382,6 +383,8 @@ When implementing event processing in the Workflow Orchestrator, consider:
 
 ## Related Documentation
 
-- [Event Processing Service](../../event_processing_service.md)
-- [Scheduler Component](./scheduler.md)
-- [Compensation Mechanisms](./compensation.md) 
+* [Event Processing Service](../../event_processing_service.md)
+* [Scheduler Component](./scheduler.md)
+* [Compensation Mechanisms](./compensation.md)
+
+

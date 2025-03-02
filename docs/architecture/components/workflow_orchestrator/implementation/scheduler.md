@@ -221,7 +221,7 @@ class SchedulerService {
 The Scheduler Component uses a dedicated `schedules` table to store schedule definitions and state:
 
 | Column | Type | Description |
-|--------|------|-------------|
+|----|----|----|
 | id | UUID | Unique identifier for the schedule |
 | type | VARCHAR | Schedule type (one-time or recurring) |
 | target_type | VARCHAR | Type of target (workflow or task) |
@@ -240,11 +240,11 @@ The Scheduler Component uses a dedicated `schedules` table to store schedule def
 
 The Scheduler implements a two-tier approach:
 
+
 1. **Memory Queue**: For imminent schedules (next few minutes)
    * Fast in-memory processing
    * No database overhead for near-term schedules
    * Survives service restart via database recovery
-
 2. **Database Store**: For all schedules and persistence
    * Durable storage of all schedule definitions
    * Periodic polling to load upcoming schedules into memory
@@ -254,6 +254,7 @@ The Scheduler implements a two-tier approach:
 
 For recurring schedules, the system:
 
+
 1. Parses cron expressions into a structured representation
 2. Calculates next execution time based on the expression
 3. Supports extended syntax for more complex schedules
@@ -262,6 +263,7 @@ For recurring schedules, the system:
 ### Batched Processing
 
 For efficiency, the scheduler:
+
 
 1. Processes schedules in batches
 2. Uses database transactions for atomic updates
@@ -365,6 +367,8 @@ Critical metrics to monitor:
 
 ## Related Documentation
 
-- [Event Processing](./event_processing.md)
-- [State Management](./state_management.md)
-- [System Configuration](../operations/configuration.md) 
+* [Event Processing](./event_processing.md)
+* [State Management](./state_management.md)
+* [System Configuration](../operations/configuration.md)
+
+

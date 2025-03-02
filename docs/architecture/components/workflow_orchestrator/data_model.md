@@ -151,7 +151,7 @@ The Workflow Orchestrator Service uses the following database tables:
 Stores the templates for workflows:
 
 | Column | Type | Description |
-|--------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | workflow_id | VARCHAR | Business identifier |
 | name | VARCHAR | Human-readable name |
@@ -170,7 +170,7 @@ Stores the templates for workflows:
 Stores the actual running workflow instances:
 
 | Column | Type | Description |
-|--------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | workflow_definition_id | UUID | Foreign key to workflow_definitions |
 | status | VARCHAR | Current workflow status |
@@ -202,6 +202,8 @@ WHERE status = 'WAITING_FOR_EVENT';
 
 ## Related Documentation
 
-- [Database Architecture](../../database_architecture.md)
-- [Workflows Schema](../../schemas/workflows.md)
-- [Implementation: Database Optimization](./implementation/database_optimization.md) 
+* [Database Architecture](../../database_architecture.md)
+* [Workflows Schema](../../schemas/workflows.md)
+* [Implementation: Database Optimization](./implementation/database_optimization.md)
+
+

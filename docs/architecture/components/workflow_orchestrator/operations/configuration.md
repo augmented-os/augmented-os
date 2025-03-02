@@ -8,6 +8,7 @@ The Workflow Orchestrator Service provides extensive configuration options to ad
 
 Configuration can be provided through several mechanisms (in order of precedence):
 
+
 1. Environment variables
 2. Configuration files (YAML/JSON)
 3. Command-line arguments
@@ -129,9 +130,9 @@ workflow:
 
 Some configuration settings can be modified at runtime through the administrative API:
 
-- Log levels
-- Concurrency limits
-- Circuit breaker settings
+* Log levels
+* Concurrency limits
+* Circuit breaker settings
 
 ```
 PATCH /api/config/workflow
@@ -143,6 +144,7 @@ PATCH /api/config/workflow
 ## Configuration Validation
 
 On startup, the service validates the configuration:
+
 
 1. Required fields are present
 2. Values are within acceptable ranges
@@ -228,6 +230,7 @@ features:
 
 ## Configuration Best Practices
 
+
 1. **Use environment variables** for environment-specific values
 2. **Keep secrets in a separate file** or environment variables
 3. **Version your configuration files** alongside code
@@ -238,6 +241,8 @@ features:
 
 ## Related Documentation
 
-- [Operational Monitoring](./monitoring.md)
-- [Scaling Considerations](./scaling.md)
-- [Deployment Guide](./deployment.md) 
+* [Operational Monitoring](./monitoring.md)
+* [Scaling Considerations](./scaling.md)
+* [Deployment Guide](./deployment.md)
+
+

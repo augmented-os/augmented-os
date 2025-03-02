@@ -11,7 +11,7 @@ The service exposes metrics in Prometheus format through the `/metrics` endpoint
 ### Workflow Execution Metrics
 
 | Metric Name | Type | Description |
-|-------------|------|-------------|
+|----|----|----|
 | `workflow_started_total` | Counter | Total number of workflows started |
 | `workflow_completed_total` | Counter | Total number of workflows completed |
 | `workflow_failed_total` | Counter | Total number of failed workflows |
@@ -23,7 +23,7 @@ The service exposes metrics in Prometheus format through the `/metrics` endpoint
 ### Step Execution Metrics
 
 | Metric Name | Type | Description |
-|-------------|------|-------------|
+|----|----|----|
 | `step_execution_total` | Counter | Total number of steps executed |
 | `step_failed_total` | Counter | Total number of failed steps |
 | `step_retry_total` | Counter | Total number of step retries |
@@ -32,7 +32,7 @@ The service exposes metrics in Prometheus format through the `/metrics` endpoint
 ### Database Metrics
 
 | Metric Name | Type | Description |
-|-------------|------|-------------|
+|----|----|----|
 | `db_operation_time_seconds` | Histogram | Time spent on database operations |
 | `db_connection_pool_utilization` | Gauge | Database connection pool utilization |
 | `db_query_errors_total` | Counter | Number of database query errors |
@@ -41,7 +41,7 @@ The service exposes metrics in Prometheus format through the `/metrics` endpoint
 ### Event Processing Metrics
 
 | Metric Name | Type | Description |
-|-------------|------|-------------|
+|----|----|----|
 | `event_subscription_count` | Gauge | Number of active event subscriptions |
 | `event_received_total` | Counter | Total number of events received |
 | `event_processing_time_seconds` | Histogram | Event processing time |
@@ -50,7 +50,7 @@ The service exposes metrics in Prometheus format through the `/metrics` endpoint
 ### Scheduler Metrics
 
 | Metric Name | Type | Description |
-|-------------|------|-------------|
+|----|----|----|
 | `scheduled_items_count` | Gauge | Number of items in the scheduler |
 | `scheduler_processing_time_seconds` | Histogram | Time to process scheduler batches |
 | `scheduler_missed_executions_total` | Counter | Number of missed scheduled executions |
@@ -59,7 +59,7 @@ The service exposes metrics in Prometheus format through the `/metrics` endpoint
 ### System Metrics
 
 | Metric Name | Type | Description |
-|-------------|------|-------------|
+|----|----|----|
 | `memory_usage_bytes` | Gauge | Memory usage of the service |
 | `cpu_usage_percent` | Gauge | CPU usage of the service |
 | `http_requests_total` | Counter | Total HTTP requests to the service |
@@ -73,7 +73,7 @@ The service uses structured logging with JSON format. Key logging information in
 ### Log Levels
 
 | Level | Usage |
-|-------|-------|
+|----|----|
 | `error` | Errors that require immediate attention |
 | `warn` | Warnings that might need investigation |
 | `info` | Important workflow state changes and service events |
@@ -83,7 +83,7 @@ The service uses structured logging with JSON format. Key logging information in
 ### Common Log Fields
 
 | Field | Description |
-|-------|-------------|
+|----|----|
 | `timestamp` | Time of the log entry |
 | `level` | Log level |
 | `message` | Human-readable message |
@@ -98,6 +98,7 @@ The service uses structured logging with JSON format. Key logging information in
 
 For high-volume environments:
 
+
 1. Sample debug logs at a lower rate
 2. Keep all error and warning logs
 3. Filter sensitive information from logs
@@ -110,23 +111,26 @@ The service provides several health check endpoints:
 ### `/health`
 
 Overall service health check with HTTP status code:
-- `200`: Service is healthy
-- `503`: Service is unhealthy
+
+* `200`: Service is healthy
+* `503`: Service is unhealthy
 
 ### `/health/ready`
 
 Readiness check that verifies:
-- Database connectivity
-- Event processing system connectivity
-- Scheduler system health
-- Internal component state
+
+* Database connectivity
+* Event processing system connectivity
+* Scheduler system health
+* Internal component state
 
 ### `/health/live`
 
 Liveness check that verifies:
-- Service is responding
-- No deadlocks detected
-- Memory usage is within limits
+
+* Service is responding
+* No deadlocks detected
+* Memory usage is within limits
 
 ### `/health/detailed`
 
@@ -169,42 +173,42 @@ Recommended dashboard panels for monitoring the Workflow Orchestrator:
 
 ### Overview Dashboard
 
-- Service health status
-- Total active workflows
-- Workflow completion rate
-- Error rate (step and workflow level)
-- System resource utilization
+* Service health status
+* Total active workflows
+* Workflow completion rate
+* Error rate (step and workflow level)
+* System resource utilization
 
 ### Workflow Execution Dashboard
 
-- Workflow execution volume by type
-- Workflow execution time distribution
-- Success/failure rates by workflow type
-- Waiting workflows by event type
-- Compensation execution metrics
+* Workflow execution volume by type
+* Workflow execution time distribution
+* Success/failure rates by workflow type
+* Waiting workflows by event type
+* Compensation execution metrics
 
 ### Component Performance Dashboard
 
-- Database query performance
-- Event processing latency
-- Scheduler execution accuracy
-- Step execution time by task type
-- Connection pool utilization
+* Database query performance
+* Event processing latency
+* Scheduler execution accuracy
+* Step execution time by task type
+* Connection pool utilization
 
 ### Error Analysis Dashboard
 
-- Error distribution by category
-- Error trends over time
-- Retry attempt distribution
-- Circuit breaker state changes
-- Dead letter queue metrics
+* Error distribution by category
+* Error trends over time
+* Retry attempt distribution
+* Circuit breaker state changes
+* Dead letter queue metrics
 
 ## Alerting Recommendations
 
 ### Critical Alerts
 
 | Condition | Threshold | Description |
-|-----------|-----------|-------------|
+|----|----|----|
 | High error rate | >5% workflows failing | Unusual number of workflow failures |
 | Service health | Unhealthy >1 min | Service health check failing |
 | Database connectivity | Disconnected >30s | Database connection issues |
@@ -215,7 +219,7 @@ Recommended dashboard panels for monitoring the Workflow Orchestrator:
 ### Warning Alerts
 
 | Condition | Threshold | Description |
-|-----------|-----------|-------------|
+|----|----|----|
 | Elevated error rate | >2% workflows failing | Increasing workflow failure rate |
 | Workflow execution time | >95th percentile | Workflows taking longer than expected |
 | Connection pool | >80% utilization | Database connection pool highly utilized |
@@ -229,6 +233,7 @@ Common monitoring alerts and troubleshooting steps:
 
 ### High Workflow Failure Rate
 
+
 1. Check error logs for common patterns
 2. Analyze failed workflow distribution by type
 3. Look for external system failures
@@ -236,6 +241,7 @@ Common monitoring alerts and troubleshooting steps:
 5. Verify database performance
 
 ### Slow Workflow Execution
+
 
 1. Check for slow database queries
 2. Analyze step execution times to identify bottlenecks
@@ -245,6 +251,7 @@ Common monitoring alerts and troubleshooting steps:
 
 ### Event Processing Delays
 
+
 1. Check event processing service health
 2. Look for event subscription backlogs
 3. Verify database performance for event queries
@@ -252,6 +259,7 @@ Common monitoring alerts and troubleshooting steps:
 5. Review event handler execution times
 
 ### Database Performance Issues
+
 
 1. Check for slow queries in database logs
 2. Review connection pool utilization
@@ -261,6 +269,8 @@ Common monitoring alerts and troubleshooting steps:
 
 ## Related Documentation
 
-- [Configuration](./configuration.md)
-- [Scaling Considerations](./scaling.md)
-- [Database Optimization](../implementation/database_optimization.md) 
+* [Configuration](./configuration.md)
+* [Scaling Considerations](./scaling.md)
+* [Database Optimization](../implementation/database_optimization.md)
+
+

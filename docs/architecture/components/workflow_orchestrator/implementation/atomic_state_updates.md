@@ -435,6 +435,7 @@ async function executeInTransaction<T>(
 
 Atomic updates are designed with performance in mind:
 
+
 1. **Minimal Locking**: Locks are held for the shortest possible time
 2. **Targeted Updates**: Updates modify only necessary fields
 3. **Indexed Queries**: All queries used in atomic operations are properly indexed
@@ -482,6 +483,8 @@ async function testConcurrentUpdates() {
 
 ## Related Documentation
 
-- [State Management](./state_management.md)
-- [Database Optimization](./database_optimization.md)
-- [Error Handling](./error_handling.md) 
+* [State Management](./state_management.md)
+* [Database Optimization](./database_optimization.md)
+* [Error Handling](./error_handling.md)
+
+

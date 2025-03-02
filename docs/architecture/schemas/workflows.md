@@ -146,6 +146,7 @@ Example UI configurations:
 Steps can transition to next steps based on:
 
 
+
 1. **Simple Sequence:** No condition, always go to next step
 2. **Conditional Branching:** Evaluate condition to choose path
 3. **Parallel Execution:** Multiple branches execute simultaneously
@@ -171,6 +172,7 @@ Example transition configurations:
 ## Error Handling
 
 Workflows can handle errors at multiple levels:
+
 
 
 1. **Step Level:**
@@ -235,7 +237,7 @@ Each step execution records:
 **Table: workflow_definitions**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | workflow_id | VARCHAR(255) | Unique business identifier for the workflow |
 | name | VARCHAR(255) | Human-readable name |
@@ -252,7 +254,7 @@ Each step execution records:
 **Table: workflow_instances**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | workflow_definition_id | UUID | Reference to workflow definition |
 | status | VARCHAR(50) | Current status (running, completed, failed, suspended) |
@@ -267,13 +269,15 @@ Each step execution records:
 | correlation_id | VARCHAR(255) | Business correlation identifier |
 
 **Indexes:**
-- `workflow_definitions_workflow_id_idx` UNIQUE on `workflow_id` (for lookups)
-- `workflow_definitions_triggers_idx` GIN on `triggers` (for event matching)
-- `workflow_instances_status_idx` on `status` (for finding workflows by status)
-- `workflow_instances_correlation_idx` on `correlation_id` (for finding related workflows)
-- `workflow_instances_definition_idx` on `workflow_definition_id` (for finding all instances of a definition)
+
+* `workflow_definitions_workflow_id_idx` UNIQUE on `workflow_id` (for lookups)
+* `workflow_definitions_triggers_idx` GIN on `triggers` (for event matching)
+* `workflow_instances_status_idx` on `status` (for finding workflows by status)
+* `workflow_instances_correlation_idx` on `correlation_id` (for finding related workflows)
+* `workflow_instances_definition_idx` on `workflow_definition_id` (for finding all instances of a definition)
 
 **JSON Schema (steps field):**
+
 ```json
 {
   "type": "array",
@@ -344,6 +348,7 @@ Each step execution records:
 ```
 
 **JSON Schema (state field in workflow_instances):**
+
 ```json
 {
   "type": "object",
@@ -368,8 +373,11 @@ Each step execution records:
 ```
 
 **Notes:**
-- Workflow definitions are versioned to allow for evolution without breaking existing instances
-- Workflow instances maintain their own copy of state to ensure durability
-- The state field contains outputs from all completed steps, making it available to subsequent steps
-- For complex workflows with many steps, consider indexing specific fields within the state JSONB
-- Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB 
+
+* Workflow definitions are versioned to allow for evolution without breaking existing instances
+* Workflow instances maintain their own copy of state to ensure durability
+* The state field contains outputs from all completed steps, making it available to subsequent steps
+* For complex workflows with many steps, consider indexing specific fields within the state JSONB
+* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+
+

@@ -11,7 +11,7 @@ Before deploying the Workflow Orchestrator Service, ensure the following prerequ
 ### System Requirements
 
 | Component | Minimum | Recommended |
-|-----------|---------|-------------|
+|----|----|----|
 | CPU | 2 cores | 4+ cores |
 | Memory | 4GB RAM | 8GB+ RAM |
 | Disk | 20GB | 50GB+ |
@@ -19,31 +19,28 @@ Before deploying the Workflow Orchestrator Service, ensure the following prerequ
 
 ### Dependencies
 
+
 1. **Database**:
-   - PostgreSQL 14+ with the following extensions:
-     - `pgcrypto`
-     - `pg_trgm`
-     - `btree_gin`
-   - Connection details (host, port, credentials, database name)
-
+   * PostgreSQL 14+ with the following extensions:
+     * `pgcrypto`
+     * `pg_trgm`
+     * `btree_gin`
+   * Connection details (host, port, credentials, database name)
 2. **Message Broker** (optional but recommended):
-   - Kafka 3.0+ or RabbitMQ 3.9+
-   - Connection details and authentication
-
+   * Kafka 3.0+ or RabbitMQ 3.9+
+   * Connection details and authentication
 3. **Infrastructure**:
-   - Kubernetes 1.22+ (for container deployment)
-   - Docker 20.10+ (for container builds)
-   - Helm 3.8+ (for Kubernetes deployments)
-
+   * Kubernetes 1.22+ (for container deployment)
+   * Docker 20.10+ (for container builds)
+   * Helm 3.8+ (for Kubernetes deployments)
 4. **Network**:
-   - Outbound internet access for dependency downloads
-   - Inbound access on service ports (default: 8080, 8081)
-   - Access to database and message broker
-
+   * Outbound internet access for dependency downloads
+   * Inbound access on service ports (default: 8080, 8081)
+   * Access to database and message broker
 5. **Security**:
-   - TLS certificates for HTTPS endpoints
-   - Service account with appropriate permissions
-   - Secrets management solution (e.g., Kubernetes Secrets, HashiCorp Vault)
+   * TLS certificates for HTTPS endpoints
+   * Service account with appropriate permissions
+   * Secrets management solution (e.g., Kubernetes Secrets, HashiCorp Vault)
 
 ## Deployment Options
 
@@ -153,7 +150,7 @@ metrics:
 The following environment variables can be used to override configuration:
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+|----|----|----|
 | `SERVER_PORT` | HTTP port for API | 8080 |
 | `MANAGEMENT_PORT` | HTTP port for management endpoints | 8081 |
 | `DATABASE_URL` | JDBC URL for database connection | - |
@@ -439,30 +436,29 @@ curl http://service-host:8081/metrics
 
 ### Common Issues
 
+
 1. **Database Connection Failures**:
-   - Verify database credentials and connection string
-   - Check network connectivity and firewall rules
-   - Ensure database server is running and accessible
+   * Verify database credentials and connection string
+   * Check network connectivity and firewall rules
+   * Ensure database server is running and accessible
 
    ```bash
    # Test database connection
    psql -h db-host -U workflow_user -d workflows -c "SELECT 1"
    ```
-
 2. **Service Won't Start**:
-   - Check logs for startup errors
-   - Verify configuration file syntax
-   - Ensure required environment variables are set
+   * Check logs for startup errors
+   * Verify configuration file syntax
+   * Ensure required environment variables are set
 
    ```bash
    # View logs
    tail -f /var/log/workflow-orchestrator/service.log
    ```
-
 3. **Event Processing Issues**:
-   - Verify Kafka/RabbitMQ connectivity
-   - Check consumer group configuration
-   - Ensure topics exist and are properly configured
+   * Verify Kafka/RabbitMQ connectivity
+   * Check consumer group configuration
+   * Ensure topics exist and are properly configured
 
    ```bash
    # List Kafka topics
@@ -573,7 +569,9 @@ curl -X POST http://grafana:3000/api/dashboards/import \
 
 ## Related Documentation
 
-- [Configuration Reference](./operations/configuration.md)
-- [Monitoring Guidelines](./operations/monitoring.md)
-- [Scaling Considerations](./operations/scaling.md)
-- [Database Optimization](./implementation/database_optimization.md) 
+* [Configuration Reference](./operations/configuration.md)
+* [Monitoring Guidelines](./operations/monitoring.md)
+* [Scaling Considerations](./operations/scaling.md)
+* [Database Optimization](./implementation/database_optimization.md)
+
+
