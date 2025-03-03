@@ -1,8 +1,8 @@
-# Workflows
+# Workflow Definitions
 
 ## Overview
 
-Workflows are orchestrated sequences of tasks that accomplish a business process. They are designed to be:
+Workflow definitions are templates that describe orchestrated sequences of tasks to accomplish a business process. They are designed to be:
 
 * Composable from reusable tasks
 * Event-driven or manually triggered
@@ -10,6 +10,16 @@ Workflows are orchestrated sequences of tasks that accomplish a business process
 * Monitored and logged for audit purposes
 * Resilient with built-in error handling
 * Dynamic in their UI presentation
+
+## Key Concepts
+
+* **Workflow Definition** - A template that defines the structure and behavior of a workflow
+* **Workflow Instance** - A single execution of a workflow definition
+* **Steps** - Individual units of work within a workflow
+* **Transitions** - Rules for moving between steps
+* **State** - The current status and data of a workflow instance
+* **Events** - External triggers that can start or affect workflows
+* **Compensation** - Actions taken to clean up or roll back when workflows fail or are cancelled
 
 ## Workflow Definition Structure
 
@@ -24,16 +34,6 @@ Workflows are orchestrated sequences of tasks that accomplish a business process
     "properties": { },
     "required": []
   },
-  "triggers": [                     // List of events that can trigger this workflow
-    {
-      "eventPattern": "string",     // Event pattern to match
-      "description": "string",      // Description of when/why this triggers
-      "transform": {               // Optional transform of event data to workflow input
-        "type": "jmespath | jsonata",
-        "expression": "string"
-      }
-    }
-  ],
   "steps": [                        // Ordered list of workflow steps
     {
       "stepId": "string",           // Unique ID within workflow
@@ -146,7 +146,6 @@ Example UI configurations:
 Steps can transition to next steps based on:
 
 
-
 1. **Simple Sequence:** No condition, always go to next step
 2. **Conditional Branching:** Evaluate condition to choose path
 3. **Parallel Execution:** Multiple branches execute simultaneously
@@ -172,7 +171,6 @@ Example transition configurations:
 ## Error Handling
 
 Workflows can handle errors at multiple levels:
-
 
 
 1. **Step Level:**
@@ -232,7 +230,7 @@ Each step execution records:
 * User actions for manual steps
 * System events
 
-## Schema
+## Database Schema
 
 **Table: workflow_definitions**
 
@@ -244,140 +242,17 @@ Each step execution records:
 | description | TEXT | Detailed description |
 | version | VARCHAR(50) | Semantic version number |
 | input_schema | JSONB | JSON Schema for workflow input |
-| triggers | JSONB | Event patterns that can trigger this workflow |
 | steps | JSONB | Ordered list of workflow steps |
 | ui_components | JSONB | Workflow-level UI definitions |
 | execution_log | JSONB | Logging configuration |
 | created_at | TIMESTAMP | Creation timestamp |
 | updated_at | TIMESTAMP | Last update timestamp |
 
-**Table: workflow_instances**
+## Related Documentation
 
-| Field | Type | Description |
-|----|----|----|
-| id | UUID | Primary key |
-| workflow_definition_id | UUID | Reference to workflow definition |
-| status | VARCHAR(50) | Current status (running, completed, failed, suspended) |
-| current_step_id | VARCHAR(255) | ID of the current step |
-| input | JSONB | Initial input data |
-| state | JSONB | Current workflow state (includes all step outputs) |
-| error | JSONB | Error details if workflow failed |
-| trigger_event_id | UUID | Reference to event that triggered this workflow |
-| started_at | TIMESTAMP | When workflow started |
-| updated_at | TIMESTAMP | When workflow was last updated |
-| completed_at | TIMESTAMP | When workflow completed |
-| correlation_id | VARCHAR(255) | Business correlation identifier |
-
-**Indexes:**
-
-* `workflow_definitions_workflow_id_idx` UNIQUE on `workflow_id` (for lookups)
-* `workflow_definitions_triggers_idx` GIN on `triggers` (for event matching)
-* `workflow_instances_status_idx` on `status` (for finding workflows by status)
-* `workflow_instances_correlation_idx` on `correlation_id` (for finding related workflows)
-* `workflow_instances_definition_idx` on `workflow_definition_id` (for finding all instances of a definition)
-
-**JSON Schema (steps field):**
-
-```json
-{
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "stepId": { "type": "string" },
-      "taskId": { "type": "string" },
-      "name": { "type": "string" },
-      "description": { "type": "string" },
-      "next": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "nextStepId": { "type": "string" },
-            "condition": { "type": "string" }
-          },
-          "required": ["nextStepId"]
-        }
-      },
-      "parallelBranches": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "branchId": { "type": "string" },
-            "steps": { "type": "array" }
-          }
-        }
-      },
-      "retryPolicy": {
-        "type": "object",
-        "properties": {
-          "maxAttempts": { "type": "number" },
-          "delay": { "type": "string" },
-          "strategy": { "type": "string" }
-        }
-      },
-      "timeout": { "type": "string" },
-      "onFailure": {
-        "type": "object",
-        "properties": {
-          "action": { "type": "string" },
-          "nextStepId": { "type": "string" },
-          "errorHandler": {
-            "type": "object",
-            "properties": {
-              "conditions": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "errorType": { "type": "string" },
-                    "errorCode": { "type": "string" },
-                    "nextStepId": { "type": "string" }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "required": ["stepId", "taskId"]
-  }
-}
-```
-
-**JSON Schema (state field in workflow_instances):**
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "input": { "type": "object" },
-    "steps": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "status": { "type": "string" },
-          "output": { "type": "object" },
-          "error": { "type": "object" },
-          "startedAt": { "type": "string" },
-          "completedAt": { "type": "string" }
-        }
-      }
-    },
-    "variables": { "type": "object" }
-  }
-}
-```
-
-**Notes:**
-
-* Workflow definitions are versioned to allow for evolution without breaking existing instances
-* Workflow instances maintain their own copy of state to ensure durability
-* The state field contains outputs from all completed steps, making it available to subsequent steps
-* For complex workflows with many steps, consider indexing specific fields within the state JSONB
-* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+* [Workflow Instances](./workflow_instances.md) - Documentation for workflow instances
+* [Tasks Schema](./tasks.md) - Documentation for task definitions and instances
+* [Events Schema](./events.md) - Documentation for event definitions and instances
+* [Database Architecture](../database_architecture.md) - Overall database architecture
 
 

@@ -359,6 +359,7 @@ async function cleanupWorkflowSubscriptions(
 The Workflow Orchestrator integrates with the wider system's event-driven architecture:
 
 
+
 1. **Event Publication**:
    * Emits events for workflow lifecycle (created, completed, cancelled)
    * Emits events for step completion
@@ -373,6 +374,7 @@ This allows for loose coupling between the Workflow Orchestrator and other syste
 ## Performance Considerations
 
 When implementing event processing in the Workflow Orchestrator, consider:
+
 
 
 1. **Subscription Scaling**: Ensure the event subscription system scales with the number of waiting workflows

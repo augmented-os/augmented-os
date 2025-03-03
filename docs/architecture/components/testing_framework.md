@@ -61,6 +61,7 @@ Test definitions follow a structured format that specifies test parameters, expe
 
 The Testing Framework provides these core capabilities:
 
+
 1. **Test Definition Management**: Storing, versioning, and retrieving test definitions from the `test_definitions` table
 2. **Test Execution**: Running tests against target components with specified parameters
 3. **Result Capture**: Recording detailed test results, including timestamps, execution time, and assertion outcomes
@@ -72,25 +73,25 @@ The Testing Framework provides these core capabilities:
 
 The Testing Framework exposes the following interfaces:
 
+
 1. **Test Management API**:
-   - `registerTestDefinition(definition)`: Registers a new test definition
-   - `updateTestDefinition(id, definition)`: Updates an existing test definition
-   - `getTestDefinition(id)`: Retrieves a test definition by ID
-   - `listTestDefinitions(filter)`: Lists test definitions with optional filtering
-
+   * `registerTestDefinition(definition)`: Registers a new test definition
+   * `updateTestDefinition(id, definition)`: Updates an existing test definition
+   * `getTestDefinition(id)`: Retrieves a test definition by ID
+   * `listTestDefinitions(filter)`: Lists test definitions with optional filtering
 2. **Test Execution API**:
-   - `executeTest(testId, parameters)`: Executes a single test
-   - `executeTestSuite(suiteId, parameters)`: Executes a suite of tests
-   - `getTestResult(testResultId)`: Retrieves test result by ID
-   - `listTestResults(filter)`: Lists test results with optional filtering
-
+   * `executeTest(testId, parameters)`: Executes a single test
+   * `executeTestSuite(suiteId, parameters)`: Executes a suite of tests
+   * `getTestResult(testResultId)`: Retrieves test result by ID
+   * `listTestResults(filter)`: Lists test results with optional filtering
 3. **Event Listeners**:
-   - Subscribes to system events for monitoring test execution flow
-   - Captures event data for validating against assertions
+   * Subscribes to system events for monitoring test execution flow
+   * Captures event data for validating against assertions
 
 ### Dependencies
 
 The Testing Framework depends on:
+
 
 1. **Event Processing Service**: For monitoring events during test execution
 2. **Workflow Orchestrator**: For executing workflow tests
@@ -102,6 +103,7 @@ The Testing Framework depends on:
 ### Configuration
 
 Configuration options include:
+
 
 1. **Concurrency Settings**: Maximum number of concurrent test executions
 2. **Retry Policy**: Configuration for automatic test retries
@@ -191,16 +193,18 @@ This test verifies that the calendar integration can successfully create events 
 
 ## Related Components
 
-- [Workflow Orchestrator Service](../components/workflow_orchestrator_service.md) - Testing Framework validates workflow execution
-- [Task Execution Layer](../components/task_execution_layer.md) - Testing Framework validates task execution
-- [Integration Service](../components/integration_service.md) - Testing Framework validates integration functionality
-- [Event Processing Service](../components/event_processing_service.md) - Testing Framework leverages events for assertions
-- [Validation Service](../components/validation_service.md) - Used to validate test inputs against schemas
+* [Workflow Orchestrator Service](../components/workflow_orchestrator_service.md) - Testing Framework validates workflow execution
+* [Task Execution Layer](../components/task_execution_layer.md) - Testing Framework validates task execution
+* [Integration Service](../components/integration_service.md) - Testing Framework validates integration functionality
+* [Event Processing Service](../components/event_processing_service.md) - Testing Framework leverages events for assertions
+* [Validation Service](../components/validation_service.md) - Used to validate test inputs against schemas
 
 ## Version History
 
 | Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0   | 2023-07-15 | Initial version of the Testing Framework component |
-| 1.1.0   | 2023-09-10 | Added support for test suites and dependency management |
-| 1.2.0   | 2023-11-25 | Introduced advanced assertion capabilities and improved reporting | 
+|----|----|----|
+| 1.0.0 | 2023-07-15 | Initial version of the Testing Framework component |
+| 1.1.0 | 2023-09-10 | Added support for test suites and dependency management |
+| 1.2.0 | 2023-11-25 | Introduced advanced assertion capabilities and improved reporting |
+
+

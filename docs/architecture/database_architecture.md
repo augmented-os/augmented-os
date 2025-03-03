@@ -49,12 +49,12 @@ The database is organized around these core component types, each with definitio
 
 | Component Type | Definition Table | Instance Table |
 |----|----|----|
-| Events | `event_definitions` | `events` |
+| Events | `event_definitions` | `event_instances` |
 | Tasks | `task_definitions` | `task_instances` |
 | Workflows | `workflow_definitions` | `workflow_instances` |
 | Integrations | `integration_definitions` | `integration_instances` |
 | UI Components | `ui_components` | N/A (rendered client-side) |
-| Tests | `test_definitions` | `test_runs` & `test_case_results` |
+| Tests | `test_definitions` | `test_instances` & `test_case_results` |
 
 ## Common Fields
 
@@ -90,7 +90,7 @@ workflow_instances
     ↓ creates
 task_instances
     ↓ may trigger
-events
+event_instances
     ↓ conforms to
 event_definitions
     ↓ may use
@@ -102,9 +102,9 @@ Key relationships include:
 * Workflow definitions reference task definitions in their steps
 * Task definitions reference UI components for manual tasks
 * Workflow definitions reference event definitions in their triggers
-* Events conform to event definitions (validate against payload schema)
+* Event instances conform to event definitions (validate against payload schema)
 * Workflow instances create task instances during execution
-* Task instances may trigger events upon completion
+* Task instances may trigger event instances upon completion
 * Integration instances are used by tasks and workflows to interact with external systems
 
 ## JSON Schema Validation
@@ -124,7 +124,7 @@ The database uses these indexing strategies:
 
 ## Partitioning
 
-For high-volume tables (particularly `events` and `task_instances`), time-based partitioning is implemented to improve query performance and maintenance operations.
+For high-volume tables (particularly `event_instances` and `task_instances`), time-based partitioning is implemented to improve query performance and maintenance operations.
 
 ## Connection Pooling
 

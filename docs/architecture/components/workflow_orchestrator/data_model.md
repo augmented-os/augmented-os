@@ -8,11 +8,15 @@ The Workflow Orchestrator Service primarily interacts with these data schemas:
 * [Tasks Schema](../../schemas/tasks.md): For task definitions and instances
 * [Events Schema](../../schemas/events.md): For event processing
 
-## Core Data Structures
+This document focuses on how the Workflow Orchestrator component specifically implements and extends the canonical schemas defined in the links above. For complete schema definitions, please refer to the linked documentation.
 
-### Workflow Instance
+## Workflow Orchestrator Implementation Details
 
-The central data structure representing an executing workflow:
+The Workflow Orchestrator extends the canonical workflow schemas with additional implementation-specific structures and optimizations to support efficient workflow execution.
+
+### Workflow Instance State Management
+
+The Workflow Orchestrator maintains detailed state information for each workflow instance:
 
 ```typescript
 interface WorkflowInstance {
@@ -80,24 +84,11 @@ interface CompensationState {
 }
 ```
 
-### Workflow Definition
+### Workflow Orchestrator Step Implementation
 
-The template that defines how a workflow should execute:
+The Workflow Orchestrator implements workflow steps with these additional properties:
 
 ```typescript
-interface WorkflowDefinition {
-  id: string;                            // Workflow identifier
-  name: string;                          // Human-readable name
-  description: string;                   // Detailed description
-  version: string;                       // Semantic version
-  inputSchema: JSONSchema;               // Schema for validating input
-  steps: WorkflowStep[];                 // Steps in the workflow
-  triggers: WorkflowTrigger[];           // Events that can start the workflow
-  cancellationTriggers?: EventBasedCancellation[]; // Events that can cancel
-  compensationSteps?: CompensationStep[]; // Steps for cleanup on cancellation
-  uiComponents?: UIComponent[];          // Associated UI elements
-}
-
 interface WorkflowStep {
   stepId: string;                        // Unique identifier for the step
   type: 'TASK' | 'EVENT_WAIT' | 'DECISION';
@@ -133,59 +124,13 @@ interface CompensationStep {
   input?: Record<string, any> | string;
   condition?: string;
 }
-
-interface EventBasedCancellation {
-  eventPattern: string;
-  eventCondition?: string;
-  reason: string;
-  shouldCompensate: boolean;
-}
 ```
 
-## Database Schema
+## Database Optimizations
 
-The Workflow Orchestrator Service uses the following database tables:
+The Workflow Orchestrator implements specific database optimizations to ensure efficient workflow execution:
 
-### workflow_definitions
-
-Stores the templates for workflows:
-
-| Column | Type | Description |
-|----|----|----|
-| id | UUID | Primary key |
-| workflow_id | VARCHAR | Business identifier |
-| name | VARCHAR | Human-readable name |
-| description | TEXT | Detailed description |
-| version | VARCHAR | Semantic version (e.g., "1.0.0") |
-| steps | JSONB | Array of workflow steps |
-| input_schema | JSONB | JSON Schema for workflow inputs |
-| triggers | JSONB | Events that trigger the workflow |
-| cancellation_triggers | JSONB | Events that can cancel the workflow |
-| compensation_steps | JSONB | Steps for cleanup on cancellation |
-| created_at | TIMESTAMP | Creation timestamp |
-| updated_at | TIMESTAMP | Last updated timestamp |
-
-### workflow_instances
-
-Stores the actual running workflow instances:
-
-| Column | Type | Description |
-|----|----|----|
-| id | UUID | Primary key |
-| workflow_definition_id | UUID | Foreign key to workflow_definitions |
-| status | VARCHAR | Current workflow status |
-| state | JSONB | Current workflow state |
-| input | JSONB | Input parameters |
-| correlation_id | VARCHAR | ID for correlating related workflows |
-| version | INTEGER | For optimistic concurrency control |
-| created_at | TIMESTAMP | Creation timestamp |
-| updated_at | TIMESTAMP | Last updated timestamp |
-| started_at | TIMESTAMP | Execution start timestamp |
-| completed_at | TIMESTAMP | Completion timestamp (if finished) |
-
-## Indexes
-
-Important indexes for performance optimization:
+### Performance-Critical Indexes
 
 ```sql
 -- Key indexes for workflow_instances table
@@ -199,6 +144,15 @@ CREATE INDEX workflow_instances_definition_idx ON workflow_instances(workflow_de
 CREATE INDEX workflow_instances_waiting_for_event_idx ON workflow_instances((state->'waitingForEvent'->>'eventPattern')) 
 WHERE status = 'WAITING_FOR_EVENT';
 ```
+
+### Query Optimization Strategies
+
+The Workflow Orchestrator uses the following strategies to optimize database access:
+
+1. **Partial Updates**: Only updating changed fields to minimize write overhead
+2. **Optimistic Concurrency Control**: Using version numbers to detect conflicts
+3. **JSONB Path Operators**: Using path operators to update nested JSON without rewriting entire documents
+4. **Materialized Views**: For frequently accessed workflow statistics and reporting
 
 ## Related Documentation
 
