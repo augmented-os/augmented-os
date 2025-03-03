@@ -1,0 +1,761 @@
+openapi: 3.0.3
+info:
+  title: Workflow Orchestrator API
+  version: 1.0.0
+  description: |
+    The Workflow Orchestrator Service API allows clients to manage workflows throughout their lifecycle.
+    This specification details the available endpoints, request formats, and response structures.
+
+servers:
+  - url: /api/v1/workflows
+    description: Base URL for all API endpoints
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token authentication
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key authentication
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: WORKFLOW_NOT_FOUND
+            message:
+              type: string
+              example: Workflow instance wf-inst-xyz123 not found
+            details:
+              type: object
+              description: Additional error details if available
+      required:
+        - error
+
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of items
+          example: 45
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        limit:
+          type: integer
+          description: Items per page
+          example: 20
+      required:
+        - total
+        - page
+        - limit
+
+    WorkflowDefinitionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          example: order-processing-wf
+        name:
+          type: string
+          example: Order Processing Workflow
+        description:
+          type: string
+          example: Processes customer orders from placement to fulfillment
+        version:
+          type: string
+          example: 1.2.0
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-07-15T14:30:00Z
+      required:
+        - id
+        - name
+        - version
+        - updatedAt
+
+    WorkflowDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+          example: order-processing-wf
+        name:
+          type: string
+          example: Order Processing Workflow
+        description:
+          type: string
+          example: Processes customer orders from placement to fulfillment
+        version:
+          type: string
+          example: 1.2.0
+        steps:
+          type: array
+          items:
+            type: object
+            properties:
+              stepId:
+                type: string
+                example: validate_order
+              type:
+                type: string
+                enum: [TASK, EVENT_WAIT, DECISION]
+                example: TASK
+              taskId:
+                type: string
+                example: order_validation_task
+              transitions:
+                type: object
+                properties:
+                  default:
+                    type: string
+                    example: process_payment
+                additionalProperties:
+                  type: string
+                  example: notify_customer
+        compensationSteps:
+          type: array
+          items:
+            type: object
+        cancellationTriggers:
+          type: array
+          items:
+            type: object
+        createdBy:
+          type: string
+          example: system
+        createdAt:
+          type: string
+          format: date-time
+          example: 2023-05-10T09:00:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-07-15T14:30:00Z
+      required:
+        - id
+        - name
+        - version
+        - steps
+        - createdAt
+        - updatedAt
+
+    WorkflowDefinitionCreate:
+      type: object
+      properties:
+        id:
+          type: string
+          example: return-processing-wf
+        name:
+          type: string
+          example: Return Processing Workflow
+        description:
+          type: string
+          example: Handles customer returns and refunds
+        steps:
+          type: array
+          items:
+            type: object
+        compensationSteps:
+          type: array
+          items:
+            type: object
+      required:
+        - id
+        - name
+        - steps
+
+    WorkflowInstanceCreate:
+      type: object
+      properties:
+        definitionId:
+          type: string
+          example: order-processing-wf
+        input:
+          type: object
+          example:
+            orderId: ORD-12345
+            customerId: CUST-789
+            items:
+              - productId: PROD-001
+                quantity: 2
+        correlationId:
+          type: string
+          example: ORD-12345
+      required:
+        - definitionId
+
+    WorkflowInstanceSummary:
+      type: object
+      properties:
+        instanceId:
+          type: string
+          example: wf-inst-abcd1234
+        definitionId:
+          type: string
+          example: order-processing-wf
+        status:
+          type: string
+          enum: [CREATED, RUNNING, COMPLETED, FAILED, CANCELLED, WAITING_FOR_EVENT]
+          example: RUNNING
+        startedAt:
+          type: string
+          format: date-time
+          example: 2023-08-01T15:45:30Z
+      required:
+        - instanceId
+        - definitionId
+        - status
+        - startedAt
+
+    WorkflowInstance:
+      type: object
+      properties:
+        id:
+          type: string
+          example: wf-inst-abcd1234
+        workflowDefinitionId:
+          type: string
+          example: order-processing-wf
+        status:
+          type: string
+          enum: [CREATED, RUNNING, COMPLETED, FAILED, CANCELLED, WAITING_FOR_EVENT]
+          example: RUNNING
+        currentStepId:
+          type: string
+          example: process_payment
+        input:
+          type: object
+          example:
+            orderId: ORD-12345
+            customerId: CUST-789
+        state:
+          type: object
+          properties:
+            variables:
+              type: object
+              example:
+                orderValidated: true
+                paymentId: PAY-9876
+            steps:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [PENDING, RUNNING, COMPLETED, FAILED]
+                  output:
+                    type: object
+                  completedAt:
+                    type: string
+                    format: date-time
+        startedAt:
+          type: string
+          format: date-time
+          example: 2023-08-01T15:45:30Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-08-01T15:46:00Z
+      required:
+        - id
+        - workflowDefinitionId
+        - status
+        - startedAt
+        - updatedAt
+
+    WorkflowCancellation:
+      type: object
+      properties:
+        reason:
+          type: string
+          example: Customer requested cancellation
+        shouldCompensate:
+          type: boolean
+          default: true
+      required:
+        - reason
+
+    WorkflowCancellationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: wf-inst-abcd1234
+        status:
+          type: string
+          enum: [CANCELLING]
+          example: CANCELLING
+        cancellation:
+          type: object
+          properties:
+            reason:
+              type: string
+              example: Customer requested cancellation
+            requestedAt:
+              type: string
+              format: date-time
+              example: 2023-08-01T16:30:00Z
+            shouldCompensate:
+              type: boolean
+              example: true
+      required:
+        - id
+        - status
+        - cancellation
+
+    WorkflowSignal:
+      type: object
+      properties:
+        type:
+          type: string
+          example: MANUAL_APPROVAL
+        payload:
+          type: object
+          example:
+            approved: true
+            approvedBy: user@example.com
+            comments: Looks good
+      required:
+        - type
+        - payload
+
+    WorkflowSignalResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: wf-inst-abcd1234
+        signalProcessed:
+          type: boolean
+          example: true
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-08-01T16:35:00Z
+      required:
+        - id
+        - signalProcessed
+        - updatedAt
+
+    WorkflowHistory:
+      type: object
+      properties:
+        instanceId:
+          type: string
+          example: wf-inst-abcd1234
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                example: WORKFLOW_STARTED
+              timestamp:
+                type: string
+                format: date-time
+                example: 2023-08-01T15:45:30Z
+              details:
+                type: object
+      required:
+        - instanceId
+        - events
+
+security:
+  - bearerAuth: []
+  - apiKeyAuth: []
+
+paths:
+  /definitions:
+    get:
+      summary: List Workflow Definitions
+      description: Returns a list of available workflow definitions.
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          description: Text search across name and description fields
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of workflow definitions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkflowDefinitionSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create Workflow Definition
+      description: Creates a new workflow definition.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowDefinitionCreate'
+      responses:
+        '201':
+          description: Workflow definition created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowDefinition'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /definitions/{definitionId}:
+    get:
+      summary: Get Workflow Definition
+      description: Returns the complete definition of a workflow.
+      parameters:
+        - name: definitionId
+          in: path
+          required: true
+          description: Workflow definition ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workflow definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowDefinition'
+        '404':
+          description: Workflow definition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Update Workflow Definition
+      description: Updates an existing workflow definition. This creates a new version of the definition.
+      parameters:
+        - name: definitionId
+          in: path
+          required: true
+          description: Workflow definition ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowDefinitionCreate'
+      responses:
+        '200':
+          description: Workflow definition updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowDefinition'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Workflow definition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /instances:
+    get:
+      summary: List Workflow Instances
+      description: Returns a list of workflow instances.
+      parameters:
+        - name: definitionId
+          in: query
+          description: Filter by workflow definition
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by status
+          schema:
+            type: string
+            enum: [CREATED, RUNNING, COMPLETED, FAILED, CANCELLED, WAITING_FOR_EVENT]
+        - name: correlationId
+          in: query
+          description: Filter by correlation ID
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Items per page
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of workflow instances
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WorkflowInstanceSummary'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Start Workflow
+      description: Starts a new workflow instance.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowInstanceCreate'
+      responses:
+        '201':
+          description: Workflow instance started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowInstanceSummary'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Workflow definition not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /instances/{instanceId}:
+    get:
+      summary: Get Workflow Instance
+      description: Returns the current state of a workflow instance.
+      parameters:
+        - name: instanceId
+          in: path
+          required: true
+          description: Workflow instance ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workflow instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowInstance'
+        '404':
+          description: Workflow instance not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /instances/{instanceId}/cancel:
+    post:
+      summary: Cancel Workflow
+      description: Cancels a running workflow instance.
+      parameters:
+        - name: instanceId
+          in: path
+          required: true
+          description: Workflow instance ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowCancellation'
+      responses:
+        '200':
+          description: Workflow cancellation initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowCancellationResponse'
+        '404':
+          description: Workflow instance not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Workflow cannot be cancelled in its current state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /instances/{instanceId}/signal:
+    post:
+      summary: Signal Workflow
+      description: Sends a signal to a workflow instance, typically used to trigger transitions or provide additional data.
+      parameters:
+        - name: instanceId
+          in: path
+          required: true
+          description: Workflow instance ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowSignal'
+      responses:
+        '200':
+          description: Signal processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowSignalResponse'
+        '404':
+          description: Workflow instance not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '400':
+          description: Invalid signal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /instances/{instanceId}/history:
+    get:
+      summary: Get Workflow Execution History
+      description: Returns the execution history of a workflow instance.
+      parameters:
+        - name: instanceId
+          in: path
+          required: true
+          description: Workflow instance ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workflow execution history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowHistory'
+        '404':
+          description: Workflow instance not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 

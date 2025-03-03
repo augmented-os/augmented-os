@@ -4,6 +4,8 @@
 
 The Workflow Orchestrator Service exposes a RESTful API that allows clients to manage workflows throughout their lifecycle. This document details the available endpoints, request formats, and response structures.
 
+An OpenAPI specification is available at [workflow-orchestrator-api.yaml](./workflow-orchestrator-api.yaml) for integration with API tools and code generators.
+
 ## Base URL
 
 ```
