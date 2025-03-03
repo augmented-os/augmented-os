@@ -1,122 +1,155 @@
-# \[Schema Name\]
+# \[Component Name\]
 
 ## Overview
 
-\[Brief description of the schema and its purpose in the system. Include key characteristics and design principles.\]
+\[Brief description of the component and its purpose in the system. Include key characteristics and design principles.\]
 
-## Schema Structure
+## Key Concepts
+
+* **\[Concept 1\]** - \[Brief description of concept 1\]
+* **\[Concept 2\]** - \[Brief description of concept 2\]
+* **\[Concept 3\]** - \[Brief description of concept 3\]
+* \[Continue as required\]
+
+## \[Component\] Structure
 
 ```json
 {
-  "field1": "string",  // Description of field1
-  "field2": {          // Description of field2
-    "subfield1": "number",
-    "subfield2": "boolean"
+  "id": "string",                // Unique identifier
+  "name": "string",              // Human-readable name
+  "description": "string",       // Detailed description
+  "version": "string",           // Semantic version number
+  "field1": {                    // Description of field1
+    "subfield1": "string",
+    "subfield2": "number"
   },
-  "field3": [          // Description of field3
+  "field2": [                    // Description of field2
     {
-      "arrayField1": "string",
-      "arrayField2": "number"
+      "id": "string",            // Unique ID within array
+      "name": "string",          // Human-readable name
+      "value": "any"             // Value of the item
     }
-  ]
+  ],
+  "field3": {                    // Description of field3
+    "option1": "string",
+    "option2": "boolean",
+    "option3": "number"
+  }
 }
 ```
 
-## Field Definitions
+## \[Section 1 - Key Feature\]
 
-| Field | Type | Required | Description |
-|----|----|----|----|
-| field1 | string | Yes | \[Detailed description of field1\] |
-| field2.subfield1 | number | No | \[Detailed description of subfield1\] |
-| field2.subfield2 | boolean | Yes | \[Detailed description of subfield2\] |
-| field3\[\].arrayField1 | string | Yes | \[Detailed description of arrayField1\] |
-| field3\[\].arrayField2 | number | No | \[Detailed description of arrayField2\] |
+\[Description of a key feature of the component. For example, for workflows this might be "UI Components" or "Step Transitions".\]
 
-## Validation Rules
+* \[Point 1\]
+* \[Point 2\]
+* \[Point 3\]
+* \[Continue as required\]
 
-\[Description of validation rules that apply to this schema.\]
-
-* Rule 1: \[Description of rule 1\]
-* Rule 2: \[Description of rule 2\]
-* Rule 3: \[Description of rule 3\]
-
-## Examples
-
-### Basic Example
+Example configuration:
 
 ```json
 {
-  "field1": "example value",
-  "field2": {
-    "subfield1": 42,
-    "subfield2": true
-  },
-  "field3": [
-    {
-      "arrayField1": "item 1",
-      "arrayField2": 1
-    }
-  ]
+  "field1": {
+    "subfield1": "example value",
+    "subfield2": 42
+  }
 }
 ```
 
-\[Explanation of the basic example.\]
+## \[Section 2 - Key Feature\]
 
-### Complex Example
+\[Description of another key feature of the component.\]
+
+
+1. **\[Feature aspect 1\]:**
+   * \[Detail 1\]
+   * \[Detail 2\]
+   * \[Detail 3\]
+2. **\[Feature aspect 2\]:**
+   * \[Detail 1\]
+   * \[Detail 2\]
+   * \[Detail 3\]
+
+Example configuration:
 
 ```json
 {
-  "field1": "complex example",
-  "field2": {
-    "subfield1": 100,
-    "subfield2": false
-  },
-  "field3": [
+  "field2": [
     {
-      "arrayField1": "item 1",
-      "arrayField2": 1
+      "id": "item1",
+      "name": "First Item",
+      "value": "example"
     },
     {
-      "arrayField1": "item 2",
-      "arrayField2": 2
+      "id": "item2",
+      "name": "Second Item",
+      "value": 42
     }
   ]
 }
 ```
 
-\[Explanation of the complex example.\]
+## \[Section 3 - Key Feature\]
+
+\[Description of another key feature of the component.\]
+
+```json
+{
+  "field3": {
+    "option1": "example",
+    "option2": true,
+    "option3": 100
+  }
+}
+```
+
+Each \[component\] records:
+
+* \[Record detail 1\]
+* \[Record detail 2\]
+* \[Record detail 3\]
+* \[Continue as required\]
 
 ## Database Schema
 
-**Table: \[table_name\]**
+**Table: \[component_name\]**
 
-| Column | Type | Nullable | Default | Description |
-|----|----|----|----|----|
-| id | UUID | No | gen_random_uuid() | Primary key |
-| \[business_id\] | VARCHAR(255) | No |    | Unique business identifier |
-| field1 | VARCHAR(255) | No |    | \[Description\] |
-| field2 | JSONB | No | '{}' | \[Description\] |
-| field3 | JSONB | Yes | NULL | \[Description\] |
-| created_at | TIMESTAMP | No | NOW() | Creation timestamp |
-| updated_at | TIMESTAMP | No | NOW() | Last update timestamp |
-| version | VARCHAR(50) | No | '1.0.0' | Schema version |
+| Field | Type | Description |
+|----|----|----|
+| id | UUID | Primary key |
+| \[business_id\] | VARCHAR(255) | Unique business identifier |
+| name | VARCHAR(255) | Human-readable name |
+| description | TEXT | Detailed description |
+| version | VARCHAR(50) | Semantic version number |
+| field1 | JSONB | \[Description of field1\] |
+| field2 | JSONB | \[Description of field2\] |
+| field3 | JSONB | \[Description of field3\] |
+| created_at | TIMESTAMP | Creation timestamp |
+| updated_at | TIMESTAMP | Last update timestamp |
 
 **Indexes:**
 
-* `[table_name]_pkey` PRIMARY KEY on `id`
-* `[table_name]_business_id_idx` UNIQUE on `[business_id]`
-* `[table_name]_field1_idx` on `field1` (for filtering)
+* `[component_name]_[business_id]_idx` UNIQUE on `[business_id]` (for lookups)
+* `[component_name]_name_idx` on `name` (for searching by name)
+* `[component_name]_version_idx` on `version` (for finding specific versions)
+* `[component_name]_field1_path_idx` on `(field1->>'subfield1')` (for filtering by subfield1)
 
-## Related Components
+## Performance Considerations
 
-* [Component 1](../architecture/components/component1.md) - \[Brief description of relationship\]
-* [Component 2](../architecture/components/component2.md) - \[Brief description of relationship\]
+For \[component\], consider these performance optimizations:
 
-## Version History
+* \[Performance tip 1\]
+* \[Performance tip 2\]
+* \[Performance tip 3\]
+* \[Continue as required\]
 
-| Version | Date | Changes |
-|----|----|----|
-| 1.0.0 | YYYY-MM-DD | Initial version |
-| 1.1.0 | YYYY-MM-DD | \[Description of changes\] |
+## Related Documentation
+
+* [\[Related Component 1\]](./related_component1.md) - Documentation for related component 1
+* [\[Related Component 2\]](./related_component2.md) - Documentation for related component 2
+* [\[Related Component 3\]](./related_component3.md) - Documentation for related component 3
+* [Database Architecture](../database_architecture.md) - Overall database architecture
 
 
