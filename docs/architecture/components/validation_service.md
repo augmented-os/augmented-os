@@ -6,13 +6,13 @@ The Validation Service provides a centralized system for validating data against
 
 ## Responsibilities
 
-- Validating data against JSON schemas
-- Providing consistent validation across all system components
-- Supporting custom validation rules and functions
-- Generating detailed validation error messages
-- Caching and optimizing schema validation
-- Enforcing data type safety and constraints
-- Supporting schema versioning and evolution
+* Validating data against JSON schemas
+* Providing consistent validation across all system components
+* Supporting custom validation rules and functions
+* Generating detailed validation error messages
+* Caching and optimizing schema validation
+* Enforcing data type safety and constraints
+* Supporting schema versioning and evolution
 
 ## Architecture
 
@@ -32,108 +32,117 @@ The Validation Service is designed as a lightweight, stateless service that can 
 ### Schema Registry
 
 Responsible for:
-- Storing and managing JSON schemas
-- Providing schema versioning
-- Supporting schema references and composition
-- Caching schemas for performance
-- Validating schema syntax and structure
+
+* Storing and managing JSON schemas
+* Providing schema versioning
+* Supporting schema references and composition
+* Caching schemas for performance
+* Validating schema syntax and structure
 
 ### Validation Engine
 
 Handles validation by:
-- Executing schema validation against data
-- Supporting JSON Schema standards
-- Implementing custom validation keywords
-- Optimizing validation performance
-- Providing detailed error reporting
+
+* Executing schema validation against data
+* Supporting JSON Schema standards
+* Implementing custom validation keywords
+* Optimizing validation performance
+* Providing detailed error reporting
 
 ### Custom Validator Registry
 
 Manages custom validators by:
-- Registering custom validation functions
-- Supporting complex validation logic
-- Providing context-aware validation
-- Enabling domain-specific validation rules
-- Supporting asynchronous validation
+
+* Registering custom validation functions
+* Supporting complex validation logic
+* Providing context-aware validation
+* Enabling domain-specific validation rules
+* Supporting asynchronous validation
 
 ### Error Formatter
 
 Improves error handling by:
-- Formatting validation errors for readability
-- Localizing error messages
-- Providing context-specific error details
-- Supporting different output formats
-- Enabling custom error templates
+
+* Formatting validation errors for readability
+* Localizing error messages
+* Providing context-specific error details
+* Supporting different output formats
+* Enabling custom error templates
 
 ## Interfaces
 
 ### Input Interfaces
 
-- **API Endpoints**: Exposes REST endpoints for validation
-- **Service Interface**: Provides programmatic validation for other services
-- **Schema Management API**: Allows schema registration and updates
-- **Event Listeners**: Receives validation requests via events
+* **API Endpoints**: Exposes REST endpoints for validation
+* **Service Interface**: Provides programmatic validation for other services
+* **Schema Management API**: Allows schema registration and updates
+* **Event Listeners**: Receives validation requests via events
 
 ### Output Interfaces
 
-- **Validation Results**: Returns validation results to callers
-- **Event Emitter**: Publishes validation events
-- **Metrics System**: Reports validation performance and errors
-- **Schema Registry**: Updates and retrieves schemas
+* **Validation Results**: Returns validation results to callers
+* **Event Emitter**: Publishes validation events
+* **Metrics System**: Reports validation performance and errors
+* **Schema Registry**: Updates and retrieves schemas
 
 ## Data Model
 
 The Validation Service primarily interacts with these data schemas:
 
-- All system schemas for validation purposes
-- [Schema Registry](../schemas/schema_registry.md): For schema management
+* All system schemas for validation purposes
+* [Schema Registry](../schemas/schema_registry.md): For schema management
 
 ## Operational Considerations
 
 ### Performance
 
 The service optimizes performance by:
-- Caching compiled schemas
-- Using optimized validation algorithms
-- Supporting partial validation for large documents
-- Implementing batch validation
-- Providing validation hints for faster validation
+
+* Caching compiled schemas
+* Using optimized validation algorithms
+* Supporting partial validation for large documents
+* Implementing batch validation
+* Providing validation hints for faster validation
 
 ### Extensibility
 
 Supports extension through:
-- Custom validation keywords
-- Pluggable validation engines
-- Custom error formatters
-- Schema transformation pipelines
-- Integration with external validation systems
+
+* Custom validation keywords
+* Pluggable validation engines
+* Custom error formatters
+* Schema transformation pipelines
+* Integration with external validation systems
 
 ### Monitoring
 
 Key metrics to monitor:
-- Validation throughput and latency
-- Schema compilation time
-- Cache hit/miss rates
-- Error rates by schema and endpoint
-- Schema size and complexity
+
+* Validation throughput and latency
+* Schema compilation time
+* Cache hit/miss rates
+* Error rates by schema and endpoint
+* Schema size and complexity
 
 ## Configuration
 
 The service can be configured with:
-- Default validation options
-- Schema caching policies
-- Error formatting templates
-- Performance optimization levels
-- Logging levels and destinations
+
+* Default validation options
+* Schema caching policies
+* Error formatting templates
+* Performance optimization levels
+* Logging levels and destinations
 
 ## Security
 
 Security considerations:
-- Preventing schema injection attacks
-- Limiting schema complexity to prevent DoS
-- Validating schemas before registration
-- Sanitizing error messages
-- Enforcing schema access controls
+
+* Preventing schema injection attacks
+* Limiting schema complexity to prevent DoS
+* Validating schemas before registration
+* Sanitizing error messages
+* Enforcing schema access controls
 
 ## Implementation Examples
 
@@ -199,7 +208,7 @@ async function validateData(
 }
 ```
 
-### Registering a Custom Validator
+### Registering a Custom Validator #TODO -  What’s a metaschema?!
 
 ```typescript
 // Example of how to register a custom validator
@@ -427,4 +436,6 @@ async function checkSchemaCompatibility(
     };
   }
 }
-``` 
+```
+
+

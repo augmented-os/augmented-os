@@ -92,7 +92,7 @@ Handles data transformation by:
 
 * **Task Execution Layer**: Receives integration method calls
 * **API Endpoints**: Exposes REST endpoints for integration management
-* **Event Processor**: Receives events that trigger integrations
+* **Event Processor**: Receives events that trigger integrations #TODO - Does this respond directly to events?  Surely configuration actions would be via api and execution actions directly executed by task execution layer?
 * **Configuration API**: Receives integration configurations
 
 ### Output Interfaces

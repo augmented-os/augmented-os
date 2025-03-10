@@ -275,7 +275,7 @@ Example task with rule-based integration selection:
 **Table: task_definitions**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | task_id | VARCHAR(255) | Unique business identifier for the task |
 | name | VARCHAR(255) | Human-readable name |
@@ -291,7 +291,7 @@ Example task with rule-based integration selection:
 **Table: task_instances**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | workflow_instance_id | UUID | Reference to workflow instance |
 | step_id | VARCHAR(255) | Step identifier within workflow |
@@ -307,13 +307,15 @@ Example task with rule-based integration selection:
 | due_at | TIMESTAMP | For manual tasks: deadline |
 
 **Indexes:**
-- `task_definitions_task_id_idx` UNIQUE on `task_id` (for lookups)
-- `task_definitions_type_idx` on `type` (for filtering by type)
-- `task_instances_workflow_idx` on `workflow_instance_id` (for finding all tasks in a workflow)
-- `task_instances_status_idx` on `status` (for finding tasks by status)
-- `task_instances_assignee_idx` on `(assignee_type, assignee_id)` (for finding tasks assigned to someone)
+
+* `task_definitions_task_id_idx` UNIQUE on `task_id` (for lookups)
+* `task_definitions_type_idx` on `type` (for filtering by type)
+* `task_instances_workflow_idx` on `workflow_instance_id` (for finding all tasks in a workflow)
+* `task_instances_status_idx` on `status` (for finding tasks by status)
+* `task_instances_assignee_idx` on `(assignee_type, assignee_id)` (for finding tasks assigned to someone)
 
 **JSON Schema (implementation field):**
+
 ```json
 {
   "type": "object",
@@ -344,6 +346,7 @@ Example task with rule-based integration selection:
 ```
 
 **JSON Schema (ui_components field):**
+
 ```json
 {
   "type": "array",
@@ -360,7 +363,10 @@ Example task with rule-based integration selection:
 ```
 
 **Notes:**
-- Task definitions are versioned to allow for evolution without breaking existing workflows
-- Task instances track the execution of a specific task within a workflow
-- For manual tasks, the assignee information determines who can interact with the task
-- Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB 
+
+* Task definitions are versioned to allow for evolution without breaking existing workflows
+* Task instances track the execution of a specific task within a workflow
+* For manual tasks, the assignee information determines who can interact with the task
+* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+
+

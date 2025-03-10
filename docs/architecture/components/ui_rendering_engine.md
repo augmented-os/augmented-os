@@ -6,17 +6,17 @@ The UI Rendering Engine is responsible for dynamically generating and rendering 
 
 ## Responsibilities
 
-* Rendering UI components based on their definitions
+* Rendering UI components based on their definitions #TODO - we’ll have prebuild component which take json inputs inline with our component schema - what role is there for “rendering ui components”?
 * Managing component state and lifecycle
 * Handling user interactions and form submissions
 * Validating user input against schemas
-* Adapting UI based on device, screen size, and accessibility needs
-* Supporting theming and styling customization
-* Integrating with the workflow and task systems
+* Adapting UI based on device, screen size, and accessibility needs #TODO - This sounds like component design?
+* Supporting theming and styling customization #TODO - again sounds like component design?
+* Integrating with the workflow and task systems #TODO - Integrating how? it will be up to the frontend to display components, and the interactions will then go somewhere (not sure where?)
 
 ## Architecture
 
-The UI Rendering Engine is designed as a client-side framework with server-side support for configuration and data. It uses a component-based architecture with a central registry and rendering pipeline.
+The UI Rendering Engine is designed as a client-side framework with server-side support for configuration and data. It uses a component-based architecture with a central registry and rendering pipeline.  #TODO - huh?!
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐

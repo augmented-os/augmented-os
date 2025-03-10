@@ -10,6 +10,9 @@ Test definitions provide:
 * State assertions
 * Error scenario testing
 
+
+* #TODO - How are we storing test suites, there’s no mention of this?
+
 ## Test Definition Structure
 
 ```json
@@ -216,6 +219,7 @@ Example workflow test:
 ## Test Execution
 
 The test runner should:
+
 
 
 1. Load the test definition

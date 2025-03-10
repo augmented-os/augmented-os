@@ -206,7 +206,7 @@ Example display component:
 **Table: ui_components**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | component_id | VARCHAR(255) | Unique business identifier |
 | name | VARCHAR(255) | Human-readable name |
@@ -225,7 +225,7 @@ Example display component:
 **Table: validation_rules**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | rule_id | VARCHAR(255) | Unique identifier for the rule |
 | description | TEXT | Description of what the rule checks |
@@ -236,11 +236,13 @@ Example display component:
 | updated_at | TIMESTAMP | Last update timestamp |
 
 **Indexes:**
-- `ui_components_component_id_idx` UNIQUE on `component_id` (for lookups)
-- `ui_components_type_idx` on `component_type` (for filtering by type)
-- `validation_rules_rule_id_idx` UNIQUE on `rule_id` (for lookups)
+
+* `ui_components_component_id_idx` UNIQUE on `component_id` (for lookups)
+* `ui_components_type_idx` on `component_type` (for filtering by type)
+* `validation_rules_rule_id_idx` UNIQUE on `rule_id` (for lookups)
 
 **JSON Schema (fields field):**
+
 ```json
 {
   "type": "array",
@@ -278,6 +280,7 @@ Example display component:
 ```
 
 **JSON Schema (actions field):**
+
 ```json
 {
   "type": "array",
@@ -299,8 +302,11 @@ Example display component:
 ```
 
 **Notes:**
-- UI components are versioned to allow for evolution without breaking existing tasks
-- The display_template field can contain HTML with placeholders for data
-- For complex custom components, the custom_props field allows for component-specific configuration
-- Validation rules are stored separately to enable reuse across multiple components
-- Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB 
+
+* UI components are versioned to allow for evolution without breaking existing tasks
+* The display_template field can contain HTML with placeholders for data
+* For complex custom components, the custom_props field allows for component-specific configuration
+* Validation rules are stored separately to enable reuse across multiple components
+* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+
+

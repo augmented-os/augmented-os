@@ -53,14 +53,14 @@ Responsible for:
 
 Handles tasks that can be executed without human intervention:
 
-* Code execution in sandboxed environments
+* Code execution in sandboxed environments. #TODO - Expand - what does this mean?  We can focus on local script execution but will need to add external deployment e.g. lamda in future, so should be part of the architecture
 * Script execution with defined inputs and outputs
 * System function calls with appropriate permissions
 * Integration with external services
 
 ### Manual Task Handler
 
-Manages tasks requiring human input:
+Manages tasks requiring human input:  #TODO - What does this actually need to do when the ui is displayed from front end?  Are we creating some new kind of data for the task? I thought we’d simply view the workflow and it would display the current manual task based on the workflow step?
 
 * Task assignment to users or groups
 * UI generation based on task definition
@@ -89,21 +89,21 @@ Ensures data integrity by:
 
 ### Input Interfaces
 
-* **Task Queue**: Receives task execution requests from the Workflow Orchestrator
+* **Task Queue**: Receives task execution requests from the Workflow Orchestrator  #TODO - shouldn’t this be done at workflow level?
 * **API Endpoints**: Exposes REST endpoints for task management and manual task interaction
-* **Integration Service**: Receives integration configuration and credentials
+* **Integration Service**: Receives integration configuration and credentials #TODO - Aren’t integration ‘tasks’ being executed by the integrations service?
 
 ### Output Interfaces
 
 * **Workflow Orchestrator**: Reports task completion or failure
 * **Event Emitter**: Publishes task lifecycle events
-* **Database**: Persists task state and execution history
+* **Database**: Persists task state and execution history #TODO - shouldn’t this be done by the workflow orchestrator?
 
 ## Data Model
 
 The Task Execution Layer primarily interacts with these data schemas:
 
-* [Tasks Schema](../schemas/tasks.md): For task definitions and instances
+* [Tasks Schema](../schemas/tasks.md): For task definitions and instances #TODO - There seems to be crossover between the workflow_instances schema and the task_instances schema.  How will these two interact without duplication?
 * [Integrations Schema](../schemas/integrations.md): For integration configurations
 * [UI Components Schema](../schemas/ui_components.md): For rendering manual task interfaces
 
@@ -139,7 +139,7 @@ Failure handling strategies:
 
 ## Configuration
 
-The service can be configured with:
+The service can be configured with:  #TODO - How much of this should actually be set at task level?
 
 * Maximum concurrent tasks by type
 * Default retry policies

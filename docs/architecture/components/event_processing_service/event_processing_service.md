@@ -40,6 +40,7 @@ The Event Processing Service is designed as a distributed system with multiple c
 The Event Processing Service maintains a registry of event definitions that serves as the source of truth for all event types within the system. These definitions are critical for:
 
 
+
 1. **UI Workflow Builder**: Providing available events that workflows can listen to
 2. **Schema Validation**: Ensuring events conform to their defined structure
 3. **Documentation**: Auto-generating API documentation for events
@@ -81,13 +82,14 @@ When an event is received, the service validates it against its corresponding de
 The Event Definition Registry is backed by the `event_definitions` table in PostgreSQL, as defined in the [Events Schema](../schemas/events.md) documentation. Key aspects of this implementation include:
 
 * **JSONB Storage**: Event payload schemas are stored as JSONB in the `payload_schema` column, allowing for flexible schema definitions while maintaining queryability
-* **Multi-level Validation**: 
+* **Multi-level Validation**:
   * Service-level validation using the JSON Schema stored in the `payload_schema` field
   * Database-level validation leveraging PostgreSQL's JSONB validation capabilities
 * **Schema Enforcement**: When events are persisted to the `events` table, their payloads are validated against the corresponding schema from `event_definitions`
 * **Performance Optimization**: Indexed fields support efficient lookup of event definitions by pattern or ID
 
 The Event Processing Service's APIs directly interact with these database tables:
+
 * `registerEventDefinition` → Inserts records into the `event_definitions` table
 * `updateEventDefinition` → Updates existing records in `event_definitions`
 * `getEventDefinition` → Queries the `event_definitions` table using the optimized indexes
@@ -137,7 +139,7 @@ Handles event transformation and enrichment:
 * Implementing complex event processing patterns
 * Supporting windowing and aggregation operations
 
-### Workflow Resumption Support
+### Workflow Resumption Support #TODO - Huh?
 
 Provides specialized capabilities for paused workflow resumption:
 
@@ -257,6 +259,7 @@ class WorkflowEventManager {
 ```
 
 The workflow resumption mechanism maintains high efficiency by:
+
 
 1. Indexing subscriptions by event pattern for fast lookup
 2. Using optimized condition evaluation for matching events to workflows
@@ -527,11 +530,13 @@ function subscribeToEvents(
 
 These implementation patterns should be prioritized as follows:
 
+
 1. First iteration: Basic event publication and persistence
 2. Second iteration: Subscription and notification mechanisms
 3. Third iteration: Advanced features (filtering, transformation, etc.)
 
 During implementation, the team should:
+
 
 1. Define unit and integration test strategies for each component
 2. Establish performance benchmarks, especially for high-volume event processing
