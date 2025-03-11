@@ -77,6 +77,7 @@ Integrations provide standardized connections to external services (like Xero, G
 ## Implementation Notes
 
 
+
 1. **Storage:**
    * Integration definitions stored as code (JSON files)
    * Integration instances stored in database
@@ -188,7 +189,7 @@ Integrations provide standardized connections to external services (like Xero, G
 **Table: integration_definitions**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | integration_id | VARCHAR(255) | Unique identifier (e.g., "xero") |
 | name | VARCHAR(255) | Human-readable name |
@@ -204,7 +205,7 @@ Integrations provide standardized connections to external services (like Xero, G
 **Table: integration_instances**
 
 | Field | Type | Description |
-|-------|------|-------------|
+|----|----|----|
 | id | UUID | Primary key |
 | instance_id | VARCHAR(255) | Unique identifier for this instance |
 | integration_definition_id | UUID | Reference to integration definition |
@@ -220,13 +221,15 @@ Integrations provide standardized connections to external services (like Xero, G
 | last_used_at | TIMESTAMP | When this integration was last used |
 
 **Indexes:**
-- `integration_definitions_integration_id_idx` UNIQUE on `integration_id` (for lookups)
-- `integration_instances_instance_id_idx` UNIQUE on `instance_id` (for lookups)
-- `integration_instances_context_idx` on `(context_type, context_id)` (for finding instances in a context)
-- `integration_instances_definition_idx` on `integration_definition_id` (for finding all instances of a definition)
-- `integration_instances_status_idx` GIN on `status` (for finding instances by status)
+
+* `integration_definitions_integration_id_idx` UNIQUE on `integration_id` (for lookups)
+* `integration_instances_instance_id_idx` UNIQUE on `instance_id` (for lookups)
+* `integration_instances_context_idx` on `(context_type, context_id)` (for finding instances in a context)
+* `integration_instances_definition_idx` on `integration_definition_id` (for finding all instances of a definition)
+* `integration_instances_status_idx` GIN on `status` (for finding instances by status)
 
 **JSON Schema (methods field):**
+
 ```json
 {
   "type": "array",
@@ -245,6 +248,7 @@ Integrations provide standardized connections to external services (like Xero, G
 ```
 
 **JSON Schema (credentials field):**
+
 ```json
 {
   "type": "object",
@@ -272,6 +276,7 @@ Integrations provide standardized connections to external services (like Xero, G
 ```
 
 **JSON Schema (status field):**
+
 ```json
 {
   "type": "object",
@@ -289,7 +294,10 @@ Integrations provide standardized connections to external services (like Xero, G
 ```
 
 **Notes:**
-- Integration definitions are stored as code but also mirrored in the database
-- Credentials are encrypted using PostgreSQL's pgcrypto extension
-- Regular health checks update the status field
-- Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB 
+
+* Integration definitions are stored as code but also mirrored in the database
+* Credentials are encrypted using PostgreSQL's pgcrypto extension
+* Regular health checks update the status field
+* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+
+
