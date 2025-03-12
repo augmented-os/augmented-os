@@ -1,0 +1,789 @@
+openapi: 3.0.3
+info:
+  title: Event Processing Service API
+  description: |
+    API for the Event Processing Service, which handles event reception, routing, and delivery.
+    This service enables components to publish events, subscribe to events, manage event definitions,
+    and configure workflow triggers.
+  version: 1.0.0
+  contact:
+    name: Platform Team
+    email: platform@example.com
+
+servers:
+  - url: https://api.example.com/event-service
+    description: Production API server
+  - url: https://api.staging.example.com/event-service
+    description: Staging API server
+
+security:
+  - ApiKeyAuth: []
+  - BearerAuth: []
+
+paths:
+  /events:
+    post:
+      summary: Publish Event
+      description: Publishes a new event to the system
+      operationId: publishEvent
+      tags:
+        - Events
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventPublishRequest'
+      responses:
+        '202':
+          description: Event accepted for processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventPublishResponse'
+        '400':
+          description: Invalid event format or failed validation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          headers:
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+              description: The number of allowed requests in the current period
+            X-RateLimit-Remaining:
+              schema:
+                type: integer
+              description: The number of remaining requests in the current period
+            X-RateLimit-Reset:
+              schema:
+                type: integer
+              description: The number of seconds left in the current period
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Query Events
+      description: Retrieves events based on query parameters
+      operationId: queryEvents
+      tags:
+        - Events
+      parameters:
+        - name: pattern
+          in: query
+          description: Event pattern to filter by
+          schema:
+            type: string
+        - name: startTime
+          in: query
+          description: ISO timestamp for start of time range
+          schema:
+            type: string
+            format: date-time
+        - name: endTime
+          in: query
+          description: ISO timestamp for end of time range
+          schema:
+            type: string
+            format: date-time
+        - name: correlationId
+          in: query
+          description: Filter by correlation ID
+          schema:
+            type: string
+        - name: source.type
+          in: query
+          description: Filter by source type
+          schema:
+            type: string
+        - name: source.id
+          in: query
+          description: Filter by source ID
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of events to return
+          schema:
+            type: integer
+            default: 100
+            maximum: 1000
+        - name: offset
+          in: query
+          description: Pagination offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventQueryResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /event-definitions:
+    post:
+      summary: Create Event Definition
+      description: Creates a new event definition
+      operationId: createEventDefinition
+      tags:
+        - Event Definitions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventDefinitionRequest'
+      responses:
+        '201':
+          description: Event definition created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDefinitionResponse'
+        '400':
+          description: Invalid event definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Event definition with this ID and version already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: List Event Definitions
+      description: Retrieves a list of event definitions with optional filtering
+      operationId: listEventDefinitions
+      tags:
+        - Event Definitions
+      parameters:
+        - name: pattern
+          in: query
+          description: Filter by event pattern
+          schema:
+            type: string
+        - name: source_type
+          in: query
+          description: Filter by allowed source type
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by status (active, deprecated, draft)
+          schema:
+            type: string
+            enum: [active, deprecated, draft]
+        - name: limit
+          in: query
+          description: Maximum number of definitions to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Pagination offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventDefinitionListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /subscriptions:
+    post:
+      summary: Create Subscription
+      description: Creates a new event subscription
+      operationId: createSubscription
+      tags:
+        - Subscriptions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionRequest'
+      responses:
+        '201':
+          description: Subscription created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '400':
+          description: Invalid subscription parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: List Subscriptions
+      description: Retrieves a list of subscriptions with optional filtering
+      operationId: listSubscriptions
+      tags:
+        - Subscriptions
+      parameters:
+        - name: event_pattern
+          in: query
+          description: Filter by event pattern
+          schema:
+            type: string
+        - name: subscriber_id
+          in: query
+          description: Filter by subscriber ID
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by status (active, suspended)
+          schema:
+            type: string
+            enum: [active, suspended]
+        - name: limit
+          in: query
+          description: Maximum number of subscriptions to return
+          schema:
+            type: integer
+            default: 100
+        - name: offset
+          in: query
+          description: Pagination offset
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionListResponse'
+        '400':
+          description: Invalid query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    EventPublishRequest:
+      type: object
+      required:
+        - pattern
+        - payload
+      properties:
+        pattern:
+          type: string
+          description: Event pattern (e.g., "bookings.created")
+          example: "bookings.created"
+        payload:
+          type: object
+          description: Event-specific data
+          example:
+            bookingId: "1234"
+            customerId: "cust-5678"
+            amount: 99.99
+            status: "confirmed"
+        metadata:
+          type: object
+          properties:
+            correlationId:
+              type: string
+              description: For tracing related events
+              example: "abc-123"
+            source:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: Type of source
+                  example: "service"
+                id:
+                  type: string
+                  description: Identifier of the source
+                  example: "booking-service"
+                name:
+                  type: string
+                  description: Human-readable source name
+                  example: "Booking Service"
+
+    EventPublishResponse:
+      type: object
+      required:
+        - eventId
+        - status
+        - timestamp
+      properties:
+        eventId:
+          type: string
+          description: Unique identifier for the published event
+          example: "evt-12345678"
+        status:
+          type: string
+          description: Status of the event
+          example: "accepted"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the event was processed
+          example: "2023-04-12T15:30:45.123Z"
+
+    EventQueryResponse:
+      type: object
+      required:
+        - events
+        - pagination
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Event:
+      type: object
+      required:
+        - id
+        - pattern
+        - timestamp
+        - source
+        - payload
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the event
+          example: "evt-12345678"
+        pattern:
+          type: string
+          description: Event pattern
+          example: "bookings.created"
+        timestamp:
+          type: string
+          format: date-time
+          description: When the event occurred
+          example: "2023-04-12T15:30:45.123Z"
+        source:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "service"
+            id:
+              type: string
+              example: "booking-service"
+            name:
+              type: string
+              example: "Booking Service"
+        payload:
+          type: object
+          description: Event-specific data
+          example:
+            bookingId: "1234"
+            customerId: "cust-5678"
+            amount: 99.99
+            status: "confirmed"
+        metadata:
+          type: object
+          properties:
+            correlationId:
+              type: string
+              example: "abc-123"
+
+    EventDefinitionRequest:
+      type: object
+      required:
+        - event_id
+        - name
+        - pattern
+        - version
+        - payload_schema
+      properties:
+        event_id:
+          type: string
+          description: Unique business identifier for the event type
+          example: "BookingEvents.created"
+        name:
+          type: string
+          description: Human-readable name
+          example: "Booking Created"
+        description:
+          type: string
+          description: Detailed description of the event
+          example: "Fired when a new booking is created in the system"
+        pattern:
+          type: string
+          description: Event pattern for routing
+          example: "bookings.created"
+        version:
+          type: string
+          description: Schema version (semver format)
+          example: "1.0.0"
+        source_types:
+          type: array
+          description: Valid origins for this event type
+          items:
+            type: string
+            enum: [service, integration, workflow, task, external, system]
+          example: ["service", "integration"]
+        payload_schema:
+          type: object
+          description: JSON Schema for payload validation
+          example:
+            type: "object"
+            properties:
+              bookingId:
+                type: "string"
+                description: "Unique identifier for the booking"
+              customerId:
+                type: "string"
+                description: "Customer who made the booking"
+              amount:
+                type: "number"
+                description: "Booking amount"
+              status:
+                type: "string"
+                enum: ["pending", "confirmed", "cancelled"]
+                description: "Current booking status"
+            required: ["bookingId", "customerId", "status"]
+        examples:
+          type: array
+          description: Example payloads for documentation
+          items:
+            type: object
+          example:
+            - bookingId: "1234"
+              customerId: "cust-5678"
+              amount: 99.99
+              status: "confirmed"
+        ui_metadata:
+          type: object
+          description: Display information for event tools
+          properties:
+            icon:
+              type: string
+              example: "calendar"
+            color:
+              type: string
+              example: "#4CAF50"
+            category:
+              type: string
+              example: "booking"
+            priority:
+              type: string
+              enum: [high, medium, low]
+              example: "high"
+
+    EventDefinitionResponse:
+      type: object
+      required:
+        - id
+        - event_id
+        - name
+        - pattern
+        - version
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the event definition
+          example: "evt-def-12345678"
+        event_id:
+          type: string
+          description: Business identifier for the event type
+          example: "BookingEvents.created"
+        name:
+          type: string
+          description: Human-readable name
+          example: "Booking Created"
+        pattern:
+          type: string
+          description: Event pattern
+          example: "bookings.created"
+        version:
+          type: string
+          description: Schema version
+          example: "1.0.0"
+        status:
+          type: string
+          description: Status of the event definition
+          enum: [active, deprecated, draft]
+          example: "active"
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2023-04-12T15:30:45.123Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2023-04-12T15:30:45.123Z"
+
+    EventDefinitionListResponse:
+      type: object
+      required:
+        - definitions
+        - pagination
+      properties:
+        definitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventDefinitionResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    SubscriptionRequest:
+      type: object
+      required:
+        - event_pattern
+        - subscriber
+      properties:
+        event_pattern:
+          type: string
+          description: Event pattern to subscribe to
+          example: "bookings.*"
+        subscriber:
+          type: object
+          required:
+            - id
+            - type
+          properties:
+            id:
+              type: string
+              description: Identifier of the subscriber
+              example: "notification-service"
+            type:
+              type: string
+              description: Type of subscriber
+              enum: [service, webhook, queue]
+              example: "service"
+            endpoint:
+              type: string
+              description: Endpoint for webhook subscribers
+              example: "https://notification-service.example.com/events"
+            headers:
+              type: object
+              description: Custom headers for webhook subscribers
+              example:
+                X-Custom-Header: "custom-value"
+        filter:
+          type: object
+          description: Filter to apply to events
+          properties:
+            type:
+              type: string
+              description: Type of filter
+              enum: [jsonpath, jq]
+              example: "jsonpath"
+            expression:
+              type: string
+              description: Filter expression
+              example: "$.payload.status == 'confirmed'"
+        retry_policy:
+          type: object
+          description: Retry policy for failed deliveries
+          properties:
+            max_attempts:
+              type: integer
+              description: Maximum number of retry attempts
+              example: 5
+            backoff_factor:
+              type: number
+              description: Backoff factor for retries
+              example: 2
+            initial_delay_ms:
+              type: integer
+              description: Initial delay in milliseconds
+              example: 1000
+        description:
+          type: string
+          description: Description of the subscription
+          example: "Subscription for confirmed bookings"
+
+    SubscriptionResponse:
+      type: object
+      required:
+        - subscription_id
+        - event_pattern
+        - subscriber
+        - status
+        - created_at
+      properties:
+        subscription_id:
+          type: string
+          description: Unique identifier for the subscription
+          example: "sub-12345678"
+        event_pattern:
+          type: string
+          description: Event pattern
+          example: "bookings.*"
+        subscriber:
+          type: object
+          required:
+            - id
+            - type
+          properties:
+            id:
+              type: string
+              example: "notification-service"
+            type:
+              type: string
+              example: "service"
+        status:
+          type: string
+          description: Status of the subscription
+          enum: [active, suspended]
+          example: "active"
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: "2023-04-12T15:30:45.123Z"
+
+    SubscriptionListResponse:
+      type: object
+      required:
+        - subscriptions
+        - pagination
+      properties:
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionResponse'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Pagination:
+      type: object
+      required:
+        - total
+        - limit
+        - offset
+        - hasMore
+      properties:
+        total:
+          type: integer
+          description: Total number of items
+          example: 1250
+        limit:
+          type: integer
+          description: Maximum number of items per page
+          example: 100
+        offset:
+          type: integer
+          description: Pagination offset
+          example: 0
+        hasMore:
+          type: boolean
+          description: Whether there are more items
+          example: true
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Error code
+              example: "invalid_request"
+            message:
+              type: string
+              description: Human-readable error message
+              example: "A human-readable error message"
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    example: "payload.bookingId"
+                  code:
+                    type: string
+                    example: "required"
+                  message:
+                    type: string
+                    example: "Booking ID is required" 
