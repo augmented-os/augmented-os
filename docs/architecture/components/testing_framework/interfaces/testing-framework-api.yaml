@@ -1,0 +1,991 @@
+openapi: 3.0.0
+info:
+  title: "Testing Framework API"
+  description: "API for the Testing Framework Service, which provides capabilities for defining, executing, and analyzing tests across the Augmented OS platform."
+  version: "1.0.0"
+  contact:
+    name: "Augmented OS API Support"
+    email: "api-support@augmented-os.com"
+    url: "https://augmented-os.com/support"
+  
+servers:
+  - url: "https://api.augmented-os.com/v1"
+    description: "Production API Server"
+  - url: "https://sandbox-api.augmented-os.com/v1"
+    description: "Sandbox API Server for testing"
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: "TestDefinitions"
+    description: "Operations for managing test definitions"
+  - name: "TestExecution"
+    description: "Operations for executing tests and retrieving results"
+  - name: "TestSuites"
+    description: "Operations for managing and executing test suites"
+
+paths:
+  /testing/test-definitions:
+    get:
+      summary: "List test definitions"
+      description: "Returns a list of test definitions based on the provided filters."
+      operationId: "listTestDefinitions"
+      tags:
+        - "TestDefinitions"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: type
+          in: query
+          description: "Filter by test type"
+          required: false
+          schema:
+            type: string
+            enum: [workflow, task, integration, system, performance]
+        - name: target_id
+          in: query
+          description: "Filter by target component ID"
+          required: false
+          schema:
+            type: string
+        - name: tags
+          in: query
+          description: "Comma-separated list of tags to filter by"
+          required: false
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: "Search term to filter results"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestDefinition"
+                  pagination:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      pages:
+                        type: integer
+                      limit:
+                        type: integer
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+    post:
+      summary: "Create a new test definition"
+      description: "Creates a new test definition with the provided details."
+      operationId: "createTestDefinition"
+      tags:
+        - "TestDefinitions"
+      requestBody:
+        description: "Test definition details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestDefinitionCreate"
+      responses:
+        '201':
+          description: "Test definition created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestDefinition"
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+        '409':
+          description: "Conflict"
+  
+  /testing/test-definitions/{test_id}:
+    parameters:
+      - name: test_id
+        in: path
+        description: "ID of the test definition"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get test definition by ID"
+      description: "Returns a single test definition by ID."
+      operationId: "getTestDefinition"
+      tags:
+        - "TestDefinitions"
+      parameters:
+        - name: version
+          in: query
+          description: "Specific version to retrieve (defaults to latest)"
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestDefinition"
+        '404':
+          description: "Not found"
+        '401':
+          description: "Unauthorized"
+    put:
+      summary: "Update test definition"
+      description: "Updates an existing test definition with the provided details, creating a new version."
+      operationId: "updateTestDefinition"
+      tags:
+        - "TestDefinitions"
+      requestBody:
+        description: "Updated test definition details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestDefinitionCreate"
+      responses:
+        '200':
+          description: "Test definition updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestDefinition"
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+    delete:
+      summary: "Delete test definition"
+      description: "Marks a test definition as deleted (soft delete)."
+      operationId: "deleteTestDefinition"
+      tags:
+        - "TestDefinitions"
+      responses:
+        '204':
+          description: "Test definition deleted successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+
+  /testing/test-definitions/{test_id}/versions:
+    parameters:
+      - name: test_id
+        in: path
+        description: "ID of the test definition"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "List test definition versions"
+      description: "Returns a list of all versions for a specific test definition."
+      operationId: "listTestDefinitionVersions"
+      tags:
+        - "TestDefinitions"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestDefinitionVersion"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+
+  /testing/test-executions:
+    get:
+      summary: "List test executions"
+      description: "Returns a list of test executions based on the provided filters."
+      operationId: "listTestExecutions"
+      tags:
+        - "TestExecution"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: test_id
+          in: query
+          description: "Filter by test definition ID"
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: "Filter by execution status"
+          required: false
+          schema:
+            type: string
+            enum: [pending, running, completed, failed, cancelled]
+        - name: start_date
+          in: query
+          description: "Filter by start date (ISO 8601 format)"
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          description: "Filter by end date (ISO 8601 format)"
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestExecution"
+                  pagination:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      pages:
+                        type: integer
+                      limit:
+                        type: integer
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+    post:
+      summary: "Execute a test"
+      description: "Initiates the execution of a specified test."
+      operationId: "executeTest"
+      tags:
+        - "TestExecution"
+      requestBody:
+        description: "Test execution details"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - test_id
+              properties:
+                test_id:
+                  type: string
+                  description: "ID of the test to execute"
+                version:
+                  type: integer
+                  description: "Specific version to execute (defaults to latest)"
+                parameters:
+                  type: object
+                  description: "Additional parameters for the test execution"
+                environment:
+                  type: string
+                  description: "Environment to run the test in"
+                  enum: [development, staging, production]
+                  default: "development"
+      responses:
+        '202':
+          description: "Test execution initiated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestExecution"
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Test definition not found"
+
+  /testing/test-executions/{execution_id}:
+    parameters:
+      - name: execution_id
+        in: path
+        description: "ID of the test execution"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get test execution by ID"
+      description: "Returns details of a specific test execution."
+      operationId: "getTestExecution"
+      tags:
+        - "TestExecution"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestExecution"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+    delete:
+      summary: "Cancel test execution"
+      description: "Cancels a running test execution."
+      operationId: "cancelTestExecution"
+      tags:
+        - "TestExecution"
+      responses:
+        '204':
+          description: "Test execution cancelled successfully"
+        '400':
+          description: "Bad request - Cannot cancel a completed or already cancelled test"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+
+  /testing/test-executions/{execution_id}/logs:
+    parameters:
+      - name: execution_id
+        in: path
+        description: "ID of the test execution"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get test execution logs"
+      description: "Returns logs for a specific test execution."
+      operationId: "getTestExecutionLogs"
+      tags:
+        - "TestExecution"
+      parameters:
+        - name: start_time
+          in: query
+          description: "Filter logs after this timestamp (ISO 8601 format)"
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          description: "Filter logs before this timestamp (ISO 8601 format)"
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: level
+          in: query
+          description: "Filter by log level"
+          required: false
+          schema:
+            type: string
+            enum: [debug, info, warning, error]
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestExecutionLog"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+
+  /testing/test-suites:
+    get:
+      summary: "List test suites"
+      description: "Returns a list of test suites based on the provided filters."
+      operationId: "listTestSuites"
+      tags:
+        - "TestSuites"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: tags
+          in: query
+          description: "Comma-separated list of tags to filter by"
+          required: false
+          schema:
+            type: string
+        - name: search
+          in: query
+          description: "Search term to filter results"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TestSuite"
+                  pagination:
+                    type: object
+                    properties:
+                      total:
+                        type: integer
+                      page:
+                        type: integer
+                      pages:
+                        type: integer
+                      limit:
+                        type: integer
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+    post:
+      summary: "Create a new test suite"
+      description: "Creates a new test suite with the provided details."
+      operationId: "createTestSuite"
+      tags:
+        - "TestSuites"
+      requestBody:
+        description: "Test suite details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestSuiteCreate"
+      responses:
+        '201':
+          description: "Test suite created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestSuite"
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+        '409':
+          description: "Conflict"
+
+  /testing/test-suites/{suite_id}:
+    parameters:
+      - name: suite_id
+        in: path
+        description: "ID of the test suite"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get test suite by ID"
+      description: "Returns a single test suite by ID."
+      operationId: "getTestSuite"
+      tags:
+        - "TestSuites"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestSuite"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+    put:
+      summary: "Update test suite"
+      description: "Updates an existing test suite with the provided details."
+      operationId: "updateTestSuite"
+      tags:
+        - "TestSuites"
+      requestBody:
+        description: "Updated test suite details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestSuiteCreate"
+      responses:
+        '200':
+          description: "Test suite updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestSuite"
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+    delete:
+      summary: "Delete test suite"
+      description: "Deletes a test suite."
+      operationId: "deleteTestSuite"
+      tags:
+        - "TestSuites"
+      responses:
+        '204':
+          description: "Test suite deleted successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Not found"
+
+  /testing/test-suites/{suite_id}/execute:
+    parameters:
+      - name: suite_id
+        in: path
+        description: "ID of the test suite"
+        required: true
+        schema:
+          type: string
+    post:
+      summary: "Execute a test suite"
+      description: "Initiates the execution of all tests in a test suite."
+      operationId: "executeTestSuite"
+      tags:
+        - "TestSuites"
+      requestBody:
+        description: "Test suite execution details"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                environment:
+                  type: string
+                  description: "Environment to run the tests in"
+                  enum: [development, staging, production]
+                  default: "development"
+                parameters:
+                  type: object
+                  description: "Additional parameters for the test suite execution"
+      responses:
+        '202':
+          description: "Test suite execution initiated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestSuiteExecution"
+        '400':
+          description: "Bad request"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Test suite not found"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    TestDefinition:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the test definition"
+        name:
+          type: string
+          description: "Name of the test"
+        description:
+          type: string
+          description: "Detailed description of the test"
+        type:
+          type: string
+          description: "Type of test"
+          enum: [workflow, task, integration, system, performance]
+        target_id:
+          type: string
+          description: "ID of the target component being tested"
+        target_type:
+          type: string
+          description: "Type of the target component"
+          enum: [workflow, task, integration, system]
+        version:
+          type: integer
+          description: "Current version of the test definition"
+        tags:
+          type: array
+          description: "Tags associated with the test"
+          items:
+            type: string
+        test_script:
+          type: string
+          description: "Script or configuration defining the test"
+        parameters:
+          type: object
+          description: "Parameters required for the test"
+        created_at:
+          type: string
+          format: date-time
+          description: "Timestamp when the test was created"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Timestamp when the test was last updated"
+        created_by:
+          type: string
+          description: "ID of the user who created the test"
+
+    TestDefinitionCreate:
+      type: object
+      required:
+        - name
+        - type
+        - test_script
+      properties:
+        name:
+          type: string
+          description: "Name of the test"
+        description:
+          type: string
+          description: "Detailed description of the test"
+        type:
+          type: string
+          description: "Type of test"
+          enum: [workflow, task, integration, system, performance]
+        target_id:
+          type: string
+          description: "ID of the target component being tested"
+        target_type:
+          type: string
+          description: "Type of the target component"
+          enum: [workflow, task, integration, system]
+        tags:
+          type: array
+          description: "Tags associated with the test"
+          items:
+            type: string
+        test_script:
+          type: string
+          description: "Script or configuration defining the test"
+        parameters:
+          type: object
+          description: "Parameters required for the test"
+
+    TestDefinitionVersion:
+      type: object
+      properties:
+        version:
+          type: integer
+          description: "Version number"
+        changes:
+          type: string
+          description: "Description of changes in this version"
+        created_at:
+          type: string
+          format: date-time
+          description: "Timestamp when this version was created"
+        created_by:
+          type: string
+          description: "ID of the user who created this version"
+
+    TestExecution:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the test execution"
+        test_id:
+          type: string
+          description: "ID of the test definition"
+        test_version:
+          type: integer
+          description: "Version of the test definition used"
+        status:
+          type: string
+          description: "Current status of the execution"
+          enum: [pending, running, completed, failed, cancelled]
+        start_time:
+          type: string
+          format: date-time
+          description: "Timestamp when the execution started"
+        end_time:
+          type: string
+          format: date-time
+          description: "Timestamp when the execution ended"
+        duration_ms:
+          type: integer
+          description: "Duration of the execution in milliseconds"
+        parameters:
+          type: object
+          description: "Parameters used for this execution"
+        environment:
+          type: string
+          description: "Environment the test was executed in"
+        results:
+          type: object
+          description: "Results of the test execution"
+          properties:
+            success:
+              type: boolean
+              description: "Whether the test passed or failed"
+            error_message:
+              type: string
+              description: "Error message if the test failed"
+            metrics:
+              type: object
+              description: "Performance metrics collected during the test"
+            assertions:
+              type: array
+              description: "List of assertions and their results"
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  success:
+                    type: boolean
+                  expected:
+                    type: string
+                  actual:
+                    type: string
+                  message:
+                    type: string
+        created_by:
+          type: string
+          description: "ID of the user who initiated the execution"
+
+    TestExecutionLog:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "Timestamp of the log entry"
+        level:
+          type: string
+          description: "Log level"
+          enum: [debug, info, warning, error]
+        message:
+          type: string
+          description: "Log message"
+        context:
+          type: object
+          description: "Additional context for the log entry"
+
+    TestSuite:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the test suite"
+        name:
+          type: string
+          description: "Name of the test suite"
+        description:
+          type: string
+          description: "Detailed description of the test suite"
+        tags:
+          type: array
+          description: "Tags associated with the test suite"
+          items:
+            type: string
+        tests:
+          type: array
+          description: "Tests included in the suite"
+          items:
+            type: object
+            properties:
+              test_id:
+                type: string
+                description: "ID of the test definition"
+              version:
+                type: integer
+                description: "Specific version to use (null for latest)"
+              parameters:
+                type: object
+                description: "Override parameters for this test"
+              order:
+                type: integer
+                description: "Execution order within the suite"
+              depends_on:
+                type: array
+                description: "IDs of tests that must complete before this one"
+                items:
+                  type: string
+        created_at:
+          type: string
+          format: date-time
+          description: "Timestamp when the suite was created"
+        updated_at:
+          type: string
+          format: date-time
+          description: "Timestamp when the suite was last updated"
+        created_by:
+          type: string
+          description: "ID of the user who created the suite"
+
+    TestSuiteCreate:
+      type: object
+      required:
+        - name
+        - tests
+      properties:
+        name:
+          type: string
+          description: "Name of the test suite"
+        description:
+          type: string
+          description: "Detailed description of the test suite"
+        tags:
+          type: array
+          description: "Tags associated with the test suite"
+          items:
+            type: string
+        tests:
+          type: array
+          description: "Tests to include in the suite"
+          items:
+            type: object
+            required:
+              - test_id
+            properties:
+              test_id:
+                type: string
+                description: "ID of the test definition"
+              version:
+                type: integer
+                description: "Specific version to use (null for latest)"
+              parameters:
+                type: object
+                description: "Override parameters for this test"
+              order:
+                type: integer
+                description: "Execution order within the suite"
+              depends_on:
+                type: array
+                description: "IDs of tests that must complete before this one"
+                items:
+                  type: string
+
+    TestSuiteExecution:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the test suite execution"
+        suite_id:
+          type: string
+          description: "ID of the test suite"
+        status:
+          type: string
+          description: "Current status of the suite execution"
+          enum: [pending, running, completed, failed, cancelled]
+        start_time:
+          type: string
+          format: date-time
+          description: "Timestamp when the execution started"
+        end_time:
+          type: string
+          format: date-time
+          description: "Timestamp when the execution ended"
+        duration_ms:
+          type: integer
+          description: "Duration of the execution in milliseconds"
+        environment:
+          type: string
+          description: "Environment the suite was executed in"
+        parameters:
+          type: object
+          description: "Parameters used for this execution"
+        test_executions:
+          type: array
+          description: "List of individual test executions"
+          items:
+            type: string
+            description: "ID of a test execution"
+        summary:
+          type: object
+          description: "Summary of test results"
+          properties:
+            total:
+              type: integer
+              description: "Total number of tests"
+            passed:
+              type: integer
+              description: "Number of passed tests"
+            failed:
+              type: integer
+              description: "Number of failed tests"
+            skipped:
+              type: integer
+              description: "Number of skipped tests"
+            success_rate:
+              type: number
+              format: float
+              description: "Percentage of tests that passed"
+        created_by:
+          type: string
+          description: "ID of the user who initiated the execution" 

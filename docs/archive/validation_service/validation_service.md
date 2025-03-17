@@ -1,3 +1,14 @@
+# ARCHIVED: Validation Service Documentation
+
+This document has been migrated to the standardized component documentation structure.
+
+Archive Date: 2025-03-17
+
+Please refer to the new documentation at: docs/architecture/components/validation_service/
+
+---
+
+
 # Validation Service
 
 ## Overview
