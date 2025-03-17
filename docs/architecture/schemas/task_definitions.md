@@ -1,8 +1,8 @@
-# Tasks
+# Task Definitions
 
 ## Overview
 
-Tasks are the atomic units of work within the workflow system. Each task represents a discrete piece of functionality that can be composed into larger workflows. Tasks are designed to be:
+Task definitions are templates that describe the atomic units of work within the workflow system. Each task definition represents a reusable piece of functionality that can be composed into larger workflows. Task definitions are designed to be:
 
 * Self-contained and independently executable
 * Reusable across different workflows
@@ -10,7 +10,15 @@ Tasks are the atomic units of work within the workflow system. Each task represe
 * Configurable through parameters
 * Either automated or manual (requiring human interaction)
 
-## Task Structure
+## Key Concepts
+
+* **Task Definition** - A template that defines the structure and behavior of a task
+* **Task Instance** - A single execution of a task definition
+* **Implementation Types** - The various ways tasks can be implemented (Lambda, HTTP, Script, Manual, Integration)
+* **Input/Output Schema** - JSON Schema definitions for task inputs and outputs
+* **UI Components** - For manual tasks, the interface elements presented to users
+
+## Task Definition Structure
 
 ```json
 {
@@ -50,6 +58,8 @@ Tasks are the atomic units of work within the workflow system. Each task represe
 ```
 
 ## Implementation Types
+
+Task definitions support various implementation types to handle different execution models:
 
 ### AWS Lambda Tasks
 
@@ -270,7 +280,7 @@ Example task with rule-based integration selection:
 }
 ```
 
-## Schema
+## Database Schema
 
 **Table: task_definitions**
 
@@ -288,31 +298,10 @@ Example task with rule-based integration selection:
 | created_at | TIMESTAMP | Creation timestamp |
 | updated_at | TIMESTAMP | Last update timestamp |
 
-**Table: task_instances**
-
-| Field | Type | Description |
-|----|----|----|
-| id | UUID | Primary key |
-| workflow_instance_id | UUID | Reference to workflow instance |
-| step_id | VARCHAR(255) | Step identifier within workflow |
-| task_definition_id | UUID | Reference to task definition |
-| status | VARCHAR(50) | Current status (pending, running, completed, failed) |
-| input | JSONB | Input data provided to this task |
-| output | JSONB | Output data produced by this task |
-| error | JSONB | Error details if task failed |
-| started_at | TIMESTAMP | When task execution started |
-| completed_at | TIMESTAMP | When task execution completed |
-| assignee_type | VARCHAR(50) | For manual tasks: role, user, etc. |
-| assignee_id | VARCHAR(255) | For manual tasks: specific assignee |
-| due_at | TIMESTAMP | For manual tasks: deadline |
-
 **Indexes:**
 
 * `task_definitions_task_id_idx` UNIQUE on `task_id` (for lookups)
 * `task_definitions_type_idx` on `type` (for filtering by type)
-* `task_instances_workflow_idx` on `workflow_instance_id` (for finding all tasks in a workflow)
-* `task_instances_status_idx` on `status` (for finding tasks by status)
-* `task_instances_assignee_idx` on `(assignee_type, assignee_id)` (for finding tasks assigned to someone)
 
 **JSON Schema (implementation field):**
 
@@ -362,11 +351,19 @@ Example task with rule-based integration selection:
 }
 ```
 
-**Notes:**
+## Performance Considerations
 
-* Task definitions are versioned to allow for evolution without breaking existing workflows
-* Task instances track the execution of a specific task within a workflow
-* For manual tasks, the assignee information determines who can interact with the task
-* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+For task definitions, consider these performance optimizations:
 
+* Use versioning to allow for evolution without breaking existing workflows
+* Index frequently queried fields for faster lookup
+* Keep task definitions focused and modular to promote reuse
+* Limit the complexity of conditional UI components to prevent rendering performance issues
+* Consider caching frequently used task definitions to reduce database load
 
+## Related Documentation
+
+* [Task Instances](./task_instances.md) - Documentation for task instances
+* [Workflow Definitions](./workflow_definitions.md) - Documentation for workflow definitions
+* [Workflow Instances](./workflow_instances.md) - Documentation for workflow instances
+* [UI Components](./ui_components.md) - Documentation for UI components 

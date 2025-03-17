@@ -1,17 +1,23 @@
-# Tests
+# Test Definitions
 
 ## Overview
 
-Test definitions provide:
+Test definitions provide templates for validating tasks and workflows. They are designed to:
 
-* Reusable test cases for tasks and workflows
-* Input/output validation
-* Mock data and behaviors
-* State assertions
-* Error scenario testing
+* Define reusable test cases for tasks and workflows
+* Specify input data and expected outputs
+* Configure mock data and behaviors for dependencies
+* Set up state assertions to validate execution
+* Enable systematic error scenario testing
 
+## Key Concepts
 
-* #TODO - How are we storing test suites, there’s no mention of this?
+* **Test Definition** - A template that defines a set of test cases for a task or workflow
+* **Test Case** - A single scenario being tested with specific inputs, mocks, and assertions
+* **Mocks** - Simulated responses for dependency tasks to isolate testing
+* **Assertions** - Specific conditions that must be true for a test to pass
+* **Expected Events** - Events that should be emitted during test execution
+* **Expected State** - The expected state after test execution
 
 ## Test Definition Structure
 
@@ -216,11 +222,9 @@ Example workflow test:
 }
 ```
 
-## Test Execution
+## Test Execution Flow
 
 The test runner should:
-
-
 
 1. Load the test definition
 2. For each test case:
@@ -232,7 +236,7 @@ The test runner should:
    * Validate final state
    * Clean up test state
 
-## Schema
+## Database Schema
 
 **Table: test_definitions**
 
@@ -249,41 +253,10 @@ The test runner should:
 | created_at | TIMESTAMP | Creation timestamp |
 | updated_at | TIMESTAMP | Last update timestamp |
 
-**Table: test_runs**
-
-| Field | Type | Description |
-|----|----|----|
-| id | UUID | Primary key |
-| test_definition_id | UUID | Reference to test definition |
-| status | VARCHAR(50) | Overall status (running, passed, failed) |
-| started_at | TIMESTAMP | When test run started |
-| completed_at | TIMESTAMP | When test run completed |
-| environment | VARCHAR(50) | Test environment (dev, staging, etc.) |
-| triggered_by | VARCHAR(255) | User or system that triggered the test |
-
-**Table: test_case_results**
-
-| Field | Type | Description |
-|----|----|----|
-| id | UUID | Primary key |
-| test_run_id | UUID | Reference to test run |
-| case_id | VARCHAR(255) | Reference to case within test definition |
-| status | VARCHAR(50) | Status (passed, failed, skipped) |
-| duration_ms | INTEGER | Execution time in milliseconds |
-| input | JSONB | Input data used |
-| output | JSONB | Actual output produced |
-| error | JSONB | Error details if failed |
-| assertions | JSONB | Results of each assertion |
-| started_at | TIMESTAMP | When case started |
-| completed_at | TIMESTAMP | When case completed |
-
 **Indexes:**
 
 * `test_definitions_test_id_idx` UNIQUE on `test_id` (for lookups)
 * `test_definitions_target_idx` on `(type, target_id)` (for finding tests for a specific task/workflow)
-* `test_runs_definition_idx` on `test_definition_id` (for finding runs of a test)
-* `test_runs_status_idx` on `status` (for finding tests by status)
-* `test_case_results_run_idx` on `test_run_id` (for finding all case results in a run)
 
 **JSON Schema (cases field):**
 
@@ -351,31 +324,19 @@ The test runner should:
 }
 ```
 
-**JSON Schema (assertions field in test_case_results):**
+## Performance Considerations
 
-```json
-{
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "type": { "type": "string" },
-      "path": { "type": "string" },
-      "expected": { "type": "any" },
-      "actual": { "type": "any" },
-      "passed": { "type": "boolean" },
-      "message": { "type": "string" }
-    }
-  }
-}
-```
+For test definitions, consider these performance optimizations:
 
-**Notes:**
+* Use shared mocks for common dependencies to reduce duplication
+* Limit test case complexity to ensure quick feedback cycles
+* Use timeouts appropriate to the complexity of the task or workflow
+* Consider implementing parallel test execution where tests are independent
+* Cache test definitions that are used frequently to reduce database load
 
-* Test definitions are versioned through Git but also stored in the database
-* Test runs track the execution of tests and their results
-* Test case results provide detailed information about each case's execution
-* The assertions field in test_case_results stores both the expected and actual values
-* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+## Related Documentation
 
-
+* [Test Runs](./test_runs.md) - Documentation for test execution records
+* [Test Case Results](./test_case_results.md) - Documentation for individual test case outcomes
+* [Task Definitions](./task_definitions.md) - Definition schema for tasks that can be tested
+* [Workflow Definitions](./workflow_definitions.md) - Definition schema for workflows that can be tested 

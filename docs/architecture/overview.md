@@ -1,8 +1,11 @@
 # System Architecture
 
+## Executive Summary
+
+The Augmented OS platform employs a definition-driven architecture where system behavior is configured through JSON schemas rather than custom code. Core services including workflow orchestration, task execution, event processing, and integration management work together to provide a flexible, scalable system. This approach enables AI-friendly authoring while maintaining strong data integrity guarantees through comprehensive schema validation.
+
 ## High-Level Flow
 
- ![System Architecture Flow](../assets/system-flow-diagram.png)
 
 
 1. **Design Time (Workflow Definition):** Users create workflow definitions via the UI, assembling sequences of tasks with conditional logic, error handling, and UI configurations.
@@ -35,87 +38,40 @@ Our architecture consists of two key aspects:
 
 These are the functional parts of the system that perform work:
 
-* **Workflow Orchestrator Service** - Manages workflow execution, state transitions, and task coordination
-* **Task Execution Layer** - Runs the actual work for each step
-* **Event Processing Service** - Handles event ingestion, routing, and triggering
-* **Integration Service** - Manages connections to external systems
-* **UI Rendering Engine** - Generates dynamic interfaces based on component definitions
-* **Validation Service** - Enforces schema validation across the system
+* **[Workflow Orchestrator Service](./components/workflow_orchestrator_service/overview.md)** - Manages workflow execution, state transitions, and task coordination
+* **[Task Execution Layer](./components/task_execution_layer/overview.md)** - Runs the actual work for each step
+* **[Event Processing Service](./components/event_processing_service/overview.md)** - Handles event ingestion, routing, and triggering
+* **[Integration Service](./components/integration_service/overview.md)** - Manages connections to external systems
+* **[Web Application](./components/web_application/overview.md)** - Generates dynamic interfaces based on component definitions
+* **[Validation Service](./components/validation_service/overview.md)** - Enforces schema validation across the system
+* **[Testing Framework](./components/testing_framework/overview.md)** - Provides testing capabilities for system components
 
 ### Data Schemas
 
 These define the structure of data stored in our databases:
 
-* **[Events](./schemas/events.md)** - Event definitions and instances
-* **[Tasks](./schemas/tasks.md)** - Task definitions and instances
-* **[Workflows](./schemas/workflows.md)** - Workflow definitions and instances
-* **[Integrations](./schemas/integrations.md)** - Integration definitions and instances
+* **Events** - Event data structures
+  * **[Event Definitions](./schemas/event_definitions.md)** - Templates for event types
+  * **[Event Instances](./schemas/event_instances.md)** - Actual event occurrences
+  * **[Event Queue State](./schemas/event_queue_state.md)** - Status of queued events
+  * **[Event Sequences](./schemas/event_sequences.md)** - Ordered series of events
+  * **[Dead Letter Queue](./schemas/dead_letter_queue.md)** - Failed event processing records
+* **Workflows** - Workflow orchestration structures
+  * **[Workflow Definitions](./schemas/workflow_definitions.md)** - Templates for workflows
+  * **[Workflow Instances](./schemas/workflow_instances.md)** - Running workflow executions
+  * **[Workflow Event Triggers](./schemas/workflow_event_triggers.md)** - Event-based workflow starters
+  * **[Workflow Event Subscriptions](./schemas/workflow_event_subscriptions.md)** - Event listeners
+* **Tasks** - Task execution structures
+  * **[Task Definitions](./schemas/task_definitions.md)** - Templates for tasks
+  * **[Task Instances](./schemas/task_instances.md)** - Running task executions
+* **Integrations** - External system connections
+  * **[Integration Definitions](./schemas/integration_definitions.md)** - Templates for integrations
+  * **[Integration Instances](./schemas/integration_instances.md)** - Configured integration setups
+* **Tests** - Testing structures
+  * **[Test Definitions](./schemas/test_definitions.md)** - Templates for validating tasks and workflows
+  * **[Test Runs](./schemas/test_runs.md)** - Execution records for tests
+  * **[Test Case Results](./schemas/test_case_results.md)** - Detailed results for individual test cases
 * **[UI Components](./schemas/ui_components.md)** - UI component definitions
-* **[Tests](./schemas/tests.md)** - Test definitions and results
-
-## System Architecture Diagram
-
- ![System Architecture Diagram](../assets/system-architecture-diagram.png)
-
-## Core System Components
-
-### Workflow Orchestrator Service
-
-The central engine responsible for:
-
-* Reading workflow definitions
-* Creating and managing workflow instances
-* Coordinating task execution
-* Handling state transitions and error recovery
-* Ensuring workflow durability and consistency
-
-The orchestrator is stateless, relying on the database to store all workflow state for resilience.
-
-### Task Execution Layer
-
-The compute layer that:
-
-* Executes individual tasks based on their implementation type
-* Handles different execution environments (Lambda, HTTP, script, etc.)
-* Manages timeouts and resource allocation
-* Returns standardized results to the orchestrator
-
-### Event Processing Service
-
-Manages the event lifecycle:
-
-* Receives events from internal and external sources
-* Validates event structure and content
-* Routes events to appropriate workflows
-* Stores events for audit and replay
-* Emits events when workflows and tasks complete
-
-### Integration Service
-
-Provides standardized access to external systems:
-
-* Manages authentication and credentials
-* Handles connection lifecycle and health checks
-* Provides a unified interface for different integration types
-* Supports multiple instances of the same integration
-
-### UI Rendering Engine
-
-Generates dynamic user interfaces:
-
-* Renders UI components based on definitions
-* Handles conditional display logic
-* Manages form validation and submission
-* Provides consistent styling and behavior
-
-### Validation Service
-
-Ensures data integrity across the system:
-
-* Validates JSON against schemas
-* Enforces business rules and constraints
-* Provides clear error messages for validation failures
-* Supports custom validation logic
 
 ## Data Stores
 
@@ -131,7 +87,7 @@ Stores all orchestration-related data:
 
 ### Business Data Store
 
-Stores domain-specific business data:
+Stores domain-specific business data such as:
 
 * Customer records
 * Transaction data

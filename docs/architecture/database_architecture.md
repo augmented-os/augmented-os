@@ -45,16 +45,29 @@ This approach provides consistent schema design across the system, making it int
 
 ## Core Tables
 
-The database is organized around these core component types, each with definition and instance tables:
+The database is organized into several major component types, each with corresponding tables:
 
-| Component Type | Definition Table | Instance Table |
-|----|----|----|
-| Events | `event_definitions` | `event_instances` |
-| Tasks | `task_definitions` | `task_instances` |
-| Workflows | `workflow_definitions` | `workflow_instances` |
-| Integrations | `integration_definitions` | `integration_instances` |
-| UI Components | `ui_components` | N/A (rendered client-side) |
-| Tests | `test_definitions` | `test_instances` & `test_case_results` |
+| Component | Table | Description |
+|-----------|-------|-------------|
+| **Events** | `event_definitions` | Defines event types and their expected payload schemas |
+| | `event_instances` | Records of actual events that have occurred in the system |
+| | `event_sequences` | Tracks ordered series of related events |
+| | `event_queue_state` | Manages the state of events waiting for processing |
+| | `dead_letter_queue` | Stores events that failed processing for later analysis or retry |
+| **Tasks** | `task_definitions` | Templates for tasks that can be executed by the system |
+| | `task_instances` | Individual executions of tasks with their current state and results |
+| **Workflows** | `workflow_definitions` | Templates for process flows composed of multiple tasks |
+| | `workflow_instances` | Running or completed workflow executions with their state |
+| | `workflow_event_triggers` | Defines which events can trigger workflow execution |
+| | `workflow_event_subscriptions` | Links running workflow instances to events they're waiting for |
+| **Integrations** | `integration_definitions` | Templates for connecting to external systems |
+| | `integration_instances` | Configured connections to external systems with credentials |
+| **UI Components** | `ui_components` | Reusable UI component definitions for building interfaces |
+| **Tests** | `test_definitions` | Test templates for validating workflow and task behavior |
+| | `test_runs` | Execution records of test batches |
+| | `test_case_results` | Detailed results for individual test cases within test runs |
+
+This schema design supports the event-driven architecture of the system, with clear separation between definitions (templates/configurations) and runtime instances. The additional tables for events and workflows facilitate event processing, queueing, and workflow-to-event relationships.
 
 ## Common Fields
 
@@ -83,29 +96,43 @@ integration_definitions
 
 event_definitions
     ↓ referenced by
+workflow_event_triggers
+    ↓ connected to
 workflow_definitions
-    ↓ (triggers section)
 
 workflow_instances
     ↓ creates
 task_instances
     ↓ may trigger
 event_instances
-    ↓ conforms to
-event_definitions
-    ↓ may use
+    ↓ may be processed by
+event_sequences
+    ↓ may be queued in
+event_queue_state
+    ↓ may be moved to
+dead_letter_queue
+
+workflow_event_subscriptions
+    ↓ connects
+workflow_instances
+    ↓ with
+event_instances
+
 integration_instances
+    ↓ configured from
+integration_definitions
 ```
 
 Key relationships include:
 
 * Workflow definitions reference task definitions in their steps
 * Task definitions reference UI components for manual tasks
-* Workflow definitions reference event definitions in their triggers
-* Event instances conform to event definitions (validate against payload schema)
-* Workflow instances create task instances during execution
-* Task instances may trigger event instances upon completion
-* Integration instances are used by tasks and workflows to interact with external systems
+* Workflow event triggers connect events to workflows (event-driven workflows)
+* Workflow event subscriptions link running workflow instances to specific events
+* Event instances may flow through sequences, queue states, and potentially to dead letter queue
+* Event definitions define the structure and validation rules for event instances
+* Integration instances are configured based on integration definitions
+* Test runs execute test definitions and produce test case results
 
 ## JSON Schema Validation
 
@@ -142,12 +169,34 @@ The database is backed up using:
 
 For detailed schema information about each component, refer to the individual schema documentation:
 
-* [Events Schema](./schemas/events.md)
-* [Tasks Schema](./schemas/tasks.md)
-* [Workflows Schema](./schemas/workflows.md)
-* [Integrations Schema](./schemas/integrations.md)
-* [UI Components Schema](./schemas/ui_components.md)
-* [Tests Schema](./schemas/tests.md)
+### Events
+* [Event Definitions](./schemas/event_definitions.md)
+* [Event Instances](./schemas/event_instances.md)
+* [Event Sequences](./schemas/event_sequences.md)
+* [Event Queue State](./schemas/event_queue_state.md)
+* [Dead Letter Queue](./schemas/dead_letter_queue.md)
+
+### Workflows
+* [Workflow Definitions](./schemas/workflow_definitions.md)
+* [Workflow Instances](./schemas/workflow_instances.md)
+* [Workflow Event Triggers](./schemas/workflow_event_triggers.md)
+* [Workflow Event Subscriptions](./schemas/workflow_event_subscriptions.md)
+
+### Tasks
+* [Task Definitions](./schemas/task_definitions.md)
+* [Task Instances](./schemas/task_instances.md)
+
+### Integrations
+* [Integration Definitions](./schemas/integration_definitions.md)
+* [Integration Instances](./schemas/integration_instances.md)
+
+### Other Components
+* [UI Components](./schemas/ui_components.md)
+
+### Testing
+* [Test Definitions](./schemas/test_definitions.md)
+* [Test Runs](./schemas/test_runs.md)
+* [Test Case Results](./schemas/test_case_results.md)
 
 ## Migration Strategy
 
