@@ -192,6 +192,7 @@ async function validateEvent(pattern: string, payload: any): Promise<ValidationR
 
 The Event Receiver handles several edge cases:
 
+
 1. **Duplicate Events**: Uses event IDs and idempotency keys to detect and handle duplicate submissions
 2. **Invalid Events**: Returns detailed validation errors for schema violations
 3. **High Traffic**: Implements rate limiting and backpressure mechanisms
@@ -212,4 +213,6 @@ The Event Receiver is optimized for high throughput:
 
 * [Event Router](./event_router.md)
 * [Event Store](./event_store.md)
-* [API Reference](../interfaces/api.md) 
+* [API Reference](../interfaces/api.md)
+
+

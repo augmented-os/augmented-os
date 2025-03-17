@@ -328,6 +328,7 @@ class QueueWorker {
 
 The Internal Event Queue handles several edge cases:
 
+
 1. **Queue Overflow**: Implements backpressure to slow down producers
 2. **Processing Failures**: Uses retry strategies with exponential backoff
 3. **Service Restart**: Recovers queue state from persistent storage
@@ -348,4 +349,6 @@ The Internal Event Queue is optimized for reliable event processing:
 
 * [Event Processor](./event_processor.md)
 * [Event Router](./event_router.md)
-* [Operations Guide](../operations/monitoring.md) 
+* [Operations Guide](../operations/monitoring.md)
+
+

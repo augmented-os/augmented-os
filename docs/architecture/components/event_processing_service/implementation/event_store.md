@@ -284,7 +284,7 @@ class EventReplayService {
 
 The Event Store uses these primary database tables:
 
-**Table: events**
+**Table: event_instances**
 
 | Field | Type | Description |
 |----|----|----|
@@ -311,6 +311,7 @@ The Event Store uses these primary database tables:
 
 The Event Store handles several edge cases:
 
+
 1. **Duplicate Events**: Uses unique constraints to prevent duplicate events
 2. **Concurrent Writes**: Implements optimistic concurrency control
 3. **Storage Failures**: Implements write-ahead logging for recovery
@@ -331,4 +332,6 @@ The Event Store is optimized for efficient event storage and retrieval:
 
 * [Event Receiver](./event_receiver.md)
 * [Event Router](./event_router.md)
-* [Data Model](../data_model.md) 
+* [Data Model](../data_model.md)
+
+
