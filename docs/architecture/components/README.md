@@ -4,12 +4,13 @@ This directory contains detailed documentation for each functional component of 
 
 ## Components
 
-- [Event Processing Service](./event_processing_service.md) - Handles event ingestion, routing, and triggering
-- [Integration Service](./integration_service.md) - Manages connections to external systems
-- [Task Execution Layer](./task_execution_layer.md) - Runs the actual work for each step
-- [UI Rendering Engine](./ui_rendering_engine.md) - Generates dynamic interfaces based on component definitions
-- [Validation Service](./validation_service.md) - Enforces schema validation across the system
-- [Workflow Orchestrator Service](./workflow_orchestrator_service.md) - Manages workflow execution and state transitions
+- [Event Processing Service](./event_processing_service/) - Handles event ingestion, routing, and triggering
+- [Integration Service](./integration_service/) - Manages connections to external systems
+- [Task Execution Layer](./task_execution_layer/) - Runs the actual work for each step
+- [Web Application](./web_application/) - Generates dynamic interfaces based on component definitions
+- [Validation Service](./validation_service/) - Enforces schema validation across the system
+- [Workflow Orchestrator Service](./workflow_orchestrator_service/) - Manages workflow execution and state transitions
+- [Testing Framework](./testing_framework/) - Provides testing capabilities for system components
 
 ## Component Design Principles
 
@@ -29,8 +30,9 @@ Each system component interacts with one or more data schemas:
 - **Task Execution Layer** → Uses the [Tasks Schema](../schemas/tasks.md)
 - **Workflow Orchestrator Service** → Uses the [Workflows Schema](../schemas/workflows.md)
 - **Integration Service** → Uses the [Integrations Schema](../schemas/integrations.md)
-- **UI Rendering Engine** → Uses the [UI Components Schema](../schemas/ui_components.md)
+- **Web Application** → Uses the [UI Components Schema](../schemas/ui_components.md)
 - **Validation Service** → Uses all schemas for validation
+- **Testing Framework** → Uses test configuration schemas
 
 For details on the data structures used by these components, see the [Data Schemas](../schemas/) documentation.
 
