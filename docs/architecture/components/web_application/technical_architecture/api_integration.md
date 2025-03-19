@@ -916,14 +916,25 @@ The following best practices are enforced for API integration:
 
 The API integration layer implements several security measures:
 
+1. **Auth Service Integration**: API requests are secured using the [Auth Service](../../../components/auth_service/) for centralized authentication and authorization.
+2. **Token Management**: Secure storage and refresh of authentication tokens issued by the Auth Service, including:
+   * JWT token validation
+   * Token refreshing before expiration
+   * Secure token storage using HttpOnly cookies
+   * Automatic redirection to login on authentication failures
+3. **RBAC Integration**: Role-based access controls enforced through the Auth Service permissions
+4. **CSRF Protection**: Implementation of Cross-Site Request Forgery protection
+5. **Content Security Policy**: Adherence to CSP guidelines
+6. **Input Validation**: Validation of all user inputs before API requests
+7. **Output Encoding**: Proper encoding of API responses before rendering
+8. **Rate Limiting**: Client-side throttling of API requests
+9. **Sensitive Data Handling**: Secure handling of sensitive data
 
-1. **Token Management**: Secure storage and refresh of authentication tokens
-2. **CSRF Protection**: Implementation of Cross-Site Request Forgery protection
-3. **Content Security Policy**: Adherence to CSP guidelines
-4. **Input Validation**: Validation of all user inputs before API requests
-5. **Output Encoding**: Proper encoding of API responses before rendering
-6. **Rate Limiting**: Client-side throttling of API requests
-7. **Sensitive Data Handling**: Secure handling of sensitive data
+For detailed authentication implementation examples, refer to:
+- [Basic Authentication](../../../components/auth_service/examples/basic_authentication.md)
+- [Token Validation](../../../components/auth_service/examples/token_validation.md)
+- [Service-to-Service Authentication](../../../components/auth_service/examples/service_to_service_auth.md)
+- [Role-Based Access Control](../../../components/auth_service/examples/role_based_access.md)
 
 ## Performance Optimization
 

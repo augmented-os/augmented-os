@@ -18,6 +18,7 @@ The Reporting Engine is a core component of the Testing Framework responsible fo
 
 The Reporting Engine follows these design principles:
 
+
 1. **Format Agnostic** - Core reporting logic is separated from output format concerns
 2. **Flexible Aggregation** - Supports flexible grouping and aggregation of test results
 3. **Incremental Processing** - Large result sets are processed incrementally to manage memory
@@ -467,7 +468,7 @@ function groupResultsBy(
 The implementation addresses the following edge cases:
 
 | Scenario | Handling Approach |
-|----------|-------------------|
+|----|----|
 | Large result sets | Incremental processing and pagination for memory efficiency |
 | Missing test definitions | Graceful handling with fallback to test ID for display |
 | Inconsistent result data | Data validation and normalization before report generation |
@@ -479,6 +480,7 @@ The implementation addresses the following edge cases:
 
 The Reporting Engine is optimized for efficient report generation:
 
+
 1. **Query Optimization**: Efficient database queries for retrieving test results
 2. **Lazy Loading**: Incremental loading of related data as needed
 3. **Caching**: Caching of common report components and result data
@@ -488,7 +490,7 @@ The Reporting Engine is optimized for efficient report generation:
 ### Benchmarks
 
 | Operation | Average Performance | P99 Performance |
-|-----------|---------------------|----------------|
+|----|----|----|
 | Single Test Report (JSON) | 25ms | 75ms |
 | Single Test Report (HTML) | 45ms | 120ms |
 | Suite Report (10 tests, JSON) | 80ms | 250ms |
@@ -502,4 +504,6 @@ The Reporting Engine is optimized for efficient report generation:
 * [Result Capture](./result_capture.md)
 * [Test Suite Manager](./test_suite_manager.md)
 * [API Reference](../interfaces/api.md)
-* [Examples](../examples/advanced_example.md) 
+* [Examples](../examples/advanced_example.md)
+
+

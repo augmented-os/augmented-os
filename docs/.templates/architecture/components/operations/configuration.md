@@ -2,11 +2,12 @@
 
 ## Overview
 
-This document describes the configuration options for the [Component Name] Service. It details environment variables, configuration files, startup parameters, and runtime configuration to help operators deploy and manage the service effectively.
+This document describes the configuration options for the \[Component Name\] Service. It details environment variables, configuration files, startup parameters, and runtime configuration to help operators deploy and manage the service effectively.
 
 ## Configuration Methods
 
-The [Component Name] Service can be configured using the following methods (in order of precedence):
+The \[Component Name\] Service can be configured using the following methods (in order of precedence):
+
 
 1. **Environment Variables**: Highest precedence, override all other settings
 2. **Configuration Files**: JSON or YAML files for detailed configuration
@@ -16,20 +17,20 @@ The [Component Name] Service can be configured using the following methods (in o
 ## Environment Variables
 
 | Variable | Description | Default | Required | Example |
-|----------|-------------|---------|----------|---------|
-| `[COMPONENT]_[SETTING]` | [Description of the setting] | `[default]` | Yes/No | `[example value]` |
-| `[COMPONENT]_[SETTING]` | [Description of the setting] | `[default]` | Yes/No | `[example value]` |
-| `[COMPONENT]_[SETTING]` | [Description of the setting] | `[default]` | Yes/No | `[example value]` |
-| `[COMPONENT]_[SETTING]` | [Description of the setting] | `[default]` | Yes/No | `[example value]` |
+|----|----|----|----|----|
+| `[COMPONENT]_[SETTING]` | \[Description of the setting\] | `[default]` | Yes/No | `[example value]` |
+| `[COMPONENT]_[SETTING]` | \[Description of the setting\] | `[default]` | Yes/No | `[example value]` |
+| `[COMPONENT]_[SETTING]` | \[Description of the setting\] | `[default]` | Yes/No | `[example value]` |
+| `[COMPONENT]_[SETTING]` | \[Description of the setting\] | `[default]` | Yes/No | `[example value]` |
 
 ### Sensitive Configuration
 
 The following environment variables contain sensitive information and should be handled securely:
 
 | Variable | Description | Security Recommendations |
-|----------|-------------|--------------------------|
-| `[COMPONENT]_[SECRET]` | [Description of the secret] | [Security recommendations] |
-| `[COMPONENT]_[SECRET]` | [Description of the secret] | [Security recommendations] |
+|----|----|----|
+| `[COMPONENT]_[SECRET]` | \[Description of the secret\] | \[Security recommendations\] |
+| `[COMPONENT]_[SECRET]` | \[Description of the secret\] | \[Security recommendations\] |
 
 ## Configuration File
 
@@ -80,7 +81,7 @@ The service can be configured using a JSON or YAML configuration file specified 
 #### Service Configuration
 
 | Setting | Description | Default | Required |
-|---------|-------------|---------|----------|
+|----|----|----|----|
 | `service.name` | Service name for identification | `[component-name]` | No |
 | `service.port` | HTTP port for the service | `8080` | No |
 | `service.logLevel` | Logging level (ERROR, WARN, INFO, DEBUG, TRACE) | `INFO` | No |
@@ -89,7 +90,7 @@ The service can be configured using a JSON or YAML configuration file specified 
 #### Database Configuration
 
 | Setting | Description | Default | Required |
-|---------|-------------|---------|----------|
+|----|----|----|----|
 | `database.host` | Database server hostname | `localhost` | Yes |
 | `database.port` | Database server port | `5432` | Yes |
 | `database.name` | Database name | `[component-db]` | Yes |
@@ -101,7 +102,7 @@ The service can be configured using a JSON or YAML configuration file specified 
 #### Cache Configuration
 
 | Setting | Description | Default | Required |
-|---------|-------------|---------|----------|
+|----|----|----|----|
 | `cache.enabled` | Whether caching is enabled | `true` | No |
 | `cache.ttlSeconds` | Default cache TTL | `300` | No |
 | `cache.maxEntries` | Maximum cache entries | `10000` | No |
@@ -109,7 +110,7 @@ The service can be configured using a JSON or YAML configuration file specified 
 #### Integration Configuration
 
 | Setting | Description | Default | Required |
-|---------|-------------|---------|----------|
+|----|----|----|----|
 | `integrations.[service].url` | Service endpoint URL | None | Yes |
 | `integrations.[service].timeout` | Request timeout in ms | `3000` | No |
 | `integrations.[service].retries` | Number of retry attempts | `3` | No |
@@ -117,16 +118,16 @@ The service can be configured using a JSON or YAML configuration file specified 
 #### Feature Flags
 
 | Setting | Description | Default | Required |
-|---------|-------------|---------|----------|
-| `features.[feature1]` | [Description of feature1] | `false` | No |
-| `features.[feature2]` | [Description of feature2] | `false` | No |
+|----|----|----|----|
+| `features.[feature1]` | \[Description of feature1\] | `false` | No |
+| `features.[feature2]` | \[Description of feature2\] | `false` | No |
 
 ## Command Line Arguments
 
 The service accepts the following command line arguments:
 
 | Argument | Description | Default |
-|----------|-------------|---------|
+|----|----|----|
 | `--config` | Path to configuration file | None |
 | `--port` | HTTP port for the service | `8080` |
 | `--log-level` | Logging level | `INFO` |
@@ -134,10 +135,10 @@ The service accepts the following command line arguments:
 
 ## Runtime Configuration
 
-The [Component Name] Service supports the following runtime configuration changes without restart:
+The \[Component Name\] Service supports the following runtime configuration changes without restart:
 
 | Configuration | Method | Notes |
-|---------------|--------|-------|
+|----|----|----|
 | Log Level | API call to `/admin/loglevel` | Requires admin authentication |
 | Feature Flags | API call to `/admin/features` | Requires admin authentication |
 | Cache TTL | API call to `/admin/cache/ttl` | Requires admin authentication |
@@ -181,6 +182,7 @@ The [Component Name] Service supports the following runtime configuration change
 
 ## Configuration Best Practices
 
+
 1. **Use environment variables for deployment-specific settings**: This allows the same container image to be deployed across environments
 2. **Use configuration files for complex settings**: Configuration files are better for settings with nested structure
 3. **Validate configuration on startup**: The service validates all configuration on startup and fails fast if required settings are missing
@@ -191,4 +193,6 @@ The [Component Name] Service supports the following runtime configuration change
 
 * [Monitoring](./monitoring.md)
 * [Scaling](./scaling.md)
-* [Deployment](../deployment.md) 
+* [Deployment](../deployment.md)
+
+

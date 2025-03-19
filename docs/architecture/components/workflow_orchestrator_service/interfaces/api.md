@@ -14,10 +14,32 @@ An OpenAPI specification is available at [workflow-orchestrator-api.yaml](./work
 
 ## Authentication
 
-All API endpoints require authentication using either:
+All API endpoints require authentication using the [Auth Service](../../../auth_service/). Authentication can be provided in one of the following ways:
 
-* Bearer token authentication
-* API key in the `X-API-Key` header
+* Bearer token authentication with a valid JWT token issued by the Auth Service
+* API key in the `X-API-Key` header (for service-to-service communication)
+
+### Permission Requirements
+
+Different endpoints require specific permissions assigned through the Auth Service's role-based access control system:
+
+| Endpoint                      | Required Permission                 | Description                                        |
+|-------------------------------|-------------------------------------|----------------------------------------------------|
+| `GET /definitions`            | `workflow:definitions:read`         | List workflow definitions                          |
+| `GET /definitions/{id}`       | `workflow:definitions:read`         | Get a specific workflow definition                 |
+| `POST /definitions`           | `workflow:definitions:create`       | Create new workflow definitions                    |
+| `PUT /definitions/{id}`       | `workflow:definitions:update`       | Update existing workflow definitions               |
+| `DELETE /definitions/{id}`    | `workflow:definitions:delete`       | Delete workflow definitions                        |
+| `GET /instances`              | `workflow:instances:read`           | List workflow instances                            |
+| `GET /instances/{id}`         | `workflow:instances:read`           | Get a specific workflow instance                   |
+| `POST /instances`             | `workflow:instances:create`         | Start new workflow instances                       |
+| `POST /instances/{id}/cancel` | `workflow:instances:cancel`         | Cancel workflow instances                          |
+| `POST /instances/{id}/signal` | `workflow:instances:signal`         | Send signals to workflow instances                 |
+| `GET /instances/{id}/history` | `workflow:instances:history:read`   | View workflow execution history                    |
+
+For information on setting up roles and permissions, see the [Role-Based Access Control](../../../auth_service/examples/role_based_access.md) documentation.
+
+For details on token validation, see the [Token Validation](../../../auth_service/examples/token_validation.md) documentation.
 
 ## Endpoints
 

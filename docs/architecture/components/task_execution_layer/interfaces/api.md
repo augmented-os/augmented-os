@@ -14,10 +14,31 @@ An OpenAPI specification is available at [task-execution-layer-api.yaml](./task-
 
 ## Authentication
 
-All API endpoints require authentication using either:
+All API endpoints require authentication using the [Auth Service](../../../auth_service/). Authentication can be provided in one of the following ways:
 
-* Bearer token authentication
-* API key in the `X-API-Key` header
+* Bearer token authentication with a valid JWT token issued by the Auth Service
+* API key in the `X-API-Key` header (for service-to-service communication)
+
+### Permission Requirements
+
+Different endpoints require specific permissions assigned through the Auth Service's role-based access control system:
+
+| Endpoint                      | Required Permission              | Description                                |
+|-------------------------------|----------------------------------|--------------------------------------------|
+| `POST /tasks`                 | `tasks:execute`                  | Submit tasks for execution                 |
+| `GET /tasks/{id}`             | `tasks:read`                     | Get task status and details                |
+| `POST /tasks/{id}/cancel`     | `tasks:cancel`                   | Cancel a running or pending task           |
+| `GET /tasks`                  | `tasks:list`                     | List tasks                                 |
+| `GET /definitions`            | `tasks:definitions:list`         | List task definitions                      |
+| `GET /definitions/{id}`       | `tasks:definitions:read`         | Get a specific task definition             |
+
+#### Service-to-Service Authentication
+
+For service-to-service communication (e.g., from the Workflow Orchestrator), the service uses a dedicated service account with appropriate permissions. The Auth Service validates the service identity and ensures that it has the necessary permissions to execute the requested operations.
+
+For information on setting up roles and permissions, see the [Role-Based Access Control](../../../auth_service/examples/role_based_access.md) documentation.
+
+For details on service-to-service authentication, see the [Service-to-Service Authentication](../../../auth_service/examples/service_to_service_auth.md) documentation.
 
 ## Endpoints
 
@@ -365,4 +386,4 @@ Rate limit headers are included in all responses:
 * `X-RateLimit-Remaining`: Remaining requests in current time window
 * `X-RateLimit-Reset`: Time when the rate limit resets (Unix timestamp)
 
-When rate limited, the API returns a `429 Too Many Requests` status code. 
+When rate limited, the API returns a `429 Too Many Requests` status code.

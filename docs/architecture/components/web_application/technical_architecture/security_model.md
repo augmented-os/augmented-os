@@ -54,7 +54,8 @@ The security architecture follows a defense-in-depth approach with multiple laye
 
 The application implements a robust authentication system:
 
-* **JWT-based Authentication**: JSON Web Tokens for stateless authentication
+* **Auth Service Integration**: Centralized authentication through the [Auth Service](../../../components/auth_service/) 
+* **JWT-based Authentication**: JSON Web Tokens for stateless authentication, issued and validated by the Auth Service
 * **OAuth 2.0 Integration**: Support for third-party authentication providers
 * **Multi-factor Authentication**: Optional second factor for enhanced security
 * **Password Policies**: Enforced password complexity and rotation
@@ -64,11 +65,13 @@ The application implements a robust authentication system:
 
 Access control is implemented at multiple levels:
 
-* **Role-based Access Control (RBAC)**: Permissions assigned to roles
+* **Role-based Access Control (RBAC)**: Permissions assigned to roles managed by the Auth Service
 * **Attribute-based Access Control (ABAC)**: Dynamic permissions based on attributes
 * **Resource-level Permissions**: Fine-grained control over specific resources
 * **UI-level Authorization**: Components rendered based on user permissions
 * **API-level Authorization**: Middleware validation of permissions for API requests
+
+For detailed authentication implementation examples, see the [Auth Service Integration Examples](../../../components/auth_service/examples/).
 
 ## Data Protection
 

@@ -38,6 +38,7 @@ This directory contains the documentation for the Augmented OS system.
 * [Validation Service](./architecture/components/validation_service/)
 * [Workflow Orchestrator Service](./architecture/components/workflow_orchestrator_service/)
 * [Testing Framework](./architecture/components/testing_framework/)
+* [Authentication Service](./architecture/components/auth_service/)
 
 ### Data Schemas
 

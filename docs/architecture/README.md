@@ -20,6 +20,7 @@ This approach creates a system that is both powerful and flexible, while maintai
 * [Overview](./overview.md) - High-level architecture overview
 * [Database Architecture](./database_architecture.md) - Database design and implementation
 * [Components](./components/) - Functional system components
+  * [Auth Service](./components/auth_service/) - Authentication and authorization service
   * [Event Processing Service](./components/event_processing_service/)
   * [Integration Service](./components/integration_service/)
   * [Task Execution Layer](./components/task_execution_layer/)
@@ -45,6 +46,10 @@ This approach creates a system that is both powerful and flexible, while maintai
   * [Integrations](./schemas/#integrations)
     * [Integration Definitions](./schemas/integration_definitions.md)
     * [Integration Instances](./schemas/integration_instances.md)
+  * [Auth](./schemas/#auth)
+    * [Users](./schemas/users.md)
+    * [Roles](./schemas/roles.md)
+    * [Permissions](./schemas/permissions.md)
   * [Testing](./schemas/#tests)
     * [Test Definitions](./schemas/test_definitions.md)
     * [Test Runs](./schemas/test_runs.md)

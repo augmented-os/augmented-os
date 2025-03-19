@@ -17,6 +17,7 @@ The Result Capture module is a core component of the Testing Framework responsib
 
 The Result Capture module follows these design principles:
 
+
 1. **Comprehensive Recording** - Capture all relevant data for thorough test analysis and debugging
 2. **Efficient Storage** - Optimize storage patterns for efficient retrieval and querying of results
 3. **Real-time Updates** - Support streaming updates of test results during execution
@@ -307,7 +308,7 @@ async function getTestArtifact(
 The implementation addresses the following edge cases:
 
 | Scenario | Handling Approach |
-|----------|-------------------|
+|----|----|
 | Concurrent result updates | Database transactions with optimistic locking |
 | Large result sets | Pagination and efficient filtering for query results |
 | Large artifacts | Separate storage for artifacts with size limits and streaming support |
@@ -319,16 +320,15 @@ The implementation addresses the following edge cases:
 
 The Result Capture module is optimized for both write-intensive (during test execution) and read-intensive (during reporting) operations:
 
+
 1. **Write Optimizations**:
    * Batch updates for multiple assertion results
    * Asynchronous artifact storage
    * Efficient JSON serialization
-
 2. **Read Optimizations**:
    * Index-optimized queries for common filter patterns
    * Result caching for frequently accessed results
    * Time-based partitioning for historical data
-
 3. **Storage Optimizations**:
    * Selective archiving of older results
    * Compression of large result sets
@@ -337,7 +337,7 @@ The Result Capture module is optimized for both write-intensive (during test exe
 ### Benchmarks
 
 | Operation | Average Performance | P99 Performance |
-|-----------|---------------------|----------------|
+|----|----|----|
 | Create Result | 20ms | 45ms |
 | Update Result | 15ms | 35ms |
 | Get Result by ID | 8ms | 25ms |
@@ -350,4 +350,6 @@ The Result Capture module is optimized for both write-intensive (during test exe
 * [Data Model](../data_model.md)
 * [Test Executor](./test_executor.md)
 * [Reporting Engine](./reporting_engine.md)
-* [Configuration](../operations/configuration.md) 
+* [Configuration](../operations/configuration.md)
+
+

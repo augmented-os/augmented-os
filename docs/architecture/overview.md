@@ -45,6 +45,7 @@ These are the functional parts of the system that perform work:
 * **[Web Application](./components/web_application/overview.md)** - Generates dynamic interfaces based on component definitions
 * **[Validation Service](./components/validation_service/overview.md)** - Enforces schema validation across the system
 * **[Testing Framework](./components/testing_framework/overview.md)** - Provides testing capabilities for system components
+* **[Authentication Service](./components/auth_service/overview.md)** - Provides centralized user authentication, authorization, and token management
 
 ### Data Schemas
 
@@ -67,6 +68,10 @@ These define the structure of data stored in our databases:
 * **Integrations** - External system connections
   * **[Integration Definitions](./schemas/integration_definitions.md)** - Templates for integrations
   * **[Integration Instances](./schemas/integration_instances.md)** - Configured integration setups
+* **Users** - Authentication and authorization structures
+  * **[Users](./schemas/users.md)** - User accounts and profiles
+  * **[Roles](./schemas/roles.md)** - Role definitions for access control
+  * **[Permissions](./schemas/permissions.md)** - Permission definitions
 * **Tests** - Testing structures
   * **[Test Definitions](./schemas/test_definitions.md)** - Templates for validating tasks and workflows
   * **[Test Runs](./schemas/test_runs.md)** - Execution records for tests
@@ -94,6 +99,15 @@ Stores domain-specific business data such as:
 * Product information
 * Relationship data
 
+### Auth Store
+
+Stores authentication and authorization data:
+
+* User accounts
+* Roles and permissions
+* Access tokens
+* Security audit logs
+
 ## Frontend (UI)
 
 A web application providing:
@@ -102,6 +116,16 @@ A web application providing:
 * **Task UI** - Interfaces for performing manual tasks
 * **Business Data UI** - Views for interacting with business data
 * **Chatbot UI** - Natural language interface to the system
+* **Admin UI** - Tools for user and role management
+
+## Security Architecture
+
+The system implements a zero-trust security model:
+
+* **Authentication Service** - Centralized authentication for all system components
+* **JWT-based tokens** - Platform-agnostic authentication mechanism
+* **Role-based access control** - Fine-grained permission management
+* **Service-to-service authentication** - Secure internal communication
 
 ## Next Steps
 

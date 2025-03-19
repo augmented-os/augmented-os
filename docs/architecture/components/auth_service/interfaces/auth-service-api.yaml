@@ -1,0 +1,2037 @@
+openapi: 3.0.0
+info:
+  title: "Authentication Service API"
+  description: "API for the Authentication Service, which provides centralized user authentication, authorization, and token management throughout the Augmented OS platform."
+  version: "1.0.0"
+  contact:
+    name: "API Support"
+    email: "api-support@example.com"
+    url: "https://example.com/support"
+  
+servers:
+  - url: "https://api.example.com/v1"
+    description: "Production API Server"
+  - url: "https://sandbox-api.example.com/v1"
+    description: "Sandbox API Server for testing"
+
+security:
+  - bearerAuth: []
+  - apiKey: []
+
+tags:
+  - name: "Authentication"
+    description: "Operations for user authentication"
+  - name: "Users"
+    description: "Operations for managing users"
+  - name: "Roles"
+    description: "Operations for managing roles"
+  - name: "Permissions"
+    description: "Operations for managing permissions"
+  - name: "Service Accounts"
+    description: "Operations for managing service accounts"
+  - name: "Key Management"
+    description: "Operations for managing cryptographic keys"
+  - name: "Health"
+    description: "Health check and monitoring endpoints"
+
+paths:
+  /auth/register:
+    post:
+      summary: "Register a new user"
+      description: "Creates a new user account with the provided details."
+      operationId: "registerUser"
+      tags:
+        - "Authentication"
+      security: []  # No authentication required for registration
+      requestBody:
+        description: "User registration details"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: "Unique username for the account"
+                  example: "jsmith"
+                email:
+                  type: string
+                  format: email
+                  description: "Email address for the account"
+                  example: "john.smith@example.com"
+                password:
+                  type: string
+                  format: password
+                  description: "User password (min 8 characters)"
+                  example: "Password123!"
+                fullName:
+                  type: string
+                  description: "User's full name"
+                  example: "John Smith"
+                phone:
+                  type: string
+                  description: "User's phone number (optional)"
+                  example: "+1234567890"
+              required:
+                - username
+                - email
+                - password
+      responses:
+        '201':
+          description: "User registered successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: "Unique identifier for the user"
+                    example: "usr_123456789"
+                  username:
+                    type: string
+                    description: "Username of the registered user"
+                    example: "jsmith"
+                  email:
+                    type: string
+                    format: email
+                    description: "Email of the registered user"
+                    example: "john.smith@example.com"
+                  emailVerified:
+                    type: boolean
+                    description: "Whether the email is verified"
+                    example: false
+                  message:
+                    type: string
+                    description: "Success message"
+                    example: "User registered successfully. Please verify your email."
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '422':
+          $ref: "#/components/responses/UnprocessableEntity"
+
+  /auth/login:
+    post:
+      summary: "Authenticate user"
+      description: "Authenticates a user with username/email and password, returning authentication tokens."
+      operationId: "loginUser"
+      tags:
+        - "Authentication"
+      security: []  # No authentication required for login
+      requestBody:
+        description: "User credentials"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: "Username or email address"
+                  example: "jsmith"
+                password:
+                  type: string
+                  format: password
+                  description: "User password"
+                  example: "Password123!"
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: "Authentication successful"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: "JWT access token"
+                    example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  refresh_token:
+                    type: string
+                    description: "Refresh token for obtaining new access tokens"
+                    example: "def5020089c7bf94380dc6..."
+                  token_type:
+                    type: string
+                    description: "Type of token"
+                    example: "Bearer"
+                  expires_in:
+                    type: integer
+                    description: "Token expiration time in seconds"
+                    example: 3600
+                  user:
+                    type: object
+                    description: "Basic user information"
+                    properties:
+                      id:
+                        type: string
+                        description: "User ID"
+                        example: "usr_123456789"
+                      username:
+                        type: string
+                        description: "Username"
+                        example: "jsmith"
+                      fullName:
+                        type: string
+                        description: "User's full name"
+                        example: "John Smith"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          description: "Account locked"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/refresh:
+    post:
+      summary: "Refresh access token"
+      description: "Obtains a new access token using a refresh token."
+      operationId: "refreshToken"
+      tags:
+        - "Authentication"
+      security: []  # No authentication required for token refresh
+      requestBody:
+        description: "Refresh token"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  description: "Refresh token obtained during login"
+                  example: "def5020089c7bf94380dc6..."
+              required:
+                - refresh_token
+      responses:
+        '200':
+          description: "Token refreshed successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: "New JWT access token"
+                    example: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  refresh_token:
+                    type: string
+                    description: "New refresh token (if token rotation is enabled)"
+                    example: "def5020089c7bf94380dc6..."
+                  token_type:
+                    type: string
+                    description: "Type of token"
+                    example: "Bearer"
+                  expires_in:
+                    type: integer
+                    description: "Token expiration time in seconds"
+                    example: 3600
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/logout:
+    post:
+      summary: "Logout user"
+      description: "Invalidates the current user's tokens."
+      operationId: "logoutUser"
+      tags:
+        - "Authentication"
+      responses:
+        '200':
+          description: "Logout successful"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: "Success message"
+                    example: "Logged out successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+
+  /users:
+    get:
+      summary: "List users"
+      description: "Returns a list of users based on the provided filters."
+      operationId: "listUsers"
+      tags:
+        - "Users"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          description: "Search term to filter users by name, username, or email"
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: "Filter by user status"
+          required: false
+          schema:
+            type: string
+            enum: ["active", "inactive", "locked", "pending"]
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UserSummary"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+    post:
+      summary: "Create a new user"
+      description: "Creates a new user account by an administrator."
+      operationId: "createUser"
+      tags:
+        - "Users"
+      requestBody:
+        description: "User details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        '201':
+          description: "User created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /users/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: "User ID"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get user by ID"
+      description: "Returns a single user by ID."
+      operationId: "getUser"
+      tags:
+        - "Users"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: "Update user"
+      description: "Updates an existing user with the provided details."
+      operationId: "updateUser"
+      tags:
+        - "Users"
+      requestBody:
+        description: "Updated user details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        '200':
+          description: "User updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+    delete:
+      summary: "Delete user"
+      description: "Deletes a user by ID."
+      operationId: "deleteUser"
+      tags:
+        - "Users"
+      responses:
+        '204':
+          description: "User deleted successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /users/{id}/roles:
+    parameters:
+      - name: id
+        in: path
+        description: "User ID"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get user roles"
+      description: "Returns roles assigned to a user."
+      operationId: "getUserRoles"
+      tags:
+        - "Users"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    description: "User ID"
+                    example: "usr_123456789"
+                  roles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RoleSummary"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    post:
+      summary: "Assign role to user"
+      description: "Assigns a role to a user."
+      operationId: "assignUserRole"
+      tags:
+        - "Users"
+      requestBody:
+        description: "Role to assign"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleId:
+                  type: string
+                  description: "Role ID"
+                  example: "role_123456789"
+              required:
+                - roleId
+      responses:
+        '200':
+          description: "Role assigned successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    description: "User ID"
+                    example: "usr_123456789"
+                  roleId:
+                    type: string
+                    description: "Role ID"
+                    example: "role_123456789"
+                  message:
+                    type: string
+                    description: "Success message"
+                    example: "Role assigned successfully"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /users/{id}/roles/{roleId}:
+    parameters:
+      - name: id
+        in: path
+        description: "User ID"
+        required: true
+        schema:
+          type: string
+      - name: roleId
+        in: path
+        description: "Role ID"
+        required: true
+        schema:
+          type: string
+    delete:
+      summary: "Remove role from user"
+      description: "Removes a role from a user."
+      operationId: "removeUserRole"
+      tags:
+        - "Users"
+      responses:
+        '204':
+          description: "Role removed successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /roles:
+    get:
+      summary: "List roles"
+      description: "Returns a list of roles based on the provided filters."
+      operationId: "listRoles"
+      tags:
+        - "Roles"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          description: "Search term to filter roles by name or description"
+          required: false
+          schema:
+            type: string
+        - name: isSystem
+          in: query
+          description: "Filter by system role status"
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RoleSummary"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+    post:
+      summary: "Create a new role"
+      description: "Creates a new role with the provided details."
+      operationId: "createRole"
+      tags:
+        - "Roles"
+      requestBody:
+        description: "Role details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoleCreate"
+      responses:
+        '201':
+          description: "Role created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /roles/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: "Role ID"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get role by ID"
+      description: "Returns a single role by ID."
+      operationId: "getRole"
+      tags:
+        - "Roles"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: "Update role"
+      description: "Updates an existing role with the provided details."
+      operationId: "updateRole"
+      tags:
+        - "Roles"
+      requestBody:
+        description: "Updated role details"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "Role name"
+                  example: "Content Editor"
+                description:
+                  type: string
+                  description: "Brief description of the role"
+                  example: "Users who can edit content but not publish"
+      responses:
+        '200':
+          description: "Role updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Role"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+    delete:
+      summary: "Delete role"
+      description: "Deletes a role by ID."
+      operationId: "deleteRole"
+      tags:
+        - "Roles"
+      responses:
+        '204':
+          description: "Role deleted successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          description: "Conflict - Role is currently assigned to users"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /roles/{id}/permissions:
+    parameters:
+      - name: id
+        in: path
+        description: "Role ID"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get role permissions"
+      description: "Returns permissions assigned to a role."
+      operationId: "getRolePermissions"
+      tags:
+        - "Roles"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roleId:
+                    type: string
+                    description: "Role ID"
+                    example: "role_123456789"
+                  permissions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PermissionSummary"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    post:
+      summary: "Assign permission to role"
+      description: "Assigns a permission to a role."
+      operationId: "assignRolePermission"
+      tags:
+        - "Roles"
+      requestBody:
+        description: "Permission to assign"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permissionId:
+                  type: string
+                  description: "Permission ID"
+                  example: "perm_123456789"
+              required:
+                - permissionId
+      responses:
+        '200':
+          description: "Permission assigned successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roleId:
+                    type: string
+                    description: "Role ID"
+                    example: "role_123456789"
+                  permissionId:
+                    type: string
+                    description: "Permission ID"
+                    example: "perm_123456789"
+                  message:
+                    type: string
+                    description: "Success message"
+                    example: "Permission assigned successfully"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /roles/{id}/permissions/{permissionId}:
+    parameters:
+      - name: id
+        in: path
+        description: "Role ID"
+        required: true
+        schema:
+          type: string
+      - name: permissionId
+        in: path
+        description: "Permission ID"
+        required: true
+        schema:
+          type: string
+    delete:
+      summary: "Remove permission from role"
+      description: "Removes a permission from a role."
+      operationId: "removeRolePermission"
+      tags:
+        - "Roles"
+      responses:
+        '204':
+          description: "Permission removed successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /permissions:
+    get:
+      summary: "List permissions"
+      description: "Returns a list of permissions based on the provided filters."
+      operationId: "listPermissions"
+      tags:
+        - "Permissions"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          description: "Search term to filter permissions by name or description"
+          required: false
+          schema:
+            type: string
+        - name: resource
+          in: query
+          description: "Filter by resource type"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PermissionSummary"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+    post:
+      summary: "Create a new permission"
+      description: "Creates a new permission with the provided details."
+      operationId: "createPermission"
+      tags:
+        - "Permissions"
+      requestBody:
+        description: "Permission details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PermissionCreate"
+      responses:
+        '201':
+          description: "Permission created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Permission"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /permissions/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: "Permission ID"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get permission by ID"
+      description: "Returns a single permission by ID."
+      operationId: "getPermission"
+      tags:
+        - "Permissions"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Permission"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: "Update permission"
+      description: "Updates an existing permission with the provided details."
+      operationId: "updatePermission"
+      tags:
+        - "Permissions"
+      requestBody:
+        description: "Updated permission details"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "Permission name"
+                  example: "Edit Content"
+                description:
+                  type: string
+                  description: "Brief description of the permission"
+                  example: "Allows users to edit existing content"
+      responses:
+        '200':
+          description: "Permission updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Permission"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+    delete:
+      summary: "Delete permission"
+      description: "Deletes a permission by ID."
+      operationId: "deletePermission"
+      tags:
+        - "Permissions"
+      responses:
+        '204':
+          description: "Permission deleted successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          description: "Conflict - Permission is currently assigned to roles"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /.well-known/jwks.json:
+    get:
+      summary: "Get JSON Web Key Set"
+      description: "Returns the JSON Web Key Set (JWKS) containing the public keys used to verify the JWT tokens."
+      operationId: "getJwks"
+      tags:
+        - "Key Management"
+      security: []  # No authentication required for JWKS
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keys:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kid:
+                          type: string
+                          description: "Key ID"
+                          example: "1"
+                        kty:
+                          type: string
+                          description: "Key type"
+                          example: "RSA"
+                        use:
+                          type: string
+                          description: "Public key use"
+                          example: "sig"
+                        alg:
+                          type: string
+                          description: "Algorithm"
+                          example: "RS256"
+                        n:
+                          type: string
+                          description: "Modulus"
+                          example: "tL6HShqY5H4y56F1BWXYx0qH..."
+                        e:
+                          type: string
+                          description: "Exponent"
+                          example: "AQAB"
+                      required:
+                        - kid
+                        - kty
+                        - use
+                        - alg
+                        - n
+                        - e
+  
+  /health:
+    get:
+      summary: "Health check"
+      description: "Returns the health status of the Authentication Service."
+      operationId: "healthCheck"
+      tags:
+        - "Health"
+      security: []  # No authentication required for health check
+      responses:
+        '200':
+          description: "Service is healthy"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Health status"
+                    enum: ["ok", "warning", "error"]
+                    example: "ok"
+                  version:
+                    type: string
+                    description: "Service version"
+                    example: "1.0.0"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: "Current server time"
+                    example: "2023-01-01T00:00:00Z"
+                required:
+                  - status
+        '503':
+          description: "Service is unhealthy"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: "Health status"
+                    enum: ["ok", "warning", "error"]
+                    example: "error"
+                  details:
+                    type: object
+                    description: "Health check details"
+                    additionalProperties: true
+                  version:
+                    type: string
+                    description: "Service version"
+                    example: "1.0.0"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: "Current server time"
+                    example: "2023-01-01T00:00:00Z"
+                required:
+                  - status
+
+  /metrics:
+    get:
+      summary: "Service metrics"
+      description: "Returns metrics for monitoring the Authentication Service."
+      operationId: "getMetrics"
+      tags:
+        - "Health"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uptime:
+                    type: number
+                    description: "Service uptime in seconds"
+                    example: 86400
+                  memory:
+                    type: object
+                    description: "Memory usage"
+                    properties:
+                      used:
+                        type: number
+                        description: "Used memory in MB"
+                        example: 256
+                      total:
+                        type: number
+                        description: "Total available memory in MB"
+                        example: 1024
+                  requests:
+                    type: object
+                    description: "Request statistics"
+                    properties:
+                      total:
+                        type: integer
+                        description: "Total number of requests"
+                        example: 15000
+                      success:
+                        type: integer
+                        description: "Successful requests"
+                        example: 14850
+                      error:
+                        type: integer
+                        description: "Failed requests"
+                        example: 150
+                  authenticatedUsers:
+                    type: integer
+                    description: "Currently authenticated users"
+                    example: 250
+                  timestamp:
+                    type: string
+                    format: date-time
+                    description: "Metrics collection timestamp"
+                    example: "2023-01-01T00:00:00Z"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+  
+  /service-accounts:
+    get:
+      summary: "List service accounts"
+      description: "Returns a list of service accounts based on the provided filters."
+      operationId: "listServiceAccounts"
+      tags:
+        - "Service Accounts"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          description: "Search term to filter service accounts by name or description"
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: "Filter by status"
+          required: false
+          schema:
+            type: string
+            enum: ["active", "inactive", "revoked"]
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ServiceAccountSummary"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+    post:
+      summary: "Create a new service account"
+      description: "Creates a new service account with the provided details."
+      operationId: "createServiceAccount"
+      tags:
+        - "Service Accounts"
+      requestBody:
+        description: "Service account details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceAccountCreate"
+      responses:
+        '201':
+          description: "Service account created successfully"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ServiceAccount"
+                  - type: object
+                    properties:
+                      apiKey:
+                        type: string
+                        description: "API key (only returned on creation)"
+                        example: "sk_live_12345678901234567890"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /service-accounts/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: "Service Account ID"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get service account by ID"
+      description: "Returns a single service account by ID."
+      operationId: "getServiceAccount"
+      tags:
+        - "Service Accounts"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceAccount"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: "Update service account"
+      description: "Updates an existing service account with the provided details."
+      operationId: "updateServiceAccount"
+      tags:
+        - "Service Accounts"
+      requestBody:
+        description: "Updated service account details"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: "Service account name"
+                  example: "Data Import Service"
+                description:
+                  type: string
+                  description: "Brief description of the service account"
+                  example: "Used for batch data import operations"
+                status:
+                  type: string
+                  description: "Account status"
+                  enum: ["active", "inactive"]
+                  example: "active"
+                metadata:
+                  type: object
+                  description: "Additional metadata"
+                  additionalProperties: true
+      responses:
+        '200':
+          description: "Service account updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceAccount"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    delete:
+      summary: "Delete service account"
+      description: "Deletes a service account by ID."
+      operationId: "deleteServiceAccount"
+      tags:
+        - "Service Accounts"
+      responses:
+        '204':
+          description: "Service account deleted successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /service-accounts/{id}/rotate-key:
+    parameters:
+      - name: id
+        in: path
+        description: "Service Account ID"
+        required: true
+        schema:
+          type: string
+    post:
+      summary: "Rotate API key"
+      description: "Generates a new API key for the service account and invalidates the old one."
+      operationId: "rotateServiceAccountKey"
+      tags:
+        - "Service Accounts"
+      responses:
+        '200':
+          description: "API key rotated successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: "Service Account ID"
+                    example: "sa_123456789"
+                  apiKey:
+                    type: string
+                    description: "New API key"
+                    example: "sk_live_09876543210987654321"
+                  message:
+                    type: string
+                    description: "Success message"
+                    example: "API key rotated successfully. The old key has been invalidated."
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /service-accounts/{id}/revoke-key:
+    parameters:
+      - name: id
+        in: path
+        description: "Service Account ID"
+        required: true
+        schema:
+          type: string
+    post:
+      summary: "Revoke API key"
+      description: "Revokes the API key for the service account."
+      operationId: "revokeServiceAccountKey"
+      tags:
+        - "Service Accounts"
+      responses:
+        '200':
+          description: "API key revoked successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: "Service Account ID"
+                    example: "sa_123456789"
+                  status:
+                    type: string
+                    description: "New status"
+                    example: "revoked"
+                  message:
+                    type: string
+                    description: "Success message"
+                    example: "API key revoked successfully."
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /service-accounts/{id}/roles:
+    parameters:
+      - name: id
+        in: path
+        description: "Service Account ID"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get service account roles"
+      description: "Returns roles assigned to a service account."
+      operationId: "getServiceAccountRoles"
+      tags:
+        - "Service Accounts"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serviceAccountId:
+                    type: string
+                    description: "Service Account ID"
+                    example: "sa_123456789"
+                  roles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RoleSummary"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    post:
+      summary: "Assign role to service account"
+      description: "Assigns a role to a service account."
+      operationId: "assignServiceAccountRole"
+      tags:
+        - "Service Accounts"
+      requestBody:
+        description: "Role to assign"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleId:
+                  type: string
+                  description: "Role ID"
+                  example: "role_123456789"
+              required:
+                - roleId
+      responses:
+        '200':
+          description: "Role assigned successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  serviceAccountId:
+                    type: string
+                    description: "Service Account ID"
+                    example: "sa_123456789"
+                  roleId:
+                    type: string
+                    description: "Role ID"
+                    example: "role_123456789"
+                  message:
+                    type: string
+                    description: "Success message"
+                    example: "Role assigned successfully"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /service-accounts/{id}/roles/{roleId}:
+    parameters:
+      - name: id
+        in: path
+        description: "Service Account ID"
+        required: true
+        schema:
+          type: string
+      - name: roleId
+        in: path
+        description: "Role ID"
+        required: true
+        schema:
+          type: string
+    delete:
+      summary: "Remove role from service account"
+      description: "Removes a role from a service account."
+      operationId: "removeServiceAccountRole"
+      tags:
+        - "Service Accounts"
+      responses:
+        '204':
+          description: "Role removed successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+          
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT token obtained from the authentication service"
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: "API key for service-to-service authentication"
+  
+  responses:
+    BadRequest:
+      description: "Bad Request - The request was malformed or contains invalid parameters"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: "Unauthorized - Authentication is required or failed"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: "Forbidden - The authenticated user lacks permission"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: "Not Found - The requested resource does not exist"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Conflict:
+      description: "Conflict - The request conflicts with the current state"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnprocessableEntity:
+      description: "Unprocessable Entity - The request was well-formed but contains invalid data"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: "Error code"
+              example: "INVALID_CREDENTIALS"
+            message:
+              type: string
+              description: "Human-readable error message"
+              example: "The provided credentials are invalid"
+            details:
+              type: object
+              description: "Additional error details"
+              additionalProperties: true
+            requestId:
+              type: string
+              description: "Unique request identifier for tracing"
+              example: "req-123456789"
+      required:
+        - error
+    
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: "Current page number"
+          example: 1
+        limit:
+          type: integer
+          description: "Items per page"
+          example: 20
+        total:
+          type: integer
+          description: "Total number of items"
+          example: 42
+        pages:
+          type: integer
+          description: "Total number of pages"
+          example: 3
+    
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the user"
+          example: "usr_123456789"
+        username:
+          type: string
+          description: "Username"
+          example: "jsmith"
+        email:
+          type: string
+          format: email
+          description: "Email address"
+          example: "john.smith@example.com"
+        fullName:
+          type: string
+          description: "User's full name"
+          example: "John Smith"
+        status:
+          type: string
+          description: "Account status"
+          enum: ["active", "inactive", "locked", "pending"]
+          example: "active"
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp"
+          example: "2023-01-01T00:00:00Z"
+      required:
+        - id
+        - username
+        - email
+        - status
+        - createdAt
+    
+    User:
+      allOf:
+        - $ref: "#/components/schemas/UserSummary"
+        - type: object
+          properties:
+            phone:
+              type: string
+              description: "Phone number"
+              example: "+1234567890"
+            emailVerified:
+              type: boolean
+              description: "Whether the email is verified"
+              example: true
+            phoneVerified:
+              type: boolean
+              description: "Whether the phone is verified"
+              example: false
+            lastLoginAt:
+              type: string
+              format: date-time
+              description: "Last login timestamp"
+              example: "2023-01-15T00:00:00Z"
+            updatedAt:
+              type: string
+              format: date-time
+              description: "Last update timestamp"
+              example: "2023-01-10T00:00:00Z"
+            metadata:
+              type: object
+              description: "Additional user metadata"
+              additionalProperties: true
+    
+    UserCreate:
+      type: object
+      properties:
+        username:
+          type: string
+          description: "Unique username for the account"
+          example: "jsmith"
+        email:
+          type: string
+          format: email
+          description: "Email address for the account"
+          example: "john.smith@example.com"
+        password:
+          type: string
+          format: password
+          description: "User password (min 8 characters)"
+          example: "Password123!"
+        fullName:
+          type: string
+          description: "User's full name"
+          example: "John Smith"
+        phone:
+          type: string
+          description: "User's phone number (optional)"
+          example: "+1234567890"
+        status:
+          type: string
+          description: "Initial account status"
+          enum: ["active", "inactive", "pending"]
+          default: "pending"
+          example: "active"
+        sendWelcomeEmail:
+          type: boolean
+          description: "Whether to send a welcome email"
+          default: true
+          example: true
+        roleIds:
+          type: array
+          description: "Initial roles to assign"
+          items:
+            type: string
+            example: "role_123456789"
+        metadata:
+          type: object
+          description: "Additional user metadata"
+          additionalProperties: true
+      required:
+        - username
+        - email
+        - password
+    
+    UserUpdate:
+      type: object
+      properties:
+        fullName:
+          type: string
+          description: "User's full name"
+          example: "John Smith"
+        email:
+          type: string
+          format: email
+          description: "Email address for the account"
+          example: "john.smith@example.com"
+        phone:
+          type: string
+          description: "User's phone number"
+          example: "+1234567890"
+        status:
+          type: string
+          description: "Account status"
+          enum: ["active", "inactive", "locked", "pending"]
+          example: "active"
+        password:
+          type: string
+          format: password
+          description: "New password (min 8 characters)"
+          example: "NewPassword123!"
+        metadata:
+          type: object
+          description: "Additional user metadata"
+          additionalProperties: true
+    
+    RoleSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the role"
+          example: "role_123456789"
+        name:
+          type: string
+          description: "Role name"
+          example: "Admin"
+        description:
+          type: string
+          description: "Brief description of the role"
+          example: "System administrators with full access"
+        isSystem:
+          type: boolean
+          description: "Whether this is a system role"
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp"
+          example: "2023-01-01T00:00:00Z"
+      required:
+        - id
+        - name
+        - isSystem
+        - createdAt
+    
+    Role:
+      allOf:
+        - $ref: "#/components/schemas/RoleSummary"
+        - type: object
+          properties:
+            permissionCount:
+              type: integer
+              description: "Number of permissions in this role"
+              example: 12
+            updatedAt:
+              type: string
+              format: date-time
+              description: "Last update timestamp"
+              example: "2023-01-10T00:00:00Z"
+    
+    RoleCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Role name"
+          example: "Content Editor"
+        description:
+          type: string
+          description: "Brief description of the role"
+          example: "Users who can edit content but not publish"
+        permissionIds:
+          type: array
+          description: "Initial permissions to assign"
+          items:
+            type: string
+            example: "perm_123456789"
+        isSystem:
+          type: boolean
+          description: "Whether this is a system role (admin only)"
+          default: false
+          example: false
+      required:
+        - name
+    
+    PermissionSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the permission"
+          example: "perm_123456789"
+        name:
+          type: string
+          description: "Permission name"
+          example: "user:read"
+        description:
+          type: string
+          description: "Brief description of the permission"
+          example: "Allows reading user data"
+        resource:
+          type: string
+          description: "Resource type this permission applies to"
+          example: "user"
+        action:
+          type: string
+          description: "Action type"
+          example: "read"
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp"
+          example: "2023-01-01T00:00:00Z"
+      required:
+        - id
+        - name
+        - resource
+        - action
+        - createdAt
+    
+    Permission:
+      allOf:
+        - $ref: "#/components/schemas/PermissionSummary"
+        - type: object
+          properties:
+            roleCount:
+              type: integer
+              description: "Number of roles using this permission"
+              example: 3
+            updatedAt:
+              type: string
+              format: date-time
+              description: "Last update timestamp"
+              example: "2023-01-10T00:00:00Z"
+            isSystem:
+              type: boolean
+              description: "Whether this is a system permission"
+              example: true
+    
+    PermissionCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Permission name"
+          example: "content:edit"
+        description:
+          type: string
+          description: "Brief description of the permission"
+          example: "Allows editing of content"
+        resource:
+          type: string
+          description: "Resource type this permission applies to"
+          example: "content"
+        action:
+          type: string
+          description: "Action type"
+          example: "edit"
+        isSystem:
+          type: boolean
+          description: "Whether this is a system permission (admin only)"
+          default: false
+          example: false
+      required:
+        - name
+        - resource
+        - action
+    
+    ServiceAccountSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the service account"
+          example: "sa_123456789"
+        name:
+          type: string
+          description: "Service account name"
+          example: "Data Import Service"
+        description:
+          type: string
+          description: "Brief description of the service account"
+          example: "Used for batch data import operations"
+        status:
+          type: string
+          description: "Account status"
+          enum: ["active", "inactive", "revoked"]
+          example: "active"
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp"
+          example: "2023-01-01T00:00:00Z"
+        createdBy:
+          type: string
+          description: "ID of the user who created this service account"
+          example: "usr_123456789"
+      required:
+        - id
+        - name
+        - status
+        - createdAt
+        - createdBy
+    
+    ServiceAccount:
+      allOf:
+        - $ref: "#/components/schemas/ServiceAccountSummary"
+        - type: object
+          properties:
+            lastUsedAt:
+              type: string
+              format: date-time
+              description: "Last activity timestamp"
+              example: "2023-01-15T00:00:00Z"
+            updatedAt:
+              type: string
+              format: date-time
+              description: "Last update timestamp"
+              example: "2023-01-10T00:00:00Z"
+            updatedBy:
+              type: string
+              description: "ID of the user who last updated this service account"
+              example: "usr_123456789"
+            keyLastRotatedAt:
+              type: string
+              format: date-time
+              description: "Timestamp of the last key rotation"
+              example: "2023-01-05T00:00:00Z"
+            metadata:
+              type: object
+              description: "Additional metadata"
+              additionalProperties: true
+    
+    ServiceAccountCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Service account name"
+          example: "Data Import Service"
+        description:
+          type: string
+          description: "Brief description of the service account"
+          example: "Used for batch data import operations"
+        roleIds:
+          type: array
+          description: "Initial roles to assign"
+          items:
+            type: string
+            example: "role_123456789"
+        metadata:
+          type: object
+          description: "Additional metadata"
+          additionalProperties: true
+      required:
+        - name
+        - description
+        - roleIds
+        - metadata 
