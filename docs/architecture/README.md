@@ -23,6 +23,7 @@ This approach creates a system that is both powerful and flexible, while maintai
   * [Auth Service](./components/auth_service/) - Authentication and authorization service
   * [Event Processing Service](./components/event_processing_service/)
   * [Integration Service](./components/integration_service/)
+  * [Observability Service](./components/observability_service/) - Monitoring, logging, and tracing service
   * [Task Execution Layer](./components/task_execution_layer/)
   * [Testing Framework](./components/testing_framework/)
   * [Validation Service](./components/validation_service/)
@@ -55,6 +56,8 @@ This approach creates a system that is both powerful and flexible, while maintai
     * [Test Runs](./schemas/test_runs.md)
     * [Test Case Results](./schemas/test_case_results.md)
   * [UI Components](./schemas/ui_components.md)
+  * [Observability](./schemas/observability/)
+    * [Observability Schema Definitions](./schemas/observability/schema_definitions.md)
 
 ## Purpose
 

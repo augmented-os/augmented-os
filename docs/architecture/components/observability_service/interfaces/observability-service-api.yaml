@@ -1,0 +1,418 @@
+openapi: 3.0.0
+info:
+  title: "Observability Service API"
+  description: "API for the Observability Service, which provides centralized logging, metrics, and tracing capabilities across the Augmented OS platform."
+  version: "1.0.0"
+  contact:
+    name: "Augmented OS API Support"
+    email: "api-support@augmented-os.example.com"
+    url: "https://docs.augmented-os.example.com/support"
+  
+servers:
+  - url: "https://api.augmented-os.example.com/v1/observability"
+    description: "Production API Server"
+  - url: "https://sandbox-api.augmented-os.example.com/v1/observability"
+    description: "Sandbox API Server for testing"
+
+tags:
+  - name: "Logs"
+    description: "Operations for submitting and querying logs"
+  - name: "Metrics"
+    description: "Operations for submitting and querying metrics"
+  - name: "Traces"
+    description: "Operations for submitting and querying distributed traces"
+  - name: "Alerts"
+    description: "Operations for managing alert rules and handling active alerts"
+
+paths:
+  /[resources]:
+    get:
+      summary: "List [resources]"
+      description: "Returns a list of [resources] based on the provided filters."
+      operationId: "list[Resources]"
+      tags:
+        - "[Resource]"
+      parameters:
+        - name: page
+          in: query
+          description: "Page number for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          description: "Search term to filter results"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/[Resource]List"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      summary: "Create a new [resource]"
+      description: "Creates a new [resource] with the provided details."
+      operationId: "create[Resource]"
+      tags:
+        - "[Resource]"
+      requestBody:
+        description: "[Resource] details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/[Resource]Create"
+      responses:
+        '201':
+          description: "[Resource] created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/[Resource]"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '409':
+          $ref: "#/components/responses/Conflict"
+  
+  /[resources]/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: "ID of the [resource]"
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: "Get [resource] by ID"
+      description: "Returns a single [resource] by ID."
+      operationId: "get[Resource]"
+      tags:
+        - "[Resource]"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/[Resource]"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+    put:
+      summary: "Update [resource]"
+      description: "Updates an existing [resource] with the provided details."
+      operationId: "update[Resource]"
+      tags:
+        - "[Resource]"
+      requestBody:
+        description: "Updated [resource] details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/[Resource]Update"
+      responses:
+        '200':
+          description: "[Resource] updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/[Resource]"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+    delete:
+      summary: "Delete [resource]"
+      description: "Deletes a [resource] by ID."
+      operationId: "delete[Resource]"
+      tags:
+        - "[Resource]"
+      responses:
+        '204':
+          description: "[Resource] deleted successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+  
+  /[resources]/{id}/[operation]:
+    parameters:
+      - name: id
+        in: path
+        description: "ID of the [resource]"
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      summary: "Perform [operation] on [resource]"
+      description: "Executes [operation] on the specified [resource]."
+      operationId: "[operation][Resource]"
+      tags:
+        - "[Resource]"
+      requestBody:
+        description: "[Operation] parameters"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/[Operation]Request"
+      responses:
+        '200':
+          description: "[Operation] completed successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/[Operation]Response"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '422':
+          $ref: "#/components/responses/UnprocessableEntity"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT token obtained from the authentication service"
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: "API key for direct access"
+  
+  schemas:
+    "[Resource]":
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Unique identifier for the [resource]"
+        name:
+          type: string
+          description: "Name of the [resource]"
+        description:
+          type: string
+          description: "Description of the [resource]"
+        version:
+          type: string
+          description: "Version of the [resource]"
+        properties:
+          type: object
+          description: "Custom properties of the [resource]"
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+          description: "Creation timestamp"
+        updatedAt:
+          type: string
+          format: date-time
+          description: "Last update timestamp"
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+    
+    "[Resource]Create":
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Name of the [resource]"
+        description:
+          type: string
+          description: "Description of the [resource]"
+        properties:
+          type: object
+          description: "Custom properties of the [resource]"
+          additionalProperties: true
+      required:
+        - name
+    
+    "[Resource]Update":
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Name of the [resource]"
+        description:
+          type: string
+          description: "Description of the [resource]"
+        properties:
+          type: object
+          description: "Custom properties of the [resource]"
+          additionalProperties: true
+    
+    "[Resource]List":
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/[Resource]"
+        pagination:
+          type: object
+          properties:
+            page:
+              type: integer
+              description: "Current page number"
+            limit:
+              type: integer
+              description: "Items per page"
+            total:
+              type: integer
+              description: "Total number of items"
+            pages:
+              type: integer
+              description: "Total number of pages"
+    
+    "[Operation]Request":
+      type: object
+      properties:
+        parameter1:
+          type: string
+          description: "First parameter for the operation"
+        parameter2:
+          type: string
+          description: "Second parameter for the operation"
+      required:
+        - parameter1
+    
+    "[Operation]Response":
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "ID of the affected [resource]"
+        status:
+          type: string
+          description: "Status of the operation"
+        updatedAt:
+          type: string
+          format: date-time
+          description: "Timestamp of the operation"
+        result:
+          type: object
+          description: "Result of the operation"
+          properties:
+            resultField1:
+              type: string
+              description: "First result field"
+            resultField2:
+              type: string
+              description: "Second result field"
+    
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: "Error code"
+            message:
+              type: string
+              description: "Human-readable error message"
+            details:
+              type: object
+              additionalProperties: true
+              description: "Additional error details"
+            requestId:
+              type: string
+              description: "Request ID for tracking"
+  
+  responses:
+    BadRequest:
+      description: "Bad request - request validation failed"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: "Unauthorized - missing or invalid authentication"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: "Forbidden - insufficient permissions"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: "Not found - resource does not exist"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Conflict:
+      description: "Conflict - resource already exists or version conflict"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    UnprocessableEntity:
+      description: "Unprocessable entity - request is valid but cannot be processed"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    TooManyRequests:
+      description: "Too many requests - rate limit exceeded"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+      headers:
+        X-RateLimit-Limit:
+          schema:
+            type: integer
+          description: "Rate limit ceiling"
+        X-RateLimit-Remaining:
+          schema:
+            type: integer
+          description: "Number of requests left for the time window"
+        X-RateLimit-Reset:
+          schema:
+            type: integer
+            format: unix-time
+          description: "The time at which the rate limit resets"
+
+security:
+  - bearerAuth: []
+  - apiKey: [] 
