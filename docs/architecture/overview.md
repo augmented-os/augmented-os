@@ -46,6 +46,7 @@ These are the functional parts of the system that perform work:
 * **[Validation Service](./components/validation_service/overview.md)** - Enforces schema validation across the system
 * **[Testing Framework](./components/testing_framework/overview.md)** - Provides testing capabilities for system components
 * **[Authentication Service](./components/auth_service/overview.md)** - Provides centralized user authentication, authorization, and token management
+* **[Observability Service](./components/observability_service/overview.md)** - Provides centralized logging, metrics, and tracing capabilities across the platform
 
 ### Data Schemas
 
