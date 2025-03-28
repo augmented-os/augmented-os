@@ -221,4 +221,6 @@ For Users schema, consider these performance optimizations:
 * [Authentication Service](../components/auth_service/README.md) - Service handling user authentication
 * [Roles Schema](./roles.md) - Documentation for user roles
 * [Permissions Schema](./permissions.md) - Documentation for permissions
-* [Database Architecture](../database_architecture.md) - Overall database architecture 
+* [Database Architecture](../database_architecture.md) - Overall database architecture
+
+

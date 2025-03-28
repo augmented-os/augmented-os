@@ -6,6 +6,7 @@ This document provides examples of how to implement Role-Based Access Control (R
 
 The Authentication Service implements a comprehensive RBAC system that includes:
 
+
 1. **Users**: Entities that authenticate and perform actions
 2. **Roles**: Named collections of permissions assigned to users
 3. **Permissions**: Granular access rights to resources and actions
@@ -20,10 +21,10 @@ The Auth Service uses a role-based model with permission inheritance:
 User → Roles → Permissions → Resources + Actions
 ```
 
-- A user can have multiple roles
-- A role contains multiple permissions
-- A permission defines allowed actions on specific resources
-- Access decisions are made by checking if a user has a role with the required permission
+* A user can have multiple roles
+* A role contains multiple permissions
+* A permission defines allowed actions on specific resources
+* Access decisions are made by checking if a user has a role with the required permission
 
 ## Role Management Examples
 
@@ -525,30 +526,27 @@ The `senior_editor` role will have all its own permissions plus those from the `
 
 ## Best Practices
 
+
 1. **Design permissions around resources and actions**:
-   - Use the format `resource:action` (e.g., `content:read`)
-   - Group related permissions into roles
-   - Create fine-grained permissions that can be combined flexibly
-
+   * Use the format `resource:action` (e.g., `content:read`)
+   * Group related permissions into roles
+   * Create fine-grained permissions that can be combined flexibly
 2. **Implement least privilege principle**:
-   - Assign users the minimum roles needed for their job
-   - Avoid giving admin roles when more specific roles would suffice
-   - Regularly audit role assignments
-
+   * Assign users the minimum roles needed for their job
+   * Avoid giving admin roles when more specific roles would suffice
+   * Regularly audit role assignments
 3. **Validate permissions on both client and server**:
-   - Never rely solely on client-side permission checks
-   - Implement server-side validation for all protected operations
-   - Use UI permission checks to improve user experience
-
+   * Never rely solely on client-side permission checks
+   * Implement server-side validation for all protected operations
+   * Use UI permission checks to improve user experience
 4. **Cache permission checks efficiently**:
-   - Include permissions and roles in the JWT token
-   - Cache JWKS responses to reduce network calls
-   - Consider application-level permission caching for high-frequency checks
-
+   * Include permissions and roles in the JWT token
+   * Cache JWKS responses to reduce network calls
+   * Consider application-level permission caching for high-frequency checks
 5. **Implement proper auditing**:
-   - Log all permission and role changes
-   - Record access denials for security analysis
-   - Regularly review access patterns
+   * Log all permission and role changes
+   * Record access denials for security analysis
+   * Regularly review access patterns
 
 ## Related Documentation
 
@@ -558,4 +556,6 @@ The `senior_editor` role will have all its own permissions plus those from the `
 * [Token Service Implementation](../implementation/token_service.md)
 * [Security Considerations](../security_considerations.md)
 * [Basic Authentication Example](./basic_authentication.md)
-* [Token Validation Example](./token_validation.md) 
+* [Token Validation Example](./token_validation.md)
+
+

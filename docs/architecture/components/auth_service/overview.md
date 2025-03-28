@@ -61,4 +61,6 @@ The service exposes the following primary interfaces:
 * [API Reference](./interfaces/api.md)
 * [Token Service Implementation](./implementation/token_service.md)
 * [Operations Guide](./operations/monitoring.md)
-* [Web Application Security Model](../web_application/technical_architecture/security_model.md) 
+* [Web Application Security Model](../web_application/technical_architecture/security_model.md)
+
+

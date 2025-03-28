@@ -18,6 +18,7 @@ The Token Service is a core component of the Auth Service responsible for managi
 The Token Service follows these design principles:
 
 
+
 1. **Stateless Validation** - Tokens contain all necessary information for validation without requiring additional database lookups
 2. **Defense in Depth** - Multiple security layers including signature verification, claims validation, and optional blacklisting
 3. **Key Rotation** - Regular cryptographic key rotation without service disruption
@@ -86,6 +87,8 @@ interface RefreshToken {
 ### Token Generation
 
 Access tokens are generated through a secure process that includes:
+
+
 
 
 1. Retrieving user information, roles, and permissions

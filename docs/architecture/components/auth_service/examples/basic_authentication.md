@@ -6,6 +6,7 @@ This document provides a simple example of how to use the Authentication Service
 
 The following example illustrates a basic authentication flow that:
 
+
 1. Registers a new user account
 2. Logs in with the new account credentials
 3. Accesses a protected resource using the JWT token
@@ -272,7 +273,7 @@ except Exception as e:
 ## Common Errors and Troubleshooting
 
 | Error Code | Description | Solution |
-|------------|-------------|----------|
+|----|----|----|
 | `AUTH_001` | Invalid credentials | Check that the email and password are correct |
 | `AUTH_002` | Account not verified | Verify your email address by clicking the link in the verification email |
 | `AUTH_003` | Account locked | Contact support or wait for the lockout period to end (typically 15 minutes) |
@@ -283,24 +284,24 @@ except Exception as e:
 
 ## Security Best Practices
 
+
 1. **Store tokens securely**:
-   - In browser applications, use HttpOnly cookies or secure storage (not localStorage)
-   - In mobile applications, use secure storage mechanisms specific to the platform
-   - In server applications, use secure environment variables or secret management systems
-
+   * In browser applications, use HttpOnly cookies or secure storage (not localStorage)
+   * In mobile applications, use secure storage mechanisms specific to the platform
+   * In server applications, use secure environment variables or secret management systems
 2. **Handle token expiration gracefully**:
-   - Implement automatic token refresh
-   - Redirect to login when refresh tokens expire
-   - Consider silent authentication for better UX
-
+   * Implement automatic token refresh
+   * Redirect to login when refresh tokens expire
+   * Consider silent authentication for better UX
 3. **Protect against common attacks**:
-   - Implement CSRF protection when using cookies
-   - Set appropriate CORS headers on the server
-   - Use TLS for all API communications
+   * Implement CSRF protection when using cookies
+   * Set appropriate CORS headers on the server
+   * Use TLS for all API communications
 
 ## Next Steps
 
 Once you've implemented basic authentication, consider:
+
 
 1. [Adding Multi-Factor Authentication](./mfa_authentication.md)
 2. [Implementing Service-to-Service Authentication](./service_to_service_auth.md)
@@ -313,4 +314,6 @@ Once you've implemented basic authentication, consider:
 * [Auth Service API Reference](../interfaces/api.md)
 * [Authentication Provider Implementation](../implementation/auth_provider.md)
 * [Token Service Implementation](../implementation/token_service.md)
-* [Security Considerations](../security_considerations.md) 
+* [Security Considerations](../security_considerations.md)
+
+

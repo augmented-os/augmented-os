@@ -171,7 +171,7 @@ class WorkflowExecutor {
 Key metrics from the Workflow Orchestrator sent to the Observability Service:
 
 | Metric Name | Type | Description |
-|-------------|------|-------------|
+|----|----|----|
 | `workflow_orchestrator_workflow_started_total` | Counter | Total workflows started, tagged by workflow name and version |
 | `workflow_orchestrator_workflow_completed_total` | Counter | Completed workflows, tagged by workflow name and status (success/failure) |
 | `workflow_orchestrator_workflow_duration_ms` | Histogram | Workflow execution duration |
@@ -334,6 +334,7 @@ class TracedWorkflowExecutor {
 
 The Observability Service provides specialized visualizations for workflow execution:
 
+
 1. **Workflow DAG Visualization**: Renders workflow execution as a directed acyclic graph
 2. **Step Timeline View**: Shows step execution in a Gantt chart-like timeline
 3. **Service Dependency View**: Maps which services a workflow interacts with
@@ -359,6 +360,7 @@ The Workflow Orchestrator has pre-configured dashboards and alerts in the Observ
 
 ### Dashboards
 
+
 1. **Workflow Orchestrator Overview** - General service health and performance
 2. **Workflow Execution Analytics** - Success rates, durations, and throughput by workflow type
 3. **Workflow Step Performance** - Detailed view of step execution time and errors
@@ -368,7 +370,7 @@ The Workflow Orchestrator has pre-configured dashboards and alerts in the Observ
 ### Pre-configured Alerts
 
 | Alert Name | Description | Severity | Notification Channels |
-|------------|-------------|----------|----------------------|
+|----|----|----|----|
 | Workflow Orchestrator Service Down | Triggers when service is unreachable | Critical | Slack, PagerDuty |
 | Workflow Success Rate Low | Triggers when workflow failure rate exceeds threshold | Warning | Slack |
 | Workflow Execution Time High | Triggers when workflows exceed expected execution time | Warning | Slack |
@@ -382,4 +384,6 @@ The Workflow Orchestrator has pre-configured dashboards and alerts in the Observ
 * [Workflow Monitoring](./monitoring.md)
 * [Workflow Definition Guide](../workflow_definition.md)
 * [Observability Service Overview](../../observability_service/overview.md)
-* [Observability Schema Definitions](../../../schemas/observability/schema_definitions.md) 
+* [Observability Schema Definitions](../../../schemas/observability/schema_definitions.md)
+
+

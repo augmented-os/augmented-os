@@ -6,6 +6,7 @@ This document provides examples of how to implement service-to-service authentic
 
 The following example illustrates how to implement the client credentials flow for service-to-service authentication:
 
+
 1. Register a service account with appropriate scopes
 2. Obtain an access token using client credentials
 3. Use the token to access protected resources on another service
@@ -104,6 +105,7 @@ curl -X GET https://api.example.com/workflow-service/workflows/active \
 ## Token Validation
 
 When a service receives a request with a JWT token, it should validate the token without making a request to the Auth Service:
+
 
 1. Fetch the JSON Web Key Set (JWKS) from the Auth Service (and cache it)
 2. Validate the token signature using the appropriate public key
@@ -460,7 +462,7 @@ if __name__ == "__main__":
 ## Common Errors and Troubleshooting
 
 | Error Code | Description | Solution |
-|------------|-------------|----------|
+|----|----|----|
 | `AUTH_101` | Invalid client credentials | Verify client ID and secret are correct |
 | `AUTH_102` | Insufficient scope | Request the required scopes during token acquisition |
 | `AUTH_103` | Service account disabled | Contact administrator to re-enable the service account |
@@ -471,35 +473,33 @@ if __name__ == "__main__":
 
 ## Security Best Practices
 
+
 1. **Protect client secrets**:
-   - Store secrets in secure environment variables or secret management systems
-   - Never commit secrets to code repositories
-   - Rotate secrets periodically
-
+   * Store secrets in secure environment variables or secret management systems
+   * Never commit secrets to code repositories
+   * Rotate secrets periodically
 2. **Limit service account permissions**:
-   - Use the principle of least privilege when assigning scopes
-   - Restrict allowed IP addresses when possible
-   - Create separate service accounts for different microservices
-
+   * Use the principle of least privilege when assigning scopes
+   * Restrict allowed IP addresses when possible
+   * Create separate service accounts for different microservices
 3. **Implement proper token validation**:
-   - Always validate token signatures
-   - Verify expiration time (exp), not before time (nbf)
-   - Check issuer (iss) and audience (aud) claims
-   - Validate required scopes for specific endpoints
-
+   * Always validate token signatures
+   * Verify expiration time (exp), not before time (nbf)
+   * Check issuer (iss) and audience (aud) claims
+   * Validate required scopes for specific endpoints
 4. **Token handling**:
-   - Cache tokens until they expire to reduce authentication requests
-   - Implement automatic token refresh to handle expiration
-   - Set reasonable token lifetimes (typically shorter than user tokens)
-
+   * Cache tokens until they expire to reduce authentication requests
+   * Implement automatic token refresh to handle expiration
+   * Set reasonable token lifetimes (typically shorter than user tokens)
 5. **Monitor and audit**:
-   - Log all authentication attempts (both successful and failed)
-   - Alert on suspicious activities (multiple failed attempts, unusual request patterns)
-   - Periodically review service account usage patterns
+   * Log all authentication attempts (both successful and failed)
+   * Alert on suspicious activities (multiple failed attempts, unusual request patterns)
+   * Periodically review service account usage patterns
 
 ## Next Steps
 
 Once you've implemented service-to-service authentication, consider:
+
 
 1. [Implementing Token Validation in API Gateways](./token_validation.md)
 2. [Adding Mutual TLS (mTLS) for Additional Security](./mtls_authentication.md)
@@ -511,4 +511,6 @@ Once you've implemented service-to-service authentication, consider:
 * [Auth Service API Reference](../interfaces/api.md)
 * [Token Service Implementation](../implementation/token_service.md)
 * [Key Manager Implementation](../implementation/key_manager.md)
-* [Security Considerations](../security_considerations.md) 
+* [Security Considerations](../security_considerations.md)
+
+

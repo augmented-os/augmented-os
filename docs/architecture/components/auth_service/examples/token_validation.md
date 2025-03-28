@@ -6,6 +6,7 @@ This document provides examples of how microservices and applications can valida
 
 The following example illustrates how to properly validate tokens in your services:
 
+
 1. Fetch and cache the JSON Web Key Set (JWKS) from the Auth Service
 2. Extract the token from the Authorization header
 3. Verify the token signature using the appropriate public key
@@ -526,7 +527,7 @@ plugins:
 ## Common Errors and Troubleshooting
 
 | Error | Description | Solution |
-|-------|-------------|----------|
+|----|----|----|
 | Invalid signature | Token signature verification failed | Ensure you're using the correct public key from JWKS; check if keys were rotated |
 | Token expired | The token's exp claim indicates it has expired | Refresh the token or require the user to authenticate again |
 | Invalid issuer | The iss claim doesn't match the expected value | Configure validator with the correct issuer value, matching the Auth Service |
@@ -537,42 +538,39 @@ plugins:
 
 ## Performance Considerations
 
+
 1. **Cache JWKS responses**:
-   - Minimize network calls to the JWKS endpoint
-   - Set a reasonable cache duration (e.g., 24 hours)
-   - Implement a background refresh before expiration
-
+   * Minimize network calls to the JWKS endpoint
+   * Set a reasonable cache duration (e.g., 24 hours)
+   * Implement a background refresh before expiration
 2. **Token validation optimization**:
-   - Use efficient JWT libraries with caching capabilities
-   - Consider hardware acceleration for cryptographic operations in high-volume systems
-   - Structure your code to avoid redundant token validations
-
+   * Use efficient JWT libraries with caching capabilities
+   * Consider hardware acceleration for cryptographic operations in high-volume systems
+   * Structure your code to avoid redundant token validations
 3. **Gateway-level validation**:
-   - Validate tokens at the API gateway when possible
-   - Pass validated claims to backend services in headers
-   - Reduce computational overhead on individual services
+   * Validate tokens at the API gateway when possible
+   * Pass validated claims to backend services in headers
+   * Reduce computational overhead on individual services
 
 ## Security Best Practices
 
+
 1. **Always verify signatures**:
-   - Never accept tokens without cryptographic verification
-   - Use libraries that properly implement JWT standards
-
+   * Never accept tokens without cryptographic verification
+   * Use libraries that properly implement JWT standards
 2. **Validate all relevant claims**:
-   - Verify expiration (exp)
-   - Verify not-before (nbf)
-   - Verify issuer (iss)
-   - Verify audience (aud)
-
+   * Verify expiration (exp)
+   * Verify not-before (nbf)
+   * Verify issuer (iss)
+   * Verify audience (aud)
 3. **Prevent token leaks**:
-   - Transmit tokens only over HTTPS
-   - Never log full tokens
-   - Set appropriate token lifetimes
-
+   * Transmit tokens only over HTTPS
+   * Never log full tokens
+   * Set appropriate token lifetimes
 4. **Implement proper error handling**:
-   - Don't expose detailed validation errors to clients
-   - Log validation failures for security monitoring
-   - Return generic 401/403 errors to prevent information disclosure
+   * Don't expose detailed validation errors to clients
+   * Log validation failures for security monitoring
+   * Return generic 401/403 errors to prevent information disclosure
 
 ## Related Documentation
 
@@ -581,4 +579,6 @@ plugins:
 * [Token Service Implementation](../implementation/token_service.md)
 * [Key Manager Implementation](../implementation/key_manager.md)
 * [Service-to-Service Authentication](./service_to_service_auth.md)
-* [Role-Based Access Control](./role_based_access.md) 
+* [Role-Based Access Control](./role_based_access.md)
+
+

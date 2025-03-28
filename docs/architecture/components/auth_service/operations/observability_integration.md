@@ -91,11 +91,11 @@ try {
 
 All metrics listed in the [Monitoring Guidelines](./monitoring.md) are automatically collected and sent to the Observability Service. This includes:
 
-- Authentication metrics (login attempts, success/failure rates)
-- Token management metrics
-- User management metrics
-- Database metrics
-- External service metrics
+* Authentication metrics (login attempts, success/failure rates)
+* Token management metrics
+* User management metrics
+* Database metrics
+* External service metrics
 
 ### Example Metrics Integration
 
@@ -158,9 +158,9 @@ async function handleLogin(req, res) {
 
 The Auth Service implements distributed tracing to track requests across service boundaries. This is particularly important for operations like:
 
-- Social authentication flows involving external providers
-- Complex permission checks involving multiple services
-- User provisioning workflows across systems
+* Social authentication flows involving external providers
+* Complex permission checks involving multiple services
+* User provisioning workflows across systems
 
 ### Example Tracing Integration
 
@@ -232,6 +232,7 @@ async function validateToken(token, req) {
 
 The Auth Service has pre-configured dashboards and alerts in the Observability Service:
 
+
 1. **Auth Service Dashboard** - Shows key metrics, logs, and traces in a unified view
 2. **Auth Service Security Dashboard** - Focused on security-related metrics and anomalies
 3. **Auth Service SLA Dashboard** - Tracks performance against service level agreements
@@ -239,7 +240,7 @@ The Auth Service has pre-configured dashboards and alerts in the Observability S
 ### Pre-Configured Alerts
 
 | Alert Name | Description | Severity | Notification Channels |
-|------------|-------------|----------|----------------------|
+|----|----|----|----|
 | Auth Service High Login Failure Rate | Triggers when login failures exceed 20% over 5 minutes | Critical | Slack, PagerDuty |
 | Auth Service Latency | Triggers when P95 login time exceeds 500ms | Warning | Slack |
 | Auth Service Error Rate | Triggers when error rate exceeds 1% of requests | Warning | Slack |
@@ -250,4 +251,6 @@ The Auth Service has pre-configured dashboards and alerts in the Observability S
 * [Monitoring Guidelines](./monitoring.md)
 * [Observability Service Overview](../../observability_service/overview.md)
 * [Observability Service Integration Examples](../../observability_service/examples/service_integration.md)
-* [Observability Schema Definitions](../../../schemas/observability/schema_definitions.md) 
+* [Observability Schema Definitions](../../../schemas/observability/schema_definitions.md)
+
+
