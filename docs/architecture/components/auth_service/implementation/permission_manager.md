@@ -456,9 +456,9 @@ The Permission Manager implements a comprehensive caching strategy:
 * [Token Service](./token_service.md)
 * [Security Considerations](../security_considerations.md)
 * [API Documentation](../interfaces/api.md)
-* [Roles Schema](../../schemas/roles.md)
-* [Permissions Schema](../../schemas/permissions.md)
-* [Web Application Security Model](../../web_application/technical_architecture/security_model.md)
+* [Roles Schema](./schemas/roles.md)
+* [Permissions Schema](./schemas/permissions.md)
+* [Web Application Service Security Model](../../web_application_service/technical_architecture/security_model.md)
 * [Validation Service Configuration](../../validation_service/operations/configuration.md)
 
 ## Summary

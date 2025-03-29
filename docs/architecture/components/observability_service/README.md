@@ -52,8 +52,8 @@ The `examples/` directory provides practical usage examples:
 ## Related Components
 
 * [Event Processing Service](../event_processing_service/)
-* [Web Application](../web_application/) (Dashboard component)
+* [Web Application Service](../web_application_service/) (Dashboard component)
 * [Integration Service](../integration_service/)
-* [Task Execution Layer](../task_execution_layer/)
+* [Task Execution Service](../task_execution_service/)
 
 

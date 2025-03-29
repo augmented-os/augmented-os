@@ -461,8 +461,8 @@ The Authentication Provider works in both traditional hosted environments and se
 * [Token Service](./token_service.md)
 * [User Manager](./user_manager.md)
 * [Security Considerations](../security_considerations.md)
-* [Web Application Security Model](../../web_application/technical_architecture/security_model.md)
-* [Web Application API Integration](../../web_application/technical_architecture/api_integration.md)
+* [Web Application Service Security Model](../../web_application_service/technical_architecture/security_model.md)
+* [Web Application Service API Integration](../../web_application_service/technical_architecture/api_integration.md)
 * [Validation Service Security Configuration](../../validation_service/operations/configuration.md)
 
 ## Summary

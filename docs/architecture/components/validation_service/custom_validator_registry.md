@@ -14,7 +14,7 @@ The Custom Validator Registry provides a mechanism for registering, managing, an
 * **Secure Execution**: Sandboxed execution environment for validators
 * **Performance Optimization**: Compiled and cached validators
 * **Reusability**: Share validators across multiple schemas
-* **Testing Framework**: Tools for testing custom validators
+* **Testing Framework Service**: Tools for testing custom validators
 
 ## Architecture
 

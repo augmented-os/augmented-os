@@ -505,7 +505,7 @@ function handleValidatorRegistryError(error: unknown): HttpResponse {
 }
 ```
 
-## Testing Framework
+## Testing Framework Service
 
 The Custom Validator Registry provides a testing framework for validators:
 

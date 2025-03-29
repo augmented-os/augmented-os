@@ -22,7 +22,7 @@ The Observability Service publishes the following events to the event bus:
 |------------|-------------|----------------|-----------|
 | `observability.alert.fired` | Published when an alert transitions to firing state | [Alert Fired Schema](#alert-fired) | Event Processing Service, Notification Service |
 | `observability.alert.resolved` | Published when an alert transitions to resolved state | [Alert Resolved Schema](#alert-resolved) | Event Processing Service, Notification Service |
-| `observability.service.health_changed` | Published when a service's health status changes | [Health Changed Schema](#health-changed) | Service Registry, Web Application |
+| `observability.service.health_changed` | Published when a service's health status changes | [Health Changed Schema](#health-changed) | Service Registry, Web Application Service |
 | `observability.metrics.threshold_breach` | Published when a metric exceeds a defined threshold | [Threshold Breach Schema](#threshold-breach) | Event Processing Service |
 
 ### Subscribed Events
@@ -56,8 +56,8 @@ The Observability Service exposes the following internal endpoints for other ser
 | Endpoint | Purpose | Callers | Authentication |
 |----------|---------|---------|---------------|
 | `GET /api/v1/internal/health/services` | Get health status of all services | Service Registry | Service API key |
-| `GET /api/v1/internal/metrics/summary` | Get summary metrics for services | Web Application | Service API key |
-| `POST /api/v1/internal/alerts/acknowledge` | Acknowledge alerts | Web Application, Event Processing | Service API key |
+| `GET /api/v1/internal/metrics/summary` | Get summary metrics for services | Web Application Service | Service API key |
+| `POST /api/v1/internal/alerts/acknowledge` | Acknowledge alerts | Web Application Service, Event Processing | Service API key |
 | `GET /api/v1/internal/config/status` | Check monitoring configuration status | Admin Service | Service API key |
 
 ## Shared Storage Access

@@ -8,6 +8,7 @@ This document describes the configuration options for the Authentication Service
 
 The Authentication Service can be configured using the following methods (in order of precedence):
 
+
 1. **Environment Variables**: Highest precedence, override all other settings
 2. **Configuration Files**: JSON or YAML files for detailed configuration
 3. **Command Line Arguments**: Used during service startup
@@ -304,15 +305,16 @@ The Authentication Service supports the following runtime configuration changes 
 
 ## Configuration Best Practices
 
-1. **Use environment variables for deployment-specific settings**: This allows the same container image to be deployed across environments
-2. **Use secret management for sensitive values**: Never store secrets in configuration files or environment variables directly
-3. **Rotate cryptographic keys regularly**: Configure automated key rotation with appropriate overlap periods
-4. **Implement strict password policies in production**: Use higher minimum length and complexity requirements
-5. **Enable MFA in production**: Consider requiring MFA for privileged accounts
-6. **Adjust token lifetimes based on security requirements**: Shorter lifetimes for access tokens improve security
-7. **Configure appropriate rate limiting**: Protect against brute force and denial of service attacks
-8. **Enable TLS for all connections**: Database, Redis, and all other service connections should use TLS
-9. **Monitor configuration changes**: Enable audit logging for all configuration changes
+
+ 1. **Use environment variables for deployment-specific settings**: This allows the same container image to be deployed across environments
+ 2. **Use secret management for sensitive values**: Never store secrets in configuration files or environment variables directly
+ 3. **Rotate cryptographic keys regularly**: Configure automated key rotation with appropriate overlap periods
+ 4. **Implement strict password policies in production**: Use higher minimum length and complexity requirements
+ 5. **Enable MFA in production**: Consider requiring MFA for privileged accounts
+ 6. **Adjust token lifetimes based on security requirements**: Shorter lifetimes for access tokens improve security
+ 7. **Configure appropriate rate limiting**: Protect against brute force and denial of service attacks
+ 8. **Enable TLS for all connections**: Database, Redis, and all other service connections should use TLS
+ 9. **Monitor configuration changes**: Enable audit logging for all configuration changes
 10. **Validate configuration on startup**: The service validates all configuration on startup and fails fast if required settings are missing
 
 ## Related Documentation
@@ -322,4 +324,6 @@ The Authentication Service supports the following runtime configuration changes 
 * [Security Considerations](../security_considerations.md)
 * [Auth Provider](../implementation/auth_provider.md)
 * [Key Manager](../implementation/key_manager.md)
-* [Token Service](../implementation/token_service.md) 
+* [Token Service](../implementation/token_service.md)
+
+

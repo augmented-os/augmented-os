@@ -543,7 +543,7 @@ https://api.example.com/event-service/v1/events
 
 * [OpenAPI Specification](./event-processing-service-api.yaml)
 * [Internal Interfaces](./internal.md)
-* [Event Definitions Schema](../../schemas/event_definitions.md)
-* [Event Instances Schema](../../schemas/event_instances.md)
+* [Event Definitions Schema](./schemas/event_definitions.md)
+* [Event Instances Schema](./schemas/event_instances.md)
 
 

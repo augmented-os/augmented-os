@@ -51,7 +51,7 @@ The `examples/` directory provides practical usage examples:
 
 ## Related Components
 
-* [Task Execution Layer](../task_execution_layer/)
+* [Task Execution Service](../task_execution_service/)
 * [Event Processing Service](../event_processing_service/)
 * [Workflow Orchestrator](../workflow_orchestrator/)
 

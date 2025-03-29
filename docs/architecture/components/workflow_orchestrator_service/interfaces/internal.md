@@ -4,9 +4,9 @@
 
 This document describes the internal interfaces that the Workflow Orchestrator Service uses to communicate with other system components. These interfaces are not exposed to external clients but are essential for the service's operation.
 
-## Task Execution Layer Interface
+## Task Execution Service Interface
 
-The Workflow Orchestrator Service communicates with the Task Execution Layer to execute individual workflow steps.
+The Workflow Orchestrator Service communicates with the Task Execution Service to execute individual workflow steps.
 
 ### Task Execution Request
 

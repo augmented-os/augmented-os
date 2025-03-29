@@ -4,9 +4,9 @@
 
 The Workflow Orchestrator Service primarily interacts with these data schemas:
 
-* [Workflows Schema](../../schemas/workflows.md): For workflow definitions and instances
-* [Tasks Schema](../../schemas/tasks.md): For task definitions and instances
-* [Events Schema](../../schemas/events.md): For event processing
+* [Workflows Schema](./schemas/workflows.md): For workflow definitions and instances
+* [Tasks Schema](./schemas/tasks.md): For task definitions and instances
+* [Events Schema](./schemas/events.md): For event processing
 
 This document focuses on how the Workflow Orchestrator component specifically implements and extends the canonical schemas defined in the links above. For complete schema definitions, please refer to the linked documentation.
 
@@ -157,7 +157,7 @@ The Workflow Orchestrator uses the following strategies to optimize database acc
 ## Related Documentation
 
 * [Database Architecture](../../database_architecture.md)
-* [Workflows Schema](../../schemas/workflows.md)
+* [Workflows Schema](./schemas/workflows.md)
 * [Implementation: Database Optimization](./implementation/database_optimization.md)
 
 
