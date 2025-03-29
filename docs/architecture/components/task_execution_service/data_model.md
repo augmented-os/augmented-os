@@ -1,8 +1,8 @@
-# Task Execution Layer Data Model
+# Task Execution Service Data Model
 
 ## Overview
 
-The Task Execution Layer Service primarily interacts with these data schemas:
+The Task Execution Service Service primarily interacts with these data schemas:
 
 <!-- List the primary schemas used by this component and link to their canonical definitions -->
 
@@ -10,15 +10,15 @@ The Task Execution Layer Service primarily interacts with these data schemas:
 * [Workflows Schema](../../schemas/workflows.md): For workflow context and relationships
 * [Integration Schema](../../schemas/integrations.md): For integration task configurations
 
-This document focuses on how the Task Execution Layer component specifically implements and extends the canonical schemas defined in the links above. For complete schema definitions, please refer to the linked documentation.
+This document focuses on how the Task Execution Service component specifically implements and extends the canonical schemas defined in the links above. For complete schema definitions, please refer to the linked documentation.
 
-## Task Execution Layer Implementation Details
+## Task Execution Service Implementation Details
 
-The Task Execution Layer extends the canonical schemas with additional implementation-specific structures and optimizations to support efficient task execution.
+The Task Execution Service extends the canonical schemas with additional implementation-specific structures and optimizations to support efficient task execution.
 
 ### Task Instance State Management
 
-The Task Execution Layer maintains detailed state information for each task instance:
+The Task Execution Service maintains detailed state information for each task instance:
 
 ```typescript
 interface TaskInstance {
@@ -85,7 +85,7 @@ interface RetryPolicy {
 
 ### Task Definition Structure
 
-The Task Execution Layer uses the following structure for task definitions:
+The Task Execution Service uses the following structure for task definitions:
 
 ```typescript
 interface TaskDefinition {
@@ -126,7 +126,8 @@ interface ResourceRequirements {
 ## Database Optimization
 
 <!-- Describe any specific database optimizations or patterns -->
-The Task Execution Layer implements the following database optimizations:
+The Task Execution Service implements the following database optimizations:
+
 
 1. **Task Status Indexing** - Indexes on task status for efficient querying of tasks by state
 2. **Composite Indexes** - Composite indexes on workflowInstanceId + status for efficient workflow-related queries
@@ -141,4 +142,6 @@ The Task Execution Layer implements the following database optimizations:
 * [Tasks Schema](../../schemas/tasks.md)
 * [Workflows Schema](../../schemas/workflows.md)
 * [Integration Schema](../../schemas/integrations.md)
-* [Task Router Implementation](./implementation/task_router.md) 
+* [Task Router Implementation](./implementation/task_router.md)
+
+

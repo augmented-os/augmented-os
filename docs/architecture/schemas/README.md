@@ -50,7 +50,7 @@ Please refer to the [Database Architecture](../database_architecture.md) documen
 Each data schema is used by one or more system components:
 
 - **Events** → Used by the [Event Processing Service](../components/event_processing_service/README.md)
-- **Tasks** → Used by the [Task Execution Layer](../components/task_execution_layer/README.md)
+- **Tasks** → Used by the [Task Execution Service](../components/task_execution_service/README.md)
 - **Workflows** → Used by the [Workflow Orchestrator Service](../components/workflow_orchestrator_service/README.md)
 - **Integrations** → Used by the [Integration Service](../components/integration_service/README.md)
 - **UI Components** → Used by the [Web Application](../components/web_application/README.md) UI Rendering Engine

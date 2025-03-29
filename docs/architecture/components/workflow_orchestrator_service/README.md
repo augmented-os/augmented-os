@@ -52,7 +52,7 @@ The `examples/` directory provides practical usage examples:
 ## Related Components
 
 * [Event Processing Service](../event_processing_service.md)
-* [Task Execution Layer](../task_execution_layer.md)
+* [Task Execution Service](../task_execution_service.md)
 * [Integration Service](../integration_service.md)
 
 

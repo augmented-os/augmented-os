@@ -1,8 +1,8 @@
-# Task Execution Layer Documentation
+# Task Execution Service Documentation
 
 ## Structure Overview
 
-This documentation covers the Task Execution Layer Service, which is responsible for executing individual tasks within workflows. The documentation is organized as follows:
+This documentation covers the Task Execution Service, which is responsible for executing individual tasks within workflows. The documentation is organized as follows:
 
 ### High-Level Documentation
 
@@ -11,7 +11,7 @@ This documentation covers the Task Execution Layer Service, which is responsible
 
 ### Detailed Implementation
 
-The `implementation/` directory contains detailed documentation on specific aspects of the Task Execution Layer:
+The `implementation/` directory contains detailed documentation on specific aspects of the Task Execution Service:
 
 * [Task Router](./implementation/task_router.md): Routing tasks to appropriate executors
 * [Automated Task Executor](./implementation/automated_task_executor.md): Execution of automated tasks

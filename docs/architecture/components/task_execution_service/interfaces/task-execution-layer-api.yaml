@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Task Execution Layer API
+  title: Task Execution Service API
   description: |
-    API for the Task Execution Layer Service, which is responsible for executing
+    API for the Task Execution Service Service, which is responsible for executing
     individual tasks within workflows.
   version: 1.0.0
   contact:

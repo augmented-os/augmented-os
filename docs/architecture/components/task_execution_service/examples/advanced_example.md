@@ -1,6 +1,6 @@
 # Advanced Task Execution Examples
 
-This document provides advanced examples of using the Task Execution Layer, focusing on complex task patterns, error handling, retry mechanisms, and integration scenarios.
+This document provides advanced examples of using the Task Execution Service, focusing on complex task patterns, error handling, retry mechanisms, and integration scenarios.
 
 ## Complex Task Patterns
 

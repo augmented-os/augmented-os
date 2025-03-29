@@ -54,6 +54,6 @@ The `examples/` directory provides practical usage examples:
 * [Event Processing Service](../event_processing_service/)
 * [Web Application](../web_application/) (Dashboard component)
 * [Integration Service](../integration_service/)
-* [Task Execution Layer](../task_execution_layer/)
+* [Task Execution Service](../task_execution_service/)
 
 

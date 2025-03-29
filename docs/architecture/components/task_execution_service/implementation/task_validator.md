@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Task Validator is a critical component of the Task Execution Layer responsible for validating task definitions and task execution requests. It ensures that tasks are well-formed, contain all required information, and adhere to security and compliance policies before they are routed for execution.
+The Task Validator is a critical component of the Task Execution Service responsible for validating task definitions and task execution requests. It ensures that tasks are well-formed, contain all required information, and adhere to security and compliance policies before they are routed for execution.
 
 ## Key Responsibilities
 

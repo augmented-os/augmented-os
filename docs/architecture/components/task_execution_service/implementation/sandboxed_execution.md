@@ -2,7 +2,7 @@
 
 ## Overview
 
-Sandboxed Execution Environments are a critical security feature of the Task Execution Layer that provide isolated, controlled environments for executing automated tasks. They ensure that task code runs in a secure, resource-constrained environment that prevents unauthorized access to system resources, protects against malicious code, and prevents tasks from interfering with each other.
+Sandboxed Execution Environments are a critical security feature of the Task Execution Service that provide isolated, controlled environments for executing automated tasks. They ensure that task code runs in a secure, resource-constrained environment that prevents unauthorized access to system resources, protects against malicious code, and prevents tasks from interfering with each other.
 
 ## Key Capabilities
 
@@ -17,7 +17,7 @@ Sandboxed Execution Environments are a critical security feature of the Task Exe
 
 ## Implementation Approaches
 
-The Task Execution Layer supports multiple sandboxing technologies to accommodate different security requirements and operational environments:
+The Task Execution Service supports multiple sandboxing technologies to accommodate different security requirements and operational environments:
 
 ### Container-Based Sandboxing
 

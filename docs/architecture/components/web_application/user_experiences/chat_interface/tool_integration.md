@@ -46,7 +46,7 @@ Enable interaction with the Workflow Orchestrator:
 
 ### Task Tools
 
-Enable interaction with the Task Execution Layer:
+Enable interaction with the Task Execution Service:
 
 * **Task Querying**: Finding tasks by status, owner, deadline, etc.
 * **Task Assignment**: Assigning tasks to users or groups
@@ -211,5 +211,5 @@ System: [Shows confirmation]
 * [Dynamic Components](./dynamic_components.md)
 * [Split View Architecture](./split_view_architecture.md)
 * [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Layer](../../task_execution_layer.md)
+* [Task Execution Service](../../task_execution_service.md)
 * [API Integration Patterns](../../technical_architecture/api_integration.md) 

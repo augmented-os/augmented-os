@@ -180,5 +180,5 @@ System: [RHS highlights the responsible party in the visualization]
 * [Split View Architecture](./split_view_architecture.md)
 * [Dynamic Components](./dynamic_components.md)
 * [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Layer](../../task_execution_layer.md)
+* [Task Execution Service](../../task_execution_service.md)
 * [Accessibility Standards](../../design_system/accessibility.md) 

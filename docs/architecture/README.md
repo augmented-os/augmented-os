@@ -24,7 +24,7 @@ This approach creates a system that is both powerful and flexible, while maintai
   * [Event Processing Service](./components/event_processing_service/)
   * [Integration Service](./components/integration_service/)
   * [Observability Service](./components/observability_service/) - Monitoring, logging, and tracing service
-  * [Task Execution Layer](./components/task_execution_layer/)
+  * [Task Execution Service](./components/task_execution_service/)
   * [Testing Framework](./components/testing_framework/)
   * [Validation Service](./components/validation_service/)
   * [Web Application](./components/web_application/)

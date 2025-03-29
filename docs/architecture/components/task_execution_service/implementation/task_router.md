@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Task Router is a core component of the Task Execution Layer Service responsible for receiving incoming task requests and routing them to the appropriate executor based on task type, requirements, and current system load. It acts as the entry point for all task execution requests and ensures tasks are properly queued, prioritized, and dispatched.
+The Task Router is a core component of the Task Execution Service Service responsible for receiving incoming task requests and routing them to the appropriate executor based on task type, requirements, and current system load. It acts as the entry point for all task execution requests and ensures tasks are properly queued, prioritized, and dispatched.
 
 ## Key Responsibilities
 

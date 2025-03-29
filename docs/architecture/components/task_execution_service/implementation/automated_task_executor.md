@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Automated Task Executor is a core component of the Task Execution Layer Service responsible for executing automated tasks in isolated environments. It handles the execution of code-based tasks that don't require human intervention, ensuring secure, reliable, and efficient task processing.
+The Automated Task Executor is a core component of the Task Execution Service Service responsible for executing automated tasks in isolated environments. It handles the execution of code-based tasks that don't require human intervention, ensuring secure, reliable, and efficient task processing.
 
 ## Key Responsibilities
 

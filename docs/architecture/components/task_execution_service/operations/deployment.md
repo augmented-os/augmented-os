@@ -1,14 +1,14 @@
 # Deployment
 
-This document outlines the deployment considerations, security requirements, and infrastructure setup for the Task Execution Layer.
+This document outlines the deployment considerations, security requirements, and infrastructure setup for the Task Execution Service.
 
 ## Deployment Strategies
 
-The Task Execution Layer can be deployed using several strategies depending on the scale and requirements of your implementation:
+The Task Execution Service can be deployed using several strategies depending on the scale and requirements of your implementation:
 
 ### Containerized Deployment
 
-The recommended approach is to deploy the Task Execution Layer as a set of containerized services:
+The recommended approach is to deploy the Task Execution Service as a set of containerized services:
 
 ```yaml
 # Example Docker Compose configuration
@@ -208,7 +208,7 @@ For high-availability deployments, implement load balancing:
 
 ### Network Security
 
-* Implement network segmentation to isolate the Task Execution Layer components
+* Implement network segmentation to isolate the Task Execution Service components
 * Use private subnets for components that don't need direct external access
 * Configure security groups or network policies to restrict traffic between components
 * Implement a Web Application Firewall (WAF) for public-facing APIs

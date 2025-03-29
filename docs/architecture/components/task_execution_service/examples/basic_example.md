@@ -1,6 +1,6 @@
 # Basic Task Execution Examples
 
-This document provides simple examples of how to use the Task Execution Layer Service for common use cases.
+This document provides simple examples of how to use the Task Execution Service Service for common use cases.
 
 ## Automated Task Example
 
@@ -110,7 +110,7 @@ curl -X POST https://api.example.com/api/v1/tasks \
 
 ### Task Execution
 
-The Task Execution Layer will:
+The Task Execution Service will:
 
 1. Validate the input against the task definition's input schema
 2. Route the task to the appropriate executor (standard-executor in this case)
@@ -258,7 +258,7 @@ curl -X POST https://api.example.com/api/v1/tasks \
 
 ### Manual Task Handling
 
-The Task Execution Layer will:
+The Task Execution Service will:
 
 1. Create a manual task and assign it based on the assignment rules
 2. Make the task available in the user interface for the assigned role
@@ -301,7 +301,7 @@ The following example illustrates an integration task that:
 2. Processes a payment
 3. Returns the payment result
 
-This example demonstrates how the Task Execution Layer integrates with external systems.
+This example demonstrates how the Task Execution Service integrates with external systems.
 
 ### Task Definition
 
@@ -360,4 +360,4 @@ This example demonstrates how the Task Execution Layer integrates with external 
 }
 ```
 
-This example demonstrates the three main types of tasks supported by the Task Execution Layer and how they can be defined, submitted, and processed. 
+This example demonstrates the three main types of tasks supported by the Task Execution Service and how they can be defined, submitted, and processed. 

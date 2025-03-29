@@ -39,7 +39,7 @@ Our architecture consists of two key aspects:
 These are the functional parts of the system that perform work:
 
 * **[Workflow Orchestrator Service](./components/workflow_orchestrator_service/overview.md)** - Manages workflow execution, state transitions, and task coordination
-* **[Task Execution Layer](./components/task_execution_layer/overview.md)** - Runs the actual work for each step
+* **[Task Execution Service](./components/task_execution_service/overview.md)** - Runs the actual work for each step
 * **[Event Processing Service](./components/event_processing_service/overview.md)** - Handles event ingestion, routing, and triggering
 * **[Integration Service](./components/integration_service/overview.md)** - Manages connections to external systems
 * **[Web Application](./components/web_application/overview.md)** - Generates dynamic interfaces based on component definitions

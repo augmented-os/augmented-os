@@ -44,7 +44,7 @@ The Integration Service provides a unified interface for connecting to external 
 
 The service exposes the following primary interfaces:
 
-* **Task Execution Interface**: Receives integration method calls from the Task Execution Layer.
+* **Task Execution Interface**: Receives integration method calls from the Task Execution Service.
 * **Management API**: Exposes REST endpoints for integration definition and instance management.
 * **External Systems Interface**: Connects to third-party services and APIs using appropriate protocols and authentication.
 * **Event Interface**: Publishes integration events and status updates to the event system.

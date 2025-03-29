@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Integration Task Executor is a core component of the Task Execution Layer Service responsible for executing tasks that interact with external systems and services. It provides a secure, reliable, and configurable mechanism for integrating workflows with third-party APIs, enterprise systems, and other external services.
+The Integration Task Executor is a core component of the Task Execution Service Service responsible for executing tasks that interact with external systems and services. It provides a secure, reliable, and configurable mechanism for integrating workflows with third-party APIs, enterprise systems, and other external services.
 
 ## Key Responsibilities
 

@@ -219,7 +219,7 @@ Several concerns span across the entire architecture:
 The AugmentedOS Web Application integrates with several backend services:
 
 * **Workflow Orchestrator**: Management of workflow definitions and executions
-* **Task Execution Layer**: Execution and monitoring of tasks
+* **Task Execution Service**: Execution and monitoring of tasks
 * **Integration Management**: Configuration and monitoring of integrations
 * **Analytics Engine**: Data processing and reporting
 * **Chat Service**: Natural language processing and conversation management

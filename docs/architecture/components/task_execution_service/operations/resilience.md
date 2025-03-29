@@ -1,12 +1,12 @@
 # Resilience Patterns
 
-This document outlines the resilience patterns and failover mechanisms implemented in the Task Execution Layer.
+This document outlines the resilience patterns and failover mechanisms implemented in the Task Execution Service.
 
 ## Core Resilience Strategies
 
 ### Retry Mechanisms
 
-The Task Execution Layer implements intelligent retry logic for handling transient failures:
+The Task Execution Service implements intelligent retry logic for handling transient failures:
 
 * **Exponential Backoff**: Increasing delay between retry attempts
 * **Jitter**: Random variation in retry timing to prevent thundering herd problems

@@ -21,11 +21,11 @@ The Integration Service publishes the following events to the event bus:
 
 | Event Type | Description | Payload Schema | Consumers |
 |------------|-------------|----------------|-----------|
-| `integration.method.executed` | Published when an integration method is successfully executed | [See schema](#integration-method-executed) | Task Execution Layer, Workflow Orchestrator |
-| `integration.method.failed` | Published when an integration method execution fails | [See schema](#integration-method-failed) | Task Execution Layer, Workflow Orchestrator |
-| `integration.connected` | Published when an integration instance is successfully connected | [See schema](#integration-connected) | Task Execution Layer, Workflow Orchestrator |
-| `integration.auth.failed` | Published when authentication with an external system fails | [See schema](#integration-auth-failed) | Task Execution Layer, Workflow Orchestrator |
-| `integration.instance.status` | Published when an integration instance's status changes | [See schema](#integration-instance-status) | Task Execution Layer, Workflow Orchestrator |
+| `integration.method.executed` | Published when an integration method is successfully executed | [See schema](#integration-method-executed) | Task Execution Service, Workflow Orchestrator |
+| `integration.method.failed` | Published when an integration method execution fails | [See schema](#integration-method-failed) | Task Execution Service, Workflow Orchestrator |
+| `integration.connected` | Published when an integration instance is successfully connected | [See schema](#integration-connected) | Task Execution Service, Workflow Orchestrator |
+| `integration.auth.failed` | Published when authentication with an external system fails | [See schema](#integration-auth-failed) | Task Execution Service, Workflow Orchestrator |
+| `integration.instance.status` | Published when an integration instance's status changes | [See schema](#integration-instance-status) | Task Execution Service, Workflow Orchestrator |
 
 ### Subscribed Events
 
@@ -33,7 +33,7 @@ The Integration Service subscribes to the following events:
 
 | Event Type | Description | Publisher | Handler |
 |------------|-------------|-----------|---------|
-| `task.integration.execute` | Request to execute an integration method | Task Execution Layer | Routes to Method Executor to execute the requested integration method |
+| `task.integration.execute` | Request to execute an integration method | Task Execution Service | Routes to Method Executor to execute the requested integration method |
 | `system.credential.rotated` | Notification of credential rotation | Credential Service | Updates stored credentials for affected integration instances |
 | `system.config.updated` | Notification of configuration changes | Configuration Service | Updates runtime configuration for adapters and rate limiters |
 
@@ -56,7 +56,7 @@ The Integration Service exposes the following internal endpoints for other servi
 
 | Endpoint | Purpose | Callers | Authentication |
 |----------|---------|---------|---------------|
-| `POST /execute/{integrationId}/{method}` | Execute an integration method | Task Execution Layer | Service-to-service mTLS |
+| `POST /execute/{integrationId}/{method}` | Execute an integration method | Task Execution Service | Service-to-service mTLS |
 | `GET /definitions/{id}/schema` | Get JSON schema for parameters | Form Rendering Service | Service-to-service mTLS |
 | `GET /status/health` | Health check endpoint | Monitoring Service | Basic authentication |
 | `GET /status/metrics` | Metrics reporting endpoint | Monitoring Service | Basic authentication |

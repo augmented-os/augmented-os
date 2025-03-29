@@ -1,8 +1,8 @@
-# Task Execution Layer Service
+# Task Execution Service
 
 ## Overview
 
-The Task Execution Layer Service is responsible for executing individual tasks within workflows. It handles the routing, execution, validation, and state management of tasks, providing a reliable and extensible mechanism for task processing across different execution environments.
+The Task Execution Service is responsible for executing individual tasks within workflows. It handles the routing, execution, validation, and state management of tasks, providing a reliable and extensible mechanism for task processing across different execution environments.
 
 ## Key Responsibilities
 
@@ -21,7 +21,7 @@ The Task Execution Layer Service is responsible for executing individual tasks w
 
 ```
 ┌─────────────────────────────────────────────┐
-│             Task Execution Layer             │
+│             Task Execution Service             │
 ├─────────┬─────────┬──────────┬──────────────┤
 │  Task   │Automated│  Manual  │ Integration  │
 │ Router  │Executor │ Handler  │  Executor    │

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document clarifies the relationship between Task Instances and Workflow Instances, explaining how these two core concepts interact within the system architecture. Understanding this relationship is essential for developers working with the Task Execution Layer and the Workflow Orchestrator.
+This document clarifies the relationship between Task Instances and Workflow Instances, explaining how these two core concepts interact within the system architecture. Understanding this relationship is essential for developers working with the Task Execution Service and the Workflow Orchestrator.
 
 ## Conceptual Model
 
@@ -94,7 +94,7 @@ Key aspects of this relationship:
 
 ## Lifecycle Coordination
 
-The lifecycle of task instances is coordinated by the Workflow Orchestrator but executed by the Task Execution Layer:
+The lifecycle of task instances is coordinated by the Workflow Orchestrator but executed by the Task Execution Service:
 
 ```typescript
 // Example of lifecycle coordination
@@ -125,7 +125,7 @@ class WorkflowExecutionCoordinator {
             workflowInstance
           );
           
-          // Execute task through Task Execution Layer
+          // Execute task through Task Execution Service
           const taskResult = await this.taskExecutionService.executeTask(taskInstance);
           
           // Process task result

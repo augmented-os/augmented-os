@@ -1,10 +1,10 @@
 # Performance Optimization
 
-This document provides guidelines and best practices for optimizing the performance of the Task Execution Layer.
+This document provides guidelines and best practices for optimizing the performance of the Task Execution Service.
 
 ## Performance Considerations
 
-The Task Execution Layer's performance is critical for the overall system responsiveness and throughput. Key performance considerations include:
+The Task Execution Service's performance is critical for the overall system responsiveness and throughput. Key performance considerations include:
 
 1. **Task Execution Throughput**: The number of tasks that can be executed per unit of time
 2. **Task Execution Latency**: The time taken to execute individual tasks
@@ -219,7 +219,7 @@ Example JMeter test plan for task execution:
 ```xml
 <jmeterTestPlan version="1.2" properties="5.0">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Task Execution Layer Load Test">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Task Execution Service Load Test">
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>

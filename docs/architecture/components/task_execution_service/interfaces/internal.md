@@ -1,12 +1,12 @@
-# Task Execution Layer Internal Interfaces
+# Task Execution Service Internal Interfaces
 
 ## Overview
 
-This document describes the internal interfaces used by the Task Execution Layer Service for communication with other system components. These interfaces are not exposed externally and are intended for internal system integration only.
+This document describes the internal interfaces used by the Task Execution Service Service for communication with other system components. These interfaces are not exposed externally and are intended for internal system integration only.
 
 ## Interface Types
 
-The Task Execution Layer Service uses the following types of internal interfaces:
+The Task Execution Service Service uses the following types of internal interfaces:
 
 * **Event-based interfaces**: Asynchronous communication via the event bus
 * **Service-to-service APIs**: Direct synchronous communication with other services
@@ -16,7 +16,7 @@ The Task Execution Layer Service uses the following types of internal interfaces
 
 ### Published Events
 
-The Task Execution Layer Service publishes the following events to the event bus:
+The Task Execution Service Service publishes the following events to the event bus:
 
 | Event Type | Description | Payload Schema | Consumers |
 |------------|-------------|----------------|-----------|
@@ -32,7 +32,7 @@ The Task Execution Layer Service publishes the following events to the event bus
 
 ### Subscribed Events
 
-The Task Execution Layer Service subscribes to the following events:
+The Task Execution Service Service subscribes to the following events:
 
 | Event Type | Description | Publisher | Handler |
 |------------|-------------|-----------|---------|
@@ -48,7 +48,7 @@ The Task Execution Layer Service subscribes to the following events:
 
 ### Outbound Service Calls
 
-The Task Execution Layer Service makes the following calls to other services:
+The Task Execution Service Service makes the following calls to other services:
 
 | Service | Endpoint | Purpose | Error Handling |
 |---------|----------|---------|---------------|
@@ -62,7 +62,7 @@ The Task Execution Layer Service makes the following calls to other services:
 
 ### Inbound Service Calls
 
-The Task Execution Layer Service exposes the following internal endpoints for other services:
+The Task Execution Service Service exposes the following internal endpoints for other services:
 
 | Endpoint | Purpose | Callers | Authentication |
 |----------|---------|---------|---------------|
@@ -77,7 +77,7 @@ The Task Execution Layer Service exposes the following internal endpoints for ot
 
 ## Task Queue Interface
 
-The Task Execution Layer implements a specialized task queue interface for efficient task distribution and execution:
+The Task Execution Service implements a specialized task queue interface for efficient task distribution and execution:
 
 ### Queue Structure
 
@@ -105,7 +105,7 @@ The Task Execution Layer implements a specialized task queue interface for effic
 The Task Queue Interface integrates with the Workflow Orchestrator through:
 
 1. **Task Execution Requests**: Workflow Orchestrator enqueues tasks for execution
-2. **Task Status Updates**: Task Execution Layer reports task status back to Workflow Orchestrator
+2. **Task Status Updates**: Task Execution Service reports task status back to Workflow Orchestrator
 3. **Workflow Context Access**: Tasks can access workflow variables and context
 4. **Correlation Tracking**: Correlation IDs link tasks to their parent workflows
 
@@ -131,7 +131,7 @@ interface TaskQueueMessage {
 
 ## Integration Service Interface
 
-The Task Execution Layer integrates with the Integration Service for executing integration tasks:
+The Task Execution Service integrates with the Integration Service for executing integration tasks:
 
 ### Integration Execution
 
@@ -145,7 +145,7 @@ The Task Execution Layer integrates with the Integration Service for executing i
 
 The Integration Service supports the following integration types:
 
-| Integration Type | Description | Task Execution Layer Interaction |
+| Integration Type | Description | Task Execution Service Interaction |
 |------------------|-------------|----------------------------------|
 | REST API | HTTP/HTTPS API integrations | Sends request parameters, receives response data |
 | SOAP | SOAP web service integrations | Sends XML payload, receives XML response |
@@ -303,7 +303,7 @@ The Integration Service supports the following integration types:
 
 ### Retry Policies
 
-The Task Execution Layer Service implements the following retry policies for internal communication:
+The Task Execution Service Service implements the following retry policies for internal communication:
 
 | Interface Type | Retry Strategy | Backoff | Max Retries | Circuit Breaking |
 |----------------|----------------|---------|-------------|------------------|

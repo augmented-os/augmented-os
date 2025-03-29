@@ -1,12 +1,12 @@
-# Task Execution Layer Configuration
+# Task Execution Service Configuration
 
 ## Overview
 
-This document describes the configuration options for the Task Execution Layer Service. It covers environment variables, configuration files, runtime settings, and best practices for configuring the service in different environments.
+This document describes the configuration options for the Task Execution Service Service. It covers environment variables, configuration files, runtime settings, and best practices for configuring the service in different environments.
 
 ## Configuration Hierarchy
 
-The Task Execution Layer uses a hierarchical configuration approach with the following precedence (highest to lowest):
+The Task Execution Service uses a hierarchical configuration approach with the following precedence (highest to lowest):
 
 
 1. **Environment Variables**: Highest precedence, used for environment-specific settings
@@ -286,7 +286,7 @@ logging:
 
 ## Configuration File Formats
 
-The Task Execution Layer supports the following configuration file formats:
+The Task Execution Service supports the following configuration file formats:
 
 
 1. **YAML**: Preferred format for human-readable configuration
@@ -369,7 +369,7 @@ monitoring:
 
 ## Task-Level vs. Service-Level Configuration
 
-The Task Execution Layer distinguishes between service-level and task-level configuration:
+The Task Execution Service distinguishes between service-level and task-level configuration:
 
 ### Service-Level Configuration
 
@@ -413,7 +413,7 @@ Task-level configuration is stored in the task definition and can be overridden 
 
 ## Configuration Management Tools
 
-The Task Execution Layer integrates with the following configuration management tools:
+The Task Execution Service integrates with the following configuration management tools:
 
 
 1. **Spring Cloud Config**: For centralized configuration management

@@ -1,12 +1,12 @@
-# Task Execution Layer Scaling
+# Task Execution Service Scaling
 
 ## Overview
 
-This document describes the scaling characteristics and strategies for the Task Execution Layer Service. It covers horizontal and vertical scaling approaches, load balancing, resource requirements, and performance considerations at different scales.
+This document describes the scaling characteristics and strategies for the Task Execution Service Service. It covers horizontal and vertical scaling approaches, load balancing, resource requirements, and performance considerations at different scales.
 
 ## Scaling Dimensions
 
-The Task Execution Layer can scale across multiple dimensions:
+The Task Execution Service can scale across multiple dimensions:
 
 1. **Task Volume**: Number of tasks processed per time unit
 2. **Task Complexity**: Computational requirements of individual tasks
@@ -16,7 +16,7 @@ The Task Execution Layer can scale across multiple dimensions:
 
 ## Component Scaling Characteristics
 
-Each component of the Task Execution Layer has different scaling characteristics:
+Each component of the Task Execution Service has different scaling characteristics:
 
 | Component | Scaling Type | Stateful | Resource Bottleneck | Scaling Trigger |
 |-----------|--------------|----------|---------------------|----------------|
@@ -30,7 +30,7 @@ Each component of the Task Execution Layer has different scaling characteristics
 
 ## Horizontal Scaling
 
-The Task Execution Layer is designed for horizontal scaling of its stateless components:
+The Task Execution Service is designed for horizontal scaling of its stateless components:
 
 ### Scaling Strategies
 
@@ -207,7 +207,7 @@ Current architectural limitations to be aware of:
 
 ## Scaling Recommendations
 
-Best practices for scaling the Task Execution Layer:
+Best practices for scaling the Task Execution Service:
 
 1. **Monitor Key Metrics**:
    * Task queue depth and processing time
