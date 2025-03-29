@@ -18,17 +18,20 @@ This directory contains detailed documentation for each functional component of 
 Each component directory follows a consistent documentation structure:
 
 
+
 1. **README.md** - Entry point with navigation guidance
 2. **overview.md** - High-level architectural overview
 3. **data_model.md** - Core data structures and schemas
-4. **implementation/** - Detailed implementation documentation
-5. **interfaces/** - API documentation (public and internal)
-6. **operations/** - Operational guidance (monitoring, scaling, configuration)
-7. **examples/** - Practical usage examples
+4. **schemas/** - Schema documentation specific to this component
+5. **implementation/** - Detailed implementation documentation
+6. **interfaces/** - API documentation with OpenAPI specifications for public endpoints
+7. **operations/** - Operational guidance (monitoring, scaling, configuration)
+8. **examples/** - Practical usage examples
 
 ## Component Design Principles
 
 Our system components follow these principles:
+
 
 
 1. **Service-Oriented Architecture** - Each component is a standalone service with well-defined responsibilities

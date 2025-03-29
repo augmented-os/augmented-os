@@ -6,9 +6,9 @@ The Task Execution Service primarily interacts with these data schemas:
 
 <!-- List the primary schemas used by this component and link to their canonical definitions -->
 
-* [Tasks Schema](./schemas/tasks.md): For task definitions and instances
-* [Workflows Schema](./schemas/workflows.md): For workflow context and relationships
-* [Integration Schema](./schemas/integrations.md): For integration task configurations
+* [Tasks Schema](../../schemas/tasks.md): For task definitions and instances
+* [Workflows Schema](../../schemas/workflows.md): For workflow context and relationships
+* [Integration Schema](../../schemas/integrations.md): For integration task configurations
 
 This document focuses on how the Task Execution Service component specifically implements and extends the canonical schemas defined in the links above. For complete schema definitions, please refer to the linked documentation.
 
@@ -139,9 +139,9 @@ The Task Execution Service implements the following database optimizations:
 
 <!-- Link to related schema documentation -->
 
-* [Tasks Schema](./schemas/tasks.md)
-* [Workflows Schema](./schemas/workflows.md)
-* [Integration Schema](./schemas/integrations.md)
+* [Tasks Schema](../../schemas/tasks.md)
+* [Workflows Schema](../../schemas/workflows.md)
+* [Integration Schema](../../schemas/integrations.md)
 * [Task Router Implementation](./implementation/task_router.md)
 
 
