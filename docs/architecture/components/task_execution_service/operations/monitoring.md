@@ -62,7 +62,7 @@ The Task Execution Service uses structured logging with the following log levels
 Key log events to monitor:
 
 | Event | Log Level | Description |
-|-------|-----------|-------------|
+|----|----|----|
 | `TaskSubmissionFailed` | ERROR | Task submission failed |
 | `TaskExecutionFailed` | ERROR | Task execution failed |
 | `ExecutorUnavailable` | ERROR | Executor is unavailable |
@@ -105,29 +105,26 @@ The following alerts are recommended for proactive monitoring:
 
 A comprehensive monitoring dashboard should include:
 
+
 1. **Task Execution Overview**
    * Task submission rate
    * Success/failure rates
    * Execution time distribution
    * Active tasks by type
-
 2. **Executor Performance**
    * Executor utilization
    * Task processing rate
    * Error rates by executor
    * Queue depths
-
 3. **Task Router Performance**
    * Routing time
    * Queue metrics
    * Routing errors
    * Task distribution by executor
-
 4. **Integration Health**
    * Integration service availability
    * Request success/failure rates
    * Integration response times
-
 5. **System Health**
    * Service health status
    * Resource utilization (CPU, memory)
@@ -137,6 +134,7 @@ A comprehensive monitoring dashboard should include:
 ## Troubleshooting Guide
 
 When investigating issues, follow these steps:
+
 
 1. **Check Service Health**: Verify overall service health via `/health` endpoint
 2. **Review Error Logs**: Look for ERROR and WARN level logs
@@ -148,8 +146,10 @@ When investigating issues, follow these steps:
 Common issues and resolutions:
 
 | Issue | Potential Causes | Resolution Steps |
-|-------|------------------|------------------|
+|----|----|----|
 | High task failure rate | Invalid task definitions, executor issues | Check error logs, verify task definitions, restart problematic executors |
 | Long queue times | Insufficient executor capacity, routing issues | Scale up executors, check for routing bottlenecks |
 | Executor unavailable | Resource constraints, configuration issues | Restart executor, check resource allocation, verify configuration |
-| Integration failures | External service issues, network problems | Verify external service status, check network connectivity | 
+| Integration failures | External service issues, network problems | Verify external service status, check network connectivity |
+
+

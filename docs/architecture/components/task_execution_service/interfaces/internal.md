@@ -8,64 +8,51 @@ This document describes the internal interfaces used by the Task Execution Servi
 
 The Task Execution Service uses the following types of internal interfaces:
 
-* **Event-based interfaces**: Asynchronous communication via the event bus
-* **Service-to-service APIs**: Direct synchronous communication with other services
-* **Task Queue Interface**: Specialized interface for task execution coordination
+* **Event Bus Interfaces**: Asynchronous publish/subscribe patterns
+* **Direct Service Calls**: Synchronous API calls to other services
+* **Internal API Endpoints**: For use by other system components
 
-## Event-Based Interfaces
+## Event Bus Interfaces
 
 ### Published Events
 
 The Task Execution Service publishes the following events to the event bus:
 
-| Event Type | Description | Payload Schema | Consumers |
-|------------|-------------|----------------|-----------|
-| `task.instance.created` | Published when a new task instance is created | [Link to schema](#task-instance-created) | Workflow Orchestrator, Monitoring Service |
-| `task.instance.started` | Published when a task instance execution begins | [Link to schema](#task-instance-started) | Workflow Orchestrator, Monitoring Service |
-| `task.instance.completed` | Published when a task instance completes successfully | [Link to schema](#task-instance-completed) | Workflow Orchestrator, Monitoring Service |
-| `task.instance.failed` | Published when a task instance fails | [Link to schema](#task-instance-failed) | Workflow Orchestrator, Monitoring Service |
-| `task.instance.retry` | Published when a task instance is scheduled for retry | [Link to schema](#task-instance-retry) | Workflow Orchestrator, Monitoring Service |
-| `task.manual.assigned` | Published when a manual task is assigned to a user | [Link to schema](#task-manual-assigned) | Notification Service, UI Framework |
-| `task.manual.reassigned` | Published when a manual task is reassigned | [Link to schema](#task-manual-reassigned) | Notification Service, UI Framework |
-| `task.manual.deadline.approaching` | Published when a manual task deadline is approaching | [Link to schema](#task-manual-deadline-approaching) | Notification Service |
-| `task.manual.deadline.missed` | Published when a manual task deadline is missed | [Link to schema](#task-manual-deadline-missed) | Notification Service, Escalation Service |
+| Event Type | Purpose | Schema |
+|----|----|----|
+| `task.created` | Signals that a new task has been created | [TaskCreatedEvent](../../../event_types/task_events.md#taskcreatedevent) |
+| `task.started` | Signals that a task has started execution | [TaskStartedEvent](../../../event_types/task_events.md#taskstartedevent) |
+| `task.completed` | Signals that a task has completed successfully | [TaskCompletedEvent](../../../event_types/task_events.md#taskcompletedevent) |
+| `task.failed` | Signals that a task has failed | [TaskFailedEvent](../../../event_types/task_events.md#taskfailedevent) |
+| `task.canceled` | Signals that a task has been canceled | [TaskCanceledEvent](../../../event_types/task_events.md#taskcanceledevent) |
 
 ### Subscribed Events
 
 The Task Execution Service subscribes to the following events:
 
-| Event Type | Description | Publisher | Handler |
-|------------|-------------|-----------|---------|
-| `workflow.instance.created` | Workflow instance creation | Workflow Orchestrator | Prepares for potential task executions |
-| `workflow.instance.updated` | Workflow instance update | Workflow Orchestrator | Updates related task contexts |
-| `workflow.instance.cancelled` | Workflow instance cancellation | Workflow Orchestrator | Cancels any pending tasks for the workflow |
-| `task.definition.created` | New task definition created | Task Definition Service | Updates task definition cache |
-| `task.definition.updated` | Task definition updated | Task Definition Service | Updates task definition cache |
-| `user.availability.changed` | User availability status change | User Service | Updates manual task assignment eligibility |
-| `system.maintenance.scheduled` | System maintenance notification | System Admin Service | Adjusts task scheduling to avoid maintenance window |
+| Event Type | Purpose | Handler |
+|----|----|----|
+| `workflow.task_requested` | Receives requests to execute a task from the workflow orchestrator | `TaskRequestHandler` |
+| `integration.response_received` | Receives responses from external systems via the integration service | `IntegrationResponseHandler` |
+| `system.shutdown_requested` | Gracefully handles system shutdown events | `SystemEventHandler` |
+| `system.maintenance_mode` | Adjusts processing behavior during maintenance | `SystemEventHandler` |
 
-## Service-to-Service APIs
-
-### Outbound Service Calls
+## Direct Service Calls
 
 The Task Execution Service makes the following calls to other services:
 
-| Service | Endpoint | Purpose | Error Handling |
-|---------|----------|---------|---------------|
-| Workflow Orchestrator | `POST /api/internal/workflows/{workflowId}/tasks/{taskId}/status` | Update task status in workflow context | Retry with exponential backoff, store locally if unavailable |
-| User Service | `GET /api/internal/users/{userId}/profile` | Get user details for manual task assignment | Cache results, use default assignment if unavailable |
-| User Service | `GET /api/internal/users/find` | Find eligible users for task assignment | Fall back to role-based assignment if unavailable |
-| Integration Service | `POST /api/internal/integrations/execute` | Execute integration tasks | Circuit breaker pattern, store for retry if unavailable |
-| Notification Service | `POST /api/internal/notifications` | Send task notifications | Queue locally and retry if unavailable |
-| Resource Service | `POST /api/internal/resources/allocate` | Allocate resources for task execution | Retry with fallback to default resources |
-| Security Service | `POST /api/internal/security/validate` | Validate security context for task execution | Cache policies, apply default restrictions if unavailable |
+| Service | Endpoint | Purpose |
+|----|----|----|
+| Auth Service | `/api/auth/validate-token` | Validates user tokens for task operations |
+| Integration Service | `/api/integrations/{id}/invoke` | Executes integration tasks |
+| Observability Service | `/api/tracing/span` | Reports tracing information |
 
-### Inbound Service Calls
+## Internal Endpoints
 
 The Task Execution Service exposes the following internal endpoints for other services:
 
 | Endpoint | Purpose | Callers | Authentication |
-|----------|---------|---------|---------------|
+|----|----|----|----|
 | `POST /api/internal/tasks` | Create a new task instance | Workflow Orchestrator | Service-to-service JWT |
 | `GET /api/internal/tasks/{taskId}` | Get task instance details | Workflow Orchestrator, UI Framework | Service-to-service JWT |
 | `PUT /api/internal/tasks/{taskId}/status` | Update task status | Workflow Orchestrator | Service-to-service JWT |
@@ -82,7 +69,7 @@ The Task Execution Service implements a specialized task queue interface for eff
 ### Queue Structure
 
 | Queue Name | Purpose | Consumers | Priority |
-|------------|---------|-----------|----------|
+|----|----|----|----|
 | `task-execution-automated` | Queue for automated tasks | Automated Task Executor | Based on task priority |
 | `task-execution-integration` | Queue for integration tasks | Integration Task Executor | Based on task priority |
 | `task-execution-manual` | Queue for manual tasks | Manual Task Handler | Based on task priority |
@@ -92,7 +79,7 @@ The Task Execution Service implements a specialized task queue interface for eff
 ### Queue Operations
 
 | Operation | Description | Implementation |
-|-----------|-------------|----------------|
+|----|----|----|
 | Enqueue | Add a task to the appropriate queue | Uses message attributes for routing and priority |
 | Dequeue | Retrieve a task for execution | Implements visibility timeout for processing |
 | Complete | Mark a task as completed | Removes from queue and publishes completion event |
@@ -103,6 +90,7 @@ The Task Execution Service implements a specialized task queue interface for eff
 ### Workflow Orchestrator Integration
 
 The Task Queue Interface integrates with the Workflow Orchestrator through:
+
 
 1. **Task Execution Requests**: Workflow Orchestrator enqueues tasks for execution
 2. **Task Status Updates**: Task Execution Service reports task status back to Workflow Orchestrator
@@ -136,7 +124,7 @@ The Task Execution Service integrates with the Integration Service for executing
 ### Integration Execution
 
 | Interface | Description | Protocol |
-|-----------|-------------|----------|
+|----|----|----|
 | Integration Execution | Execute integration tasks with external systems | REST API |
 | Connection Management | Manage connections to external systems | REST API |
 | Credential Resolution | Securely resolve credentials for integrations | REST API |
@@ -146,7 +134,7 @@ The Task Execution Service integrates with the Integration Service for executing
 The Integration Service supports the following integration types:
 
 | Integration Type | Description | Task Execution Service Interaction |
-|------------------|-------------|----------------------------------|
+|----|----|----|
 | REST API | HTTP/HTTPS API integrations | Sends request parameters, receives response data |
 | SOAP | SOAP web service integrations | Sends XML payload, receives XML response |
 | Database | Database query and update operations | Sends query parameters, receives result sets |
@@ -306,7 +294,7 @@ The Integration Service supports the following integration types:
 The Task Execution Service implements the following retry policies for internal communication:
 
 | Interface Type | Retry Strategy | Backoff | Max Retries | Circuit Breaking |
-|----------------|----------------|---------|-------------|------------------|
+|----|----|----|----|----|
 | Event Publishing | At-least-once delivery | Exponential (100ms-30s) | 10 | Yes, 50% failure threshold |
 | Service Calls | Retry with fallback | Exponential (200ms-60s) | 5 | Yes, 30% failure threshold |
 | Task Queue Operations | At-least-once processing | Fixed (5s) | 3 | No |
@@ -316,7 +304,7 @@ The Task Execution Service implements the following retry policies for internal 
 When communication with dependent services fails, the following fallback mechanisms are used:
 
 | Dependency | Fallback Approach | Impact |
-|------------|-------------------|--------|
+|----|----|----|
 | Workflow Orchestrator | Store status updates locally and retry | Delayed workflow progression |
 | User Service | Use cached user data or default assignment rules | Potentially suboptimal task assignment |
 | Integration Service | Queue integration requests locally | Delayed integration execution |
@@ -329,4 +317,6 @@ When communication with dependent services fails, the following fallback mechani
 * [Data Model](../data_model.md)
 * [Task Router Implementation](../implementation/task_router.md)
 * [Workflow Orchestrator Integration](../../workflow_orchestrator/interfaces/internal.md)
-* [Integration Service Interface](../../integration_service/interfaces/internal.md) 
+* [Integration Service Interface](../../integration_service/interfaces/internal.md)
+
+
