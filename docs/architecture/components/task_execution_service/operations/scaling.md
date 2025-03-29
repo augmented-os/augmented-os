@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the scaling characteristics and strategies for the Task Execution Service Service. It covers horizontal and vertical scaling approaches, load balancing, resource requirements, and performance considerations at different scales.
+This document describes the scaling characteristics and strategies for the Task Execution Service. It covers horizontal and vertical scaling approaches, load balancing, resource requirements, and performance considerations at different scales.
 
 ## Scaling Dimensions
 

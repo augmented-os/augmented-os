@@ -211,7 +211,7 @@ For high-availability deployments, implement load balancing:
 * Implement network segmentation to isolate the Task Execution Service components
 * Use private subnets for components that don't need direct external access
 * Configure security groups or network policies to restrict traffic between components
-* Implement a Web Application Firewall (WAF) for public-facing APIs
+* Implement a Web Application Service Firewall (WAF) for public-facing APIs
 
 ### Data Security
 

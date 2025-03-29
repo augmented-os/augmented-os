@@ -1,6 +1,6 @@
 # Basic Task Execution Examples
 
-This document provides simple examples of how to use the Task Execution Service Service for common use cases.
+This document provides simple examples of how to use the Task Execution Service for common use cases.
 
 ## Automated Task Example
 

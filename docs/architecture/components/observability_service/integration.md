@@ -17,7 +17,7 @@ The Observability Service is designed to collect and centralize observability da
                                       ┌──────────▼──────────┐
 ┌─────────────────┐                   │                     │                   ┌─────────────────┐
 │                 │    logs           │                     │    dashboards     │                 │
-│  Auth Service   ├───metrics────────►│   Observability     ├───alerts─────────►│ Web Application │
+│  Auth Service   ├───metrics────────►│   Observability     ├───alerts─────────►│ Web Application Service │
 │                 │    traces         │     Service         │                   │                 │
 └─────────────────┘                   │                     │                   └─────────────────┘
                                       │                     │
@@ -62,23 +62,23 @@ The integration follows these data flows:
    * Services generate log entries during operation
    * Log entries are sent to the Observability Service via HTTP/gRPC
    * The Observability Service processes and stores logs
-   * Users query and view logs through the Web Application
+   * Users query and view logs through the Web Application Service
 2. **Metrics Flow**:
    * Services measure and collect metrics
    * Metrics are sent to the Observability Service on a regular interval
    * The Observability Service aggregates and stores metrics
-   * Dashboard components visualize metrics through the Web Application
+   * Dashboard components visualize metrics through the Web Application Service
 3. **Traces Flow**:
    * Client requests generate trace context
    * Trace context is propagated between services
    * Each service creates spans within the trace
    * Spans are sent to the Observability Service
-   * Users explore distributed traces through the Web Application
+   * Users explore distributed traces through the Web Application Service
 4. **Alerts Flow**:
    * Observability Service evaluates alert rules against metrics
    * When thresholds are exceeded, alerts are triggered
    * Alerts are sent to configured notification channels
-   * Users manage and acknowledge alerts through the Web Application
+   * Users manage and acknowledge alerts through the Web Application Service
 
 ## System-Wide Benefits
 
@@ -96,6 +96,6 @@ Centralizing observability through the Observability Service provides several be
 * [Observability Service Overview](./overview.md)
 * [Observability Service Data Model](./data_model.md)
 * [Observability API Reference](./interfaces/api.md)
-* [Web Application Dashboard](../web_application/implementation/observability_dashboard.md)
+* [Web Application Service Dashboard](../web_application_service/implementation/observability_dashboard.md)
 
 

@@ -42,9 +42,9 @@ These are the functional parts of the system that perform work:
 * **[Task Execution Service](./components/task_execution_service/overview.md)** - Runs the actual work for each step
 * **[Event Processing Service](./components/event_processing_service/overview.md)** - Handles event ingestion, routing, and triggering
 * **[Integration Service](./components/integration_service/overview.md)** - Manages connections to external systems
-* **[Web Application](./components/web_application/overview.md)** - Generates dynamic interfaces based on component definitions
+* **[Web Application Service](./components/web_application_service/overview.md)** - Generates dynamic interfaces based on component definitions
 * **[Validation Service](./components/validation_service/overview.md)** - Enforces schema validation across the system
-* **[Testing Framework](./components/testing_framework/overview.md)** - Provides testing capabilities for system components
+* **[Testing Framework Service](./components/testing_framework_service/overview.md)** - Provides testing capabilities for system components
 * **[Authentication Service](./components/auth_service/overview.md)** - Provides centralized user authentication, authorization, and token management
 * **[Observability Service](./components/observability_service/overview.md)** - Provides centralized logging, metrics, and tracing capabilities across the platform
 
@@ -53,31 +53,31 @@ These are the functional parts of the system that perform work:
 These define the structure of data stored in our databases:
 
 * **Events** - Event data structures
-  * **[Event Definitions](./schemas/event_definitions.md)** - Templates for event types
-  * **[Event Instances](./schemas/event_instances.md)** - Actual event occurrences
-  * **[Event Queue State](./schemas/event_queue_state.md)** - Status of queued events
-  * **[Event Sequences](./schemas/event_sequences.md)** - Ordered series of events
-  * **[Dead Letter Queue](./schemas/dead_letter_queue.md)** - Failed event processing records
+  * **[Event Definitions](./components/event_definitions_service/schemas/event_definitions.md)** - Templates for event types
+  * **[Event Instances](./components/event_instances_service/schemas/event_instances.md)** - Actual event occurrences
+  * **[Event Queue State](./components/event_queue_state_service/schemas/event_queue_state.md)** - Status of queued events
+  * **[Event Sequences](./components/event_sequences_service/schemas/event_sequences.md)** - Ordered series of events
+  * **[Dead Letter Queue](./components/dead_letter_queue_service/schemas/dead_letter_queue.md)** - Failed event processing records
 * **Workflows** - Workflow orchestration structures
-  * **[Workflow Definitions](./schemas/workflow_definitions.md)** - Templates for workflows
-  * **[Workflow Instances](./schemas/workflow_instances.md)** - Running workflow executions
-  * **[Workflow Event Triggers](./schemas/workflow_event_triggers.md)** - Event-based workflow starters
-  * **[Workflow Event Subscriptions](./schemas/workflow_event_subscriptions.md)** - Event listeners
+  * **[Workflow Definitions](./components/workflow_definitions_service/schemas/workflow_definitions.md)** - Templates for workflows
+  * **[Workflow Instances](./components/workflow_instances_service/schemas/workflow_instances.md)** - Running workflow executions
+  * **[Workflow Event Triggers](./components/workflow_event_triggers_service/schemas/workflow_event_triggers.md)** - Event-based workflow starters
+  * **[Workflow Event Subscriptions](./components/workflow_event_subscriptions_service/schemas/workflow_event_subscriptions.md)** - Event listeners
 * **Tasks** - Task execution structures
-  * **[Task Definitions](./schemas/task_definitions.md)** - Templates for tasks
-  * **[Task Instances](./schemas/task_instances.md)** - Running task executions
+  * **[Task Definitions](./components/task_definitions_service/schemas/task_definitions.md)** - Templates for tasks
+  * **[Task Instances](./components/task_instances_service/schemas/task_instances.md)** - Running task executions
 * **Integrations** - External system connections
-  * **[Integration Definitions](./schemas/integration_definitions.md)** - Templates for integrations
-  * **[Integration Instances](./schemas/integration_instances.md)** - Configured integration setups
+  * **[Integration Definitions](./components/integration_definitions_service/schemas/integration_definitions.md)** - Templates for integrations
+  * **[Integration Instances](./components/integration_instances_service/schemas/integration_instances.md)** - Configured integration setups
 * **Users** - Authentication and authorization structures
-  * **[Users](./schemas/users.md)** - User accounts and profiles
-  * **[Roles](./schemas/roles.md)** - Role definitions for access control
-  * **[Permissions](./schemas/permissions.md)** - Permission definitions
+  * **[Users](./components/users_service/schemas/users.md)** - User accounts and profiles
+  * **[Roles](./components/roles_service/schemas/roles.md)** - Role definitions for access control
+  * **[Permissions](./components/permissions_service/schemas/permissions.md)** - Permission definitions
 * **Tests** - Testing structures
-  * **[Test Definitions](./schemas/test_definitions.md)** - Templates for validating tasks and workflows
-  * **[Test Runs](./schemas/test_runs.md)** - Execution records for tests
-  * **[Test Case Results](./schemas/test_case_results.md)** - Detailed results for individual test cases
-* **[UI Components](./schemas/ui_components.md)** - UI component definitions
+  * **[Test Definitions](./components/test_definitions_service/schemas/test_definitions.md)** - Templates for validating tasks and workflows
+  * **[Test Runs](./components/test_runs_service/schemas/test_runs.md)** - Execution records for tests
+  * **[Test Case Results](./components/test_case_results_service/schemas/test_case_results.md)** - Detailed results for individual test cases
+* **[UI Components](./components/ui_components_service/schemas/ui_components.md)** - UI component definitions
 
 ## Data Stores
 

@@ -314,4 +314,4 @@ The Event Processing Service has pre-configured dashboards and alerts in the Obs
 * [Event Processing Monitoring](./monitoring.md)
 * [Observability Service Overview](../../observability_service/overview.md)
 * [Observability Service Integration Examples](../../observability_service/examples/service_integration.md)
-* [Observability Schema Definitions](../../../schemas/observability/schema_definitions.md) 
+* [Observability Schema Definitions](.././schemas/observability/schema_definitions.md) 

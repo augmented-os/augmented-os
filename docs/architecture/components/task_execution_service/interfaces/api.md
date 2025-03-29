@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Task Execution Service Service exposes a RESTful API that allows clients to submit, monitor, and manage tasks. This document details the available endpoints, request formats, and response structures.
+The Task Execution Service exposes a RESTful API that allows clients to submit, monitor, and manage tasks. This document details the available endpoints, request formats, and response structures.
 
 An OpenAPI specification is available at [task-execution-layer-api.yaml](./task-execution-layer-api.yaml) for integration with API tools and code generators.
 

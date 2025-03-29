@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Task Execution Service Service exposes various metrics, logs, and health checks to enable comprehensive monitoring and observability. This document provides guidance on effective monitoring strategies, key metrics to track, and recommended alerting thresholds.
+The Task Execution Service exposes various metrics, logs, and health checks to enable comprehensive monitoring and observability. This document provides guidance on effective monitoring strategies, key metrics to track, and recommended alerting thresholds.
 
 ## Metrics
 
@@ -52,7 +52,7 @@ The service exposes metrics in Prometheus format through the `/metrics` endpoint
 
 ## Logs
 
-The Task Execution Service Service uses structured logging with the following log levels:
+The Task Execution Service uses structured logging with the following log levels:
 
 * `ERROR` - Critical errors requiring immediate attention
 * `WARN` - Potential issues that might require investigation

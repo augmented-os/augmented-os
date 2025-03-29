@@ -7,10 +7,10 @@ This directory contains detailed documentation for each functional component of 
 * [Event Processing Service](./event_processing_service/) - Handles event ingestion, routing, and triggering
 * [Integration Service](./integration_service/) - Manages connections to external systems
 * [Task Execution Service](./task_execution_service/) - Runs the actual work for each step
-* [Web Application](./web_application/) - Generates dynamic interfaces based on component definitions
+* [Web Application Service](./web_application_service/) - Generates dynamic interfaces based on component definitions
 * [Validation Service](./validation_service/) - Enforces schema validation across the system
 * [Workflow Orchestrator Service](./workflow_orchestrator_service/) - Manages workflow execution and state transitions
-* [Testing Framework](./testing_framework/) - Provides testing capabilities for system components
+* [Testing Framework Service](./testing_framework_service/) - Provides testing capabilities for system components
 * [Authentication Service](./auth_service/) - Provides centralized user authentication, authorization, and token management
 
 ## Component Documentation Structure

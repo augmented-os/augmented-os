@@ -4,9 +4,9 @@
 
 The Event Processing Service primarily interacts with these data schemas:
 
-* [Event Definitions Schema](../../schemas/event_definitions.md): Defines the structure and metadata for event types within the system
-* [Event Instances Schema](../../schemas/event_instances.md): Represents concrete occurrences of business events
-* [Workflow Event Triggers Schema](https://../../schemas/workflow_event_triggers.md): Used for workflow event trigger integration
+* [Event Definitions Schema](./schemas/event_definitions.md): Defines the structure and metadata for event types within the system
+* [Event Instances Schema](./schemas/event_instances.md): Represents concrete occurrences of business events
+* [Workflow Event Triggers Schema](https://./schemas/workflow_event_triggers.md): Used for workflow event trigger integration
 
 This document focuses on how the Event Processing Service component specifically implements and extends the canonical schemas defined in the links above. For complete schema definitions, please refer to the linked documentation.
 
@@ -163,9 +163,9 @@ The Event Processing Service implements the following database optimizations:
 
 ## Related Schema Documentation
 
-* [Event Definitions Schema](../../schemas/event_definitions.md)
-* [Event Instances Schema](../../schemas/event_instances.md)
-* [Workflow Schema](../../schemas/workflows.md)
+* [Event Definitions Schema](./schemas/event_definitions.md)
+* [Event Instances Schema](./schemas/event_instances.md)
+* [Workflow Schema](./schemas/workflows.md)
 * [Event Receiver Implementation](./implementation/event_receiver.md)
 * [Event Store Implementation](./implementation/event_store.md)
 

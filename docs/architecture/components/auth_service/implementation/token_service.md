@@ -221,7 +221,7 @@ async function validateAccessToken(token: string): Promise<AccessTokenClaims | n
 * [Auth Provider](./auth_provider.md)
 * [Permission Manager](./permission_manager.md)
 * [Security Considerations](../security_considerations.md)
-* [Web Application API Integration](../../web_application/technical_architecture/api_integration.md)
+* [Web Application Service API Integration](../../web_application_service/technical_architecture/api_integration.md)
 * [Validation Service Security](../../validation_service/operations/configuration.md)
 * [JWKS Endpoint Documentation](../interfaces/api.md#jwks-endpoint)
 

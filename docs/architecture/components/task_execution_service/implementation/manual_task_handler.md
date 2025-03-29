@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Manual Task Handler is a core component of the Task Execution Service Service responsible for managing tasks that require human intervention. It handles the assignment, notification, tracking, and completion of manual tasks, providing a bridge between automated workflows and human operators.
+The Manual Task Handler is a core component of the Task Execution Service responsible for managing tasks that require human intervention. It handles the assignment, notification, tracking, and completion of manual tasks, providing a bridge between automated workflows and human operators.
 
 ## Key Responsibilities
 

@@ -170,33 +170,33 @@ The database is backed up using:
 For detailed schema information about each component, refer to the individual schema documentation:
 
 ### Events
-* [Event Definitions](./schemas/event_definitions.md)
-* [Event Instances](./schemas/event_instances.md)
-* [Event Sequences](./schemas/event_sequences.md)
-* [Event Queue State](./schemas/event_queue_state.md)
-* [Dead Letter Queue](./schemas/dead_letter_queue.md)
+* [Event Definitions](./components/event_definitions_service/schemas/event_definitions.md)
+* [Event Instances](./components/event_instances_service/schemas/event_instances.md)
+* [Event Sequences](./components/event_sequences_service/schemas/event_sequences.md)
+* [Event Queue State](./components/event_queue_state_service/schemas/event_queue_state.md)
+* [Dead Letter Queue](./components/dead_letter_queue_service/schemas/dead_letter_queue.md)
 
 ### Workflows
-* [Workflow Definitions](./schemas/workflow_definitions.md)
-* [Workflow Instances](./schemas/workflow_instances.md)
-* [Workflow Event Triggers](./schemas/workflow_event_triggers.md)
-* [Workflow Event Subscriptions](./schemas/workflow_event_subscriptions.md)
+* [Workflow Definitions](./components/workflow_definitions_service/schemas/workflow_definitions.md)
+* [Workflow Instances](./components/workflow_instances_service/schemas/workflow_instances.md)
+* [Workflow Event Triggers](./components/workflow_event_triggers_service/schemas/workflow_event_triggers.md)
+* [Workflow Event Subscriptions](./components/workflow_event_subscriptions_service/schemas/workflow_event_subscriptions.md)
 
 ### Tasks
-* [Task Definitions](./schemas/task_definitions.md)
-* [Task Instances](./schemas/task_instances.md)
+* [Task Definitions](./components/task_definitions_service/schemas/task_definitions.md)
+* [Task Instances](./components/task_instances_service/schemas/task_instances.md)
 
 ### Integrations
-* [Integration Definitions](./schemas/integration_definitions.md)
-* [Integration Instances](./schemas/integration_instances.md)
+* [Integration Definitions](./components/integration_definitions_service/schemas/integration_definitions.md)
+* [Integration Instances](./components/integration_instances_service/schemas/integration_instances.md)
 
 ### Other Components
-* [UI Components](./schemas/ui_components.md)
+* [UI Components](./components/ui_components_service/schemas/ui_components.md)
 
 ### Testing
-* [Test Definitions](./schemas/test_definitions.md)
-* [Test Runs](./schemas/test_runs.md)
-* [Test Case Results](./schemas/test_case_results.md)
+* [Test Definitions](./components/test_definitions_service/schemas/test_definitions.md)
+* [Test Runs](./components/test_runs_service/schemas/test_runs.md)
+* [Test Case Results](./components/test_case_results_service/schemas/test_case_results.md)
 
 ## Migration Strategy
 

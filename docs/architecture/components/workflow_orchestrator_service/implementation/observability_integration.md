@@ -384,6 +384,6 @@ The Workflow Orchestrator has pre-configured dashboards and alerts in the Observ
 * [Workflow Monitoring](./monitoring.md)
 * [Workflow Definition Guide](../workflow_definition.md)
 * [Observability Service Overview](../../observability_service/overview.md)
-* [Observability Schema Definitions](../../../schemas/observability/schema_definitions.md)
+* [Observability Schema Definitions](.././schemas/observability/schema_definitions.md)
 
 

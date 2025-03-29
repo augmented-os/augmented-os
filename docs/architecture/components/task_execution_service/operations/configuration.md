@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the configuration options for the Task Execution Service Service. It covers environment variables, configuration files, runtime settings, and best practices for configuring the service in different environments.
+This document describes the configuration options for the Task Execution Service. It covers environment variables, configuration files, runtime settings, and best practices for configuring the service in different environments.
 
 ## Configuration Hierarchy
 

@@ -212,6 +212,6 @@ The Query Engine is optimized for interactive query performance:
 * [Data Model](../data_model.md)
 * [Storage Manager](./storage_manager.md)
 * [API Reference](../interfaces/api.md)
-* [Dashboard Integration](../../web_application/implementation/observability_dashboard.md)
+* [Dashboard Integration](../../web_application_service/implementation/observability_dashboard.md)
 
 

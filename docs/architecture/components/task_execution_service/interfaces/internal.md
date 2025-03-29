@@ -2,11 +2,11 @@
 
 ## Overview
 
-This document describes the internal interfaces used by the Task Execution Service Service for communication with other system components. These interfaces are not exposed externally and are intended for internal system integration only.
+This document describes the internal interfaces used by the Task Execution Service for communication with other system components. These interfaces are not exposed externally and are intended for internal system integration only.
 
 ## Interface Types
 
-The Task Execution Service Service uses the following types of internal interfaces:
+The Task Execution Service uses the following types of internal interfaces:
 
 * **Event-based interfaces**: Asynchronous communication via the event bus
 * **Service-to-service APIs**: Direct synchronous communication with other services
@@ -16,7 +16,7 @@ The Task Execution Service Service uses the following types of internal interfac
 
 ### Published Events
 
-The Task Execution Service Service publishes the following events to the event bus:
+The Task Execution Service publishes the following events to the event bus:
 
 | Event Type | Description | Payload Schema | Consumers |
 |------------|-------------|----------------|-----------|
@@ -32,7 +32,7 @@ The Task Execution Service Service publishes the following events to the event b
 
 ### Subscribed Events
 
-The Task Execution Service Service subscribes to the following events:
+The Task Execution Service subscribes to the following events:
 
 | Event Type | Description | Publisher | Handler |
 |------------|-------------|-----------|---------|
@@ -48,7 +48,7 @@ The Task Execution Service Service subscribes to the following events:
 
 ### Outbound Service Calls
 
-The Task Execution Service Service makes the following calls to other services:
+The Task Execution Service makes the following calls to other services:
 
 | Service | Endpoint | Purpose | Error Handling |
 |---------|----------|---------|---------------|
@@ -62,7 +62,7 @@ The Task Execution Service Service makes the following calls to other services:
 
 ### Inbound Service Calls
 
-The Task Execution Service Service exposes the following internal endpoints for other services:
+The Task Execution Service exposes the following internal endpoints for other services:
 
 | Endpoint | Purpose | Callers | Authentication |
 |----------|---------|---------|---------------|
@@ -303,7 +303,7 @@ The Integration Service supports the following integration types:
 
 ### Retry Policies
 
-The Task Execution Service Service implements the following retry policies for internal communication:
+The Task Execution Service implements the following retry policies for internal communication:
 
 | Interface Type | Retry Strategy | Backoff | Max Retries | Circuit Breaking |
 |----------------|----------------|---------|-------------|------------------|

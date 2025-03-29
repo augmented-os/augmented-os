@@ -228,10 +228,10 @@ The Auth Service uses the following database collections/tables to store authent
 
 ## Integration with Other Services
 
-### Web Application
+### Web Application Service
 
-* **Authentication API integration** - The Web Application uses the Auth Service API for user authentication
-* **Token validation** - The Web Application validates tokens using the JWKS endpoint
+* **Authentication API integration** - The Web Application Service uses the Auth Service API for user authentication
+* **Token validation** - The Web Application Service validates tokens using the JWKS endpoint
 
 ### Microservices
 

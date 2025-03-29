@@ -52,7 +52,7 @@ The `examples/` directory provides practical usage examples:
 
 ## Related Components
 
-* [Web Application](../web_application/README.md)
+* [Web Application Service](../web_application_service/README.md)
 * [Validation Service](../validation_service/README.md)
 * [Workflow Orchestrator Service](../workflow_orchestrator_service/README.md)
 * [Task Execution Service](../task_execution_service/README.md) 

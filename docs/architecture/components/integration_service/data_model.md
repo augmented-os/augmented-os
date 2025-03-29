@@ -4,8 +4,8 @@
 
 The Integration Service primarily interacts with these data schemas:
 
-* [Integrations Schema](../../schemas/integrations.md): Defines integration definitions, instances, and related configuration
-* [Events Schema](../../schemas/events.md): Used for integration-related events and notifications
+* [Integrations Schema](./schemas/integrations.md): Defines integration definitions, instances, and related configuration
+* [Events Schema](./schemas/events.md): Used for integration-related events and notifications
 
 This document focuses on how the Integration Service component specifically implements and extends the canonical schemas defined in the links above. For complete schema definitions, please refer to the linked documentation.
 
@@ -161,8 +161,8 @@ The Integration Service implements the following database optimizations:
 
 ## Related Schema Documentation
 
-* [Integrations Schema](../../schemas/integrations.md)
-* [Events Schema](../../schemas/events.md)
+* [Integrations Schema](./schemas/integrations.md)
+* [Events Schema](./schemas/events.md)
 * [Implementation Details](./implementation/credential_manager.md)
 
 

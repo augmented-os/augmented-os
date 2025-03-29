@@ -6,9 +6,9 @@ The Authentication Service manages several core data structures that represent u
 
 The Authentication Service primarily manages the following data schemas:
 
-* [Users Schema](../../schemas/users.md): User identities and profiles
-* [Roles Schema](../../schemas/roles.md): Role definitions for access control
-* [Permissions Schema](../../schemas/permissions.md): Permission definitions and mappings
+* [Users Schema](./schemas/users.md): User identities and profiles
+* [Roles Schema](./schemas/roles.md): Role definitions for access control
+* [Permissions Schema](./schemas/permissions.md): Permission definitions and mappings
 * Tokens: JWT and refresh token tracking
 * Service Accounts: Machine-to-machine authentication credentials
 
@@ -366,9 +366,9 @@ The Authentication Service data model supports the following evolution patterns:
 
 ## Related Schema Documentation
 
-* [Users Schema](../../schemas/users.md)
-* [Roles Schema](../../schemas/roles.md)
-* [Permissions Schema](../../schemas/permissions.md)
+* [Users Schema](./schemas/users.md)
+* [Roles Schema](./schemas/roles.md)
+* [Permissions Schema](./schemas/permissions.md)
 * [Database Architecture](../database_architecture.md)
 
 
