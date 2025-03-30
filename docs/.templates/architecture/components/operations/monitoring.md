@@ -1,154 +1,141 @@
-# Monitoring Guidelines
+# Business Store Service Monitoring
 
 ## Overview
 
-The \[Component Name\] Service exposes various metrics, logs, and health checks to enable comprehensive monitoring and observability. This document provides guidance on effective monitoring strategies, key metrics to track, and recommended alerting thresholds.
+Monitoring the Business Store Service is critical to ensure its reliability and performance in a multi-tenant environment. This document outlines the key metrics, logging practices, health checks, and alerting for the service. Proper monitoring helps us detect issues like performance bottlenecks (e.g., slow queries), security events (e.g., unauthorized access attempts), and capacity concerns (e.g., database nearing limits).
 
 ## Metrics
 
-The service exposes metrics in Prometheus format through the `/metrics` endpoint. The following key metrics should be monitored:
+The Business Store Service exposes metrics in Prometheus format at the `/metrics` endpoin】. Important metrics to monitor include:
 
-### \[Primary Function\] Metrics
+### Tenant Operations Metrics
 
-| Metric Name | Type | Description |
-|----|----|----|
-| `[component]_[resource]_[action]_total` | Counter | \[Description of what this metric counts\] |
-| `[component]_[resource]_[action]_total` | Counter | \[Description of what this metric counts\] |
-| `[component]_[resource]_[action]_time_seconds` | Histogram | \[Description of what this metric measures\] |
-| `[component]_[resource]_active_count` | Gauge | \[Description of what this gauge represents\] |
-| `[component]_[resource]_waiting_count` | Gauge | \[Description of what this gauge represents\] |
+These metrics track the core operations per tenant and resource type:
 
-### \[Secondary Function\] Metrics
+* `business_store_record_create_total` (Counter): Total number of records created across all tenants. We also break this down with labels for `resource` (table name) and `tenant` (perhaps hashed or grouped, since per-tenant label might be high cardinality, we might group by tier or just count globally).
+* `business_store_record_read_total` (Counter): Total number of record fetch (GET) operations.
+* `business_store_record_update_total` (Counter): Total number of record update operations.
+* `business_store_record_delete_total` (Counter): Total number of deletions.
 
-| Metric Name | Type | Description |
-|----|----|----|
-| `[component]_[operation]_total` | Counter | \[Description of what this metric counts\] |
-| `[component]_[operation]_failed_total` | Counter | \[Description of what this metric counts\] |
-| `[component]_[operation]_retry_total` | Counter | \[Description of what this metric counts\] |
-| `[component]_[operation]_time_seconds` | Histogram | \[Description of what this metric measures\] |
+Each metric can be labeled with success/fail status or error type if needed. For example, `business_store_record_create_total{status="success"}` vs `{status="error"}`.
+
+* `business_store_schema_update_total` (Counter): Count of schema update operations performed. This is important to watch since schema changes are heavy operations.
+
+Additionally, performance metrics:
+
+* `business_store_request_duration_seconds` (Histogram): Time taken to process API requests, categorized by endpoint (could use a label like `operation="createRecord"` etc.). Helps identify slow endpoints.
+* `business_store_db_query_duration_seconds` (Histogram): Time spent on database queries per operation type (maybe separate for read vs write vs schema migration). This correlates to `[component]_db_operation_time_seconds` in the templat】 (so specifically, `business_store_db_operation_time_seconds`).
 
 ### Database Metrics
 
-| Metric Name | Type | Description |
-|----|----|----|
-| `[component]_db_operation_time_seconds` | Histogram | Time spent on database operations |
-| `[component]_db_connection_pool_utilization` | Gauge | Database connection pool utilization |
-| `[component]_db_query_errors_total` | Counter | Number of database query errors |
-| `[component]_db_transaction_time_seconds` | Histogram | Time spent in database transactions |
+From the database integration (these might be collected via Postgres exporter or directly by the service):
+
+* `business_store_db_connection_pool_utilization` (Gauge): Current usage of DB connection pool vs ma】. If this approaches 1 (100%), it means the service is hitting the limit of DB connections – possibly a bottleneck.
+* `business_store_db_query_errors_total` (Counter): Number of database query errors (failed SQL executions】. Spikes here might indicate issues like constraint violations or deadlocks.
+* `business_store_db_deadlocks_total` (Counter): (If trackable) how many deadlocks were detected and handled. Should normally be 0; >0 indicates potential contention issues.
+
+We also rely on a general Postgres monitoring (through Observability service or PgBouncer stats if used) for things like slow queries and index usage.
 
 ### External Service Metrics
 
-| Metric Name | Type | Description |
-|----|----|----|
-| `[component]_[external_service]_request_total` | Counter | Total number of requests to \[external service\] |
-| `[component]_[external_service]_request_failed_total` | Counter | Failed requests to \[external service\] |
-| `[component]_[external_service]_request_time_seconds` | Histogram | Request time to \[external service\] |
+The Business Store Service interacts with other services (Auth, Validation, etc.). Monitor those interactions:
+
+* `business_store_auth_requests_total` (Counter): Number of calls to Auth Service. Possibly split by type (`token_verify`, `get_key`, etc.) with labels.
+* `business_store_auth_request_failed_total` (Counter): Failed calls to Auth (timeouts, errors】. Non-zero values indicate connectivity issues.
+* `business_store_validation_requests_total` and `...failed_total`: Similarly for Validation Service calls.
+* `business_store_embedding_requests_total` and `...failed_total`: if using an external embedding/AI service for semantic search.
+* `business_store_external_request_duration_seconds` (Histogram): Time spent waiting for external service responses (Auth, Validation, etc.) aggregated. Could also break out by service.
+
+### Semantic Search Metrics
+
+If semantic search is used:
+
+* `business_store_search_query_total` (Counter): How many semantic search queries performed.
+* `business_store_search_latency_seconds` (Histogram): Time to execute a semantic search query (embedding generation + DB search).
+
+### Tenant-Specific and High-Level Metrics
+
+* `business_store_active_tenants` (Gauge): Current number of active tenant schemas. This can be derived from metadata or from counting at runtime.
+* `business_store_tenant_data_size_bytes` (Gauge, maybe per tenant or total): Approximate size of data stored (maybe from PG relations or periodically sampled).
+* `business_store_errors_total` (Counter): Count of errors in the service overall (this could be incremented on exceptions caught globally, as a catch-all). Also categorize by type (validation error vs internal exception).
+* `business_store_rate_limit_hits_total`: If any rate limiting is implemented within service (likely at gateway), might not be inside BSS itself but we can track how often we return 429 or similar.
 
 ## Logs
 
-The \[Component Name\] Service uses structured logging with the following log levels:
+The Business Store Service employs structured loggin】 for easier analysis. The log format (in JSON) includes fields such as timestamp, level, service name, trace IDs, and message contex】.
 
-| Level | Usage |
-|----|----|
-| ERROR | Unexpected errors that require immediate attention |
-| WARN | Potential issues that might require investigation |
-| INFO | Important operational events (service start/stop, configuration changes) |
-| DEBUG | Detailed information for troubleshooting (disabled in production) |
-| TRACE | Very detailed debugging information (never enabled in production) |
+### Log Levels and Usage
 
-### Key Log Events
+* **ERROR**: Unexpected errors that cause an operation to fail. E.g., “Database timeout while creating invoice” or unhandled exceptions. Each ERROR log should have context like tenantId and operation. These trigger alerts if they exceed a threshold.
+* **WARN**: Situations that are abnormal but not immediate failures. E.g., “Validation service unreachable, using cached schema – possible stale data” or “High memory usage detected”. Warnings help spot issues to investigate but may auto-resolve.
+* **INFO**: Key lifecycle events like service startup/shutdown, schema updates, major actions. E.g., “Tenant X schema v3 applied by user Y”, or “Service started, connected to DB host X”.
+* **DEBUG**: Detailed information useful during development or troubleshooting. E.g., SQL statements executed (perhaps sanitized), payloads of requests for debugging. Typically turned off in production to avoid performance impact and log noise.
+* **TRACE**: Very granular step-by-step logs, usually disabled entirely outside of a dev environment.
 
-The following log events should be monitored:
+### Key Log Events to Monitor
 
-| Log Event | Level | Description | Action Required |
-|----|----|----|----|
-| `[component].[resource].[error_type]` | ERROR | \[Description of the error condition\] | \[Recommended action\] |
-| `[component].[resource].[warning_type]` | WARN | \[Description of the warning condition\] | \[Recommended action\] |
-| `[component].[resource].[info_type]` | INFO | \[Description of the informational event\] | \[Recommended action if any\] |
+We should configure alerts or at least pay attention to certain log event】:
 
-### Log Format
+* **Authentication failures**: Log lines like `auth.failure` at WARN or INFO level with details of e.g., token issuer mismatch or expired token. If a burst of these occurs, could indicate an attack or misconfiguration.
+* **Permission denied**: If any attempt is made by a user to access another tenant’s data (should be prevented by design, but if it happens and is logged as a security check fail), that’s important.
+* **Schema update events**: Each `schema.update` INFO log should show success or error. If error, likely accompanied by an ERROR log with cause (like validation error or migration issue).
+* **Slow query warnings**: If a single query takes unusually long (we might instrument or the DB might log it), log at WARN: e.g., “Slow query: fetch invoices took 3s for tenant X”. Monitor these to consider adding indexes or optimizing.
 
-```json
-{
-  "timestamp": "ISO-8601 timestamp",
-  "level": "INFO",
-  "service": "[component-name]",
-  "traceId": "uuid",
-  "spanId": "uuid",
-  "message": "Human readable message",
-  "context": {
-    "[contextField1]": "[value]",
-    "[contextField2]": "[value]"
-  }
-}
-```
+### Log Correlation
+
+The service uses a `traceId` and `spanId` in log】 (if distributed tracing is enabled). This allows correlating a request through multiple services. For example, a single end-user request triggers logs in Web App Service and Business Store Service; having a common traceId helps to follow the chain.
+
+We integrate with the Observability service’s tracing system, so that each request to BSS might carry a trace header which we propagate to DB calls etc. Ensure logs include those IDs.
 
 ## Health Checks
 
-The service exposes health check endpoints:
+Health check endpoints are provided for use by orchestration (like Kubernetes liveness/readiness probes) and monitoring system】:
 
-* `/health/liveness` - Basic check that the service is running
-* `/health/readiness` - Check that the service is ready to accept requests
-* `/health/dependency` - Check status of all dependencies
+* **Liveness (**`/health/liveness`): Returns simple success (200 OK with maybe `{"status":"alive"}`) if the process is running. This doesn’t check dependencies, only that the service loop is up. The app should respond even under heavy load unless truly hung; otherwise a separate thread can respond.
+* **Readiness (**`/health/readiness`): Checks that the service is fully operational: e.g., it can connect to the database and essential dependencies. Implementation: attempt a lightweight DB query (or ensure the last DB heartbeat was recent), check that any required subservices (Auth, etc.) are reachable (maybe by checking a cached status or doing a quick call), then return 200 if all good, or 503 if something is wrong. For example, if DB is down, readiness returns 503 causing container orchestration to stop sending traffic.
+* **Dependency (**`/health/dependency`): As per template, possibly a more detailed report of each dependency status:
 
-### Dependency Health
+  ```json
+  {
+    "database": "OK",
+    "authService": "OK",
+    "validationService": "degraded"  // e.g., slow to respond but alive
+  }
+  ```
 
-The following dependencies are critical for service operation:
+  This could be same as readiness but with more info. Could be restricted (auth required or not exposed publicly).
 
-| Dependency | Impact if Unavailable | Recovery Strategy |
-|----|----|----|
-| \[Dependency 1\] | \[Impact description\] | \[Recovery approach\] |
-| \[Dependency 2\] | \[Impact description\] | \[Recovery approach\] |
-| \[Dependency 3\] | \[Impact description\] | \[Recovery approach\] |
+### Automated Health Signals
 
-## Alerting
+The service also might have an in-memory self-monitor that marks unhealthy if certain conditions occur, e.g., if repeated failures to connect to DB happened in last X minutes. This can integrate with readiness as well.
 
-### Critical Alerts
+## Alerting and Thresholds
 
-The following conditions should trigger immediate alerts:
+The Observability service or a monitoring system (Prometheus + Alertmanager, etc.) would use the above metrics and logs to trigger alerts. Some suggested alerts:
 
-| Condition | Threshold | Impact | Response |
-|----|----|----|----|
-| High error rate | > 5% of requests over 5 minutes | \[Impact description\] | \[Response procedure\] |
-| Service unavailable | Health check fails for > 1 minute | \[Impact description\] | \[Response procedure\] |
-| \[Critical condition 3\] | \[Threshold\] | \[Impact description\] | \[Response procedure\] |
-
-### Warning Alerts
-
-The following conditions should trigger warning alerts:
-
-| Condition | Threshold | Impact | Response |
-|----|----|----|----|
-| Elevated latency | P95 > \[threshold\] ms over 10 minutes | \[Impact description\] | \[Response procedure\] |
-| Increased error rate | > 1% of requests over 15 minutes | \[Impact description\] | \[Response procedure\] |
-| \[Warning condition 3\] | \[Threshold\] | \[Impact description\] | \[Response procedure\] |
+* **High Error Rate**: If `business_store_errors_total` increases rapidly or if the proportion of error responses exceeds, say, 5% of requests for 5 minutes, alert DevOps. Possibly measured by a rate of 5xx responses in logs or metrics.
+* **Auth/Validation Failures**: If `business_store_validation_request_failed_total` is >0 for a few minutes straight, maybe the Validation Service is down (or our integration broken). Alert so that team can check it or failover.
+* **Slow Response**: If `business_store_request_duration_seconds` p95 goes above, say, 0.5s consistently (tune threshold), something might be wrong (db slowness or under-provisioned service).
+* **DB Connection Saturation**: If `business_store_db_connection_pool_utilization` > 0.8 (80%) consistently, consider scaling up or increasing pool. Or if connection errors appear (could indicate running out).
+* **High DB Error Count**: e.g., any sustained non-zero `business_store_db_query_errors_total` (like incrementing with constraint violations or deadlocks frequently) we should investigate.
+* **Tenant Schema Changes**: It might be useful to have an alert if many schema changes happen in short time (maybe a malicious or buggy client repeatedly updating schema). Not a standard threshold, but something to watch manually or via log analysis.
 
 ## Dashboards
 
-Recommended Grafana dashboard panels:
+We would create dashboards showing:
 
-
-1. **Service Overview**
-   * Request rate, error rate, and latency
-   * Active \[resources\] count
-   * Recent errors
-2. **\[Primary Function\] Metrics**
-   * \[Resource\] creation/update/deletion rates
-   * \[Operation\] success/failure rates
-   * \[Operation\] duration percentiles
-3. **Resource Utilization**
-   * CPU, memory, and network usage
-   * Database connection pool utilization
-   * Thread pool utilization
-4. **Dependencies**
-   * External service request rates and latencies
-   * Database operation latencies
-   * Cache hit/miss rates
+* Throughput of requests (create/read/update/delete counts).
+* Latency histograms for key operations.
+* Active tenants and per-tenant activity (maybe top N active tenants by ops/sec to see if one tenant is driving load).
+* Database stats: connections, slow queries. Possibly integrate with PG’s own metrics.
+* External calls performance (Auth/Validation).
+* System resources: CPU, memory of the service container (maybe from container metrics), and DB CPU/memory if on same or accessible.
 
 ## Related Documentation
 
-* [Configuration](./configuration.md)
-* [Scaling](./scaling.md)
-* [Implementation Details](../implementation/module1.md)
+* **Scaling** – for interpreting some metrics in terms of capacity (e.g., if CPU or DB load is high, scaling guidelines).
+* **Configuration** – covers how to configure logging levels, metric endpoints, and any toggles for tracing/metrics (like enabling Prometheus, or how to connect to an APM if used).
+* **Observability Service** – details the centralized logging and monitoring setup, to understand how BSS feeds into it. For example, if Observability uses an ELK stack, ensure JSON logs are formatted properly to be parsed.
+* **Security** – certain security events (auth failures, etc.) might be mentioned there but also surfaced via monitoring (e.g., an alert on multiple auth failures could indicate a brute force attempt). The monitoring should catch those patterns too.
 
 

@@ -1,0 +1,761 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "PostgreSQL Schema Definition",
+    "description": "A JSON format for defining a PostgreSQL database schema, including tables, columns, indexes, constraints, views, functions, triggers, and extensions.",
+    "type": "object",
+    "properties": {
+      "schemaVersion": {
+        "description": "Optional semantic version of this schema definition itself (e.g., 1.0.0).",
+        "type": "string",
+        "pattern": "^\\d+\\.\\d+\\.\\d+$"
+      },
+      "extensions": {
+        "description": "Optional list of required PostgreSQL extensions (e.g., 'uuid-ossp', 'postgis'). CREATE EXTENSION IF NOT EXISTS will be generated.",
+        "type": "array",
+        "items": {
+          "type": "string",
+          "pattern": "^[a-z_][a-z0-9_]*$"
+        }
+      },
+      "schemas": {
+        "description": "Required array defining the database schemas (namespaces) and their objects.",
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "$ref": "#/$defs/schemaDefinition"
+        }
+      },
+      "enums": {
+        "description": "Optional array for globally defined enumerated types.",
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/enumDefinition"
+        }
+      },
+      "compositeTypes": {
+        "description": "Optional array for globally defined composite types.",
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/compositeTypeDefinition"
+        }
+      },
+      "functions": {
+        "description": "Optional array for globally defined functions/procedures.",
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/functionDefinition"
+        }
+      },
+      "views": {
+        "description": "Optional array for globally defined views.",
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/viewDefinition"
+        }
+      },
+      "triggers": {
+        "description": "Optional array for globally defined triggers (must reference tables fully).",
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/triggerDefinition"
+        }
+      },
+      "indexes": {
+        "description": "Optional array for globally defined indexes (must reference tables fully).",
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/indexDefinition"
+        }
+      }
+    },
+    "required": [
+      "schemas"
+    ],
+    "additionalProperties": false,
+    "$defs": {
+      "sqlExpression": {
+        "type": "string",
+        "minLength": 1
+      },
+      "schemaDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the schema (e.g., 'public').",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "tables": {
+            "description": "Array of table definitions within this schema.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/tableDefinition"
+            }
+          },
+          "enums": {
+            "description": "Array of enumerated types specific to this schema.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/enumDefinition"
+            }
+          },
+          "compositeTypes": {
+            "description": "Array of composite types specific to this schema.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/compositeTypeDefinition"
+            }
+          },
+          "functions": {
+            "description": "Array of functions/procedures specific to this schema.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/functionDefinition"
+            }
+          },
+          "views": {
+            "description": "Array of views specific to this schema.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/viewDefinition"
+            }
+          },
+          "triggers": {
+            "description": "Array of triggers specific to this schema.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/triggerDefinition"
+            }
+          },
+          "indexes": {
+            "description": "Array of indexes specific to this schema.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/indexDefinition"
+            }
+          },
+          "comment": {
+            "description": "Optional description of the schema.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "tables"
+        ],
+        "additionalProperties": false
+      },
+      "tableDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the table.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "columns": {
+            "description": "Map of column names to their definitions.",
+            "$ref": "#/$defs/columnsMap"
+          },
+          "primaryKey": {
+            "description": "Primary key constraint definition.",
+            "$ref": "#/$defs/primaryKeyDefinition"
+          },
+          "unique": {
+            "description": "Array of unique constraints.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/uniqueConstraintDefinition"
+            }
+          },
+          "checks": {
+            "description": "Array of check constraints.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/checkConstraintDefinition"
+            }
+          },
+          "foreignKeys": {
+            "description": "Array of foreign key constraints.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/foreignKeyDefinition"
+            }
+          },
+          "indexes": {
+            "description": "Array of index definitions specific to this table.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/indexDefinition"
+            }
+          },
+          "partitionBy": {
+            "description": "Defines partitioning for the table.",
+            "$ref": "#/$defs/partitionByDefinition"
+          },
+          "partitions": {
+            "description": "List of child partitions if the table is partitioned.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/partitionDefinition"
+            }
+          },
+          "comment": {
+            "description": "Optional description of the table.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "columns"
+        ],
+        "additionalProperties": false
+      },
+      "columnsMap": {
+        "description": "A map where keys are valid column names and values are column definitions.",
+        "type": "object",
+        "minProperties": 1,
+        "patternProperties": {
+          "^[a-z_][a-z0-9_]*$": {
+            "$ref": "#/$defs/columnDefinition"
+          }
+        },
+        "additionalProperties": false
+      },
+      "columnDefinition": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "Required data type name (e.g., 'integer', 'text', 'uuid', 'timestamp', 'jsonb', 'my_enum').",
+            "type": "string"
+          },
+          "nullable": {
+            "description": "If false, add NOT NULL constraint. Defaults to true (nullable).",
+            "type": "boolean"
+          },
+          "default": {
+            "description": "Optional SQL expression or literal for the default value (e.g., 'NOW()', ''pending'').",
+            "type": "string"
+          },
+          "generated": {
+            "description": "Optional SQL expression for a generated column.",
+            "type": "string"
+          },
+          "stored": {
+            "description": "For generated columns. Must be true as PostgreSQL only supports STORED. Implicitly true if 'generated' is present.",
+            "type": "boolean",
+            "const": true
+          },
+          "comment": {
+            "description": "Optional description for the column.",
+            "type": "string"
+          },
+          "array": {
+            "description": "Set to true if this is an array of the base type.",
+            "type": "boolean"
+          },
+          "dimensions": {
+            "description": "For multi-dimensional arrays. Defaults to 1 if 'array' is true.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "length": {
+            "description": "Length for varchar, char.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "precision": {
+            "description": "Precision for numeric, timestamp, time, interval.",
+            "type": "integer",
+            "minimum": 0
+          },
+          "scale": {
+            "description": "Scale for numeric.",
+            "type": "integer",
+            "minimum": 0
+          },
+          "withTimeZone": {
+            "description": "For timestamp, time types.",
+            "type": "boolean"
+          },
+          "identity": {
+            "description": "Specify generation for identity columns (alternative to 'serial'). True uses defaults.",
+            "oneOf": [ { "type": "boolean" }, { "type": "object" } ]
+          },
+          "srid": {
+            "description": "SRID for geometry/geography types.",
+            "type": "integer"
+          },
+          "geometryType": {
+            "description": "Specific geometry type (e.g., 'Point', 'Polygon') for geometry/geography.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "primaryKeyDefinition": {
+        "description": "Can be an array of column names or an object with name and columns.",
+        "oneOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_][a-z0-9_]*$"
+            },
+            "minItems": 1
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z_][a-z0-9_]*$"
+              },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z_][a-z0-9_]*$"
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "columns"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "uniqueConstraintDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Optional name for the unique constraint.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "columns": {
+            "description": "Array of column names for the unique constraint.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_][a-z0-9_]*$"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "columns"
+        ],
+        "additionalProperties": false
+      },
+      "checkConstraintDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Optional name for the check constraint.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "expression": {
+            "description": "SQL boolean expression for the check constraint.",
+            "$ref": "#/$defs/sqlExpression"
+          }
+        },
+        "required": [
+          "expression"
+        ],
+        "additionalProperties": false
+      },
+      "foreignKeyDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Optional name for the foreign key constraint.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "columns": {
+            "description": "Local column(s) participating in the foreign key.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_][a-z0-9_]*$"
+            },
+            "minItems": 1
+          },
+          "references": {
+            "description": "Details of the referenced table and columns.",
+            "type": "object",
+            "properties": {
+              "schema": {
+                "description": "Schema of the referenced table (defaults to same schema).",
+                "type": "string",
+                "pattern": "^[a-z_][a-z0-9_]*$"
+              },
+              "table": {
+                "description": "Name of the referenced table.",
+                "type": "string",
+                "pattern": "^[a-z_][a-z0-9_]*$"
+              },
+              "columns": {
+                "description": "Referenced column(s) (must be PK or unique).",
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-z_][a-z0-9_]*$"
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "table",
+              "columns"
+            ],
+            "additionalProperties": false
+          },
+          "onDelete": {
+            "description": "Action on delete. Defaults to NO ACTION.",
+            "type": "string",
+            "enum": [ "CASCADE", "RESTRICT", "NO ACTION", "SET NULL", "SET DEFAULT" ]
+          },
+          "onUpdate": {
+            "description": "Action on update. Defaults to NO ACTION.",
+            "type": "string",
+            "enum": [ "CASCADE", "RESTRICT", "NO ACTION", "SET NULL", "SET DEFAULT" ]
+          },
+          "deferrable": {
+            "description": "Whether the constraint check can be deferred.",
+            "type": "boolean"
+          },
+          "initiallyDeferred": {
+            "description": "If deferrable, whether it is deferred by default.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "columns",
+          "references"
+        ],
+        "additionalProperties": false
+      },
+      "indexDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Required index name (must be unique per schema).",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "table": {
+            "description": "Target table name. Required if index is defined globally.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "columns": {
+            "description": "Array of column names or objects (with opclass/collation). Use this OR 'expression'.",
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/indexColumnDefinition"
+            },
+            "minItems": 1
+          },
+          "expression": {
+            "description": "SQL expression for a functional index. Use this OR 'columns'.",
+            "$ref": "#/$defs/sqlExpression"
+          },
+          "method": {
+            "description": "Index method. Defaults to BTREE.",
+            "type": "string",
+            "enum": [ "BTREE", "HASH", "GIN", "GIST", "SPGIST", "BRIN" ]
+          },
+          "unique": {
+            "description": "If true, create a unique index.",
+            "type": "boolean"
+          },
+          "concurrent": {
+            "description": "If true, generate CREATE INDEX CONCURRENTLY.",
+            "type": "boolean"
+          },
+          "where": {
+            "description": "SQL predicate for a partial index.",
+            "$ref": "#/$defs/sqlExpression"
+          },
+          "include": {
+            "description": "Array of column names for covering indexes.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_][a-z0-9_]*$"
+            }
+          },
+          "comment": {
+            "description": "Optional description for the index.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "indexColumnDefinition": {
+        "description": "Defines a column within an index, allowing for opclass and collation.",
+        "oneOf": [
+          {
+            "description": "Simple column name string.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          {
+            "description": "Object specifying column name and options.",
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Column name.",
+                "type": "string",
+                "pattern": "^[a-z_][a-z0-9_]*$"
+              },
+              "opclass": {
+                "description": "Operator class for the index column.",
+                "type": "string"
+              },
+              "collation": {
+                "description": "Collation for the index column.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "partitionByDefinition": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "Partitioning strategy.",
+            "type": "string",
+            "enum": [ "RANGE", "LIST", "HASH" ]
+          },
+          "columns": {
+            "description": "Column(s) or expression(s) to partition by.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "type",
+          "columns"
+        ],
+        "additionalProperties": false
+      },
+      "partitionDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the partition table.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "values": {
+            "description": "SQL clause defining partition bounds/values (e.g., 'FROM (...) TO (...)', 'IN (...)').",
+            "$ref": "#/$defs/sqlExpression"
+          }
+        },
+        "required": [
+          "name",
+          "values"
+        ],
+        "additionalProperties": false
+      },
+      "viewDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the view.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "definition": {
+            "description": "SQL SELECT query defining the view.",
+            "$ref": "#/$defs/sqlExpression"
+          },
+          "materialized": {
+            "description": "Set to true for a MATERIALIZED VIEW.",
+            "type": "boolean"
+          },
+          "checkOption": {
+            "description": "Specify WITH CHECK OPTION.",
+            "type": "string",
+            "enum": [ "LOCAL", "CASCADED" ]
+          },
+          "comment": {
+            "description": "Optional description for the view.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "definition"
+        ],
+        "additionalProperties": false
+      },
+      "functionDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the function or procedure.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "language": {
+            "description": "Implementation language (e.g., 'plpgsql', 'sql').",
+            "type": "string"
+          },
+          "args": {
+            "description": "Optional array defining function arguments (e.g., ['integer', 'text'] or objects with name/type).",
+            "type": "array",
+            "items": {
+               "oneOf": [ { "type": "string" }, { "type": "object" } ]
+            }
+          },
+          "returns": {
+            "description": "Required return type (e.g., 'integer', 'void', 'trigger', 'setof my_type').",
+            "type": "string"
+          },
+          "body": {
+            "description": "Required function body as a string.",
+            "$ref": "#/$defs/sqlExpression"
+          },
+          "volatility": {
+            "description": "Function volatility.",
+            "type": "string",
+            "enum": [ "VOLATILE", "STABLE", "IMMUTABLE" ]
+          },
+          "security": {
+            "description": "Security context.",
+            "type": "string",
+            "enum": [ "INVOKER", "DEFINER" ]
+          },
+          "comment": {
+            "description": "Optional description for the function.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "language",
+          "returns",
+          "body"
+        ],
+        "additionalProperties": false
+      },
+      "triggerDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the trigger.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "table": {
+            "description": "Target table name for the trigger.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "timing": {
+            "description": "When the trigger fires.",
+            "type": "string",
+            "enum": [ "BEFORE", "AFTER", "INSTEAD OF" ]
+          },
+          "events": {
+            "description": "Event(s) that activate the trigger.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [ "INSERT", "UPDATE", "DELETE", "TRUNCATE" ]
+            },
+            "minItems": 1
+          },
+          "function": {
+            "description": "Name of the trigger function to execute (must return 'trigger').",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "forEach": {
+            "description": "Trigger frequency. Defaults to STATEMENT.",
+            "type": "string",
+            "enum": [ "ROW", "STATEMENT" ]
+          },
+          "when": {
+            "description": "Optional SQL condition for the trigger WHEN clause.",
+            "$ref": "#/$defs/sqlExpression"
+          },
+          "comment": {
+            "description": "Optional description for the trigger.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "table",
+          "timing",
+          "events",
+          "function"
+        ],
+        "additionalProperties": false
+      },
+      "enumDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the enumerated type.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "values": {
+            "description": "Array of string values for the enum.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "name",
+          "values"
+        ],
+        "additionalProperties": false
+      },
+      "compositeTypeDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the composite type.",
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_]*$"
+          },
+          "attributes": {
+            "description": "Map of attribute names to their type definitions (similar to table columns).",
+            "$ref": "#/$defs/columnsMap"
+          }
+        },
+        "required": [
+          "name",
+          "attributes"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }

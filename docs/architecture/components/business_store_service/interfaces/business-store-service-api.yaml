@@ -1,0 +1,597 @@
+openapi: 3.0.0
+info:
+  title: "Business Store Service API"
+  description: "API for the Business Store Service, which manages multi-tenant business data with customizable data models. Enables tenants to define and manage their own data schemas and store/retrieve business records with semantic search capabilities."
+  version: "1.0.0"
+  contact:
+    name: "Augmented OS API Support"
+    email: "api-support@example.com"
+    url: "https://example.com/support"
+  
+servers:
+  - url: "https://api.example.com/api/business"
+    description: "Production API Server"
+  - url: "https://sandbox-api.example.com/api/business"
+    description: "Sandbox API Server for testing"
+
+tags:
+  - name: "Schema"
+    description: "Operations for managing tenant data models and schemas"
+  - name: "Data"
+    description: "Operations for managing business data records"
+  - name: "Search"
+    description: "Operations for semantic search across tenant data"
+  - name: "Integration"
+    description: "Operations for data import/export and system integration"
+  - name: "Health"
+    description: "Health check operations for the service"
+
+paths:
+  /{tenantId}/schema:
+    parameters:
+      - name: tenantId
+        in: path
+        description: "ID of the tenant"
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: "Get the current schema definition"
+      description: "Retrieves the current JSON Schema definition (data model) for the tenant."
+      operationId: "getTenantSchema"
+      tags:
+        - "Schema"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaDefinition"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+    put:
+      summary: "Update or define tenant schema"
+      description: "Define a new data model or update the existing data model for the tenant."
+      operationId: "updateTenantSchema"
+      tags:
+        - "Schema"
+      requestBody:
+        description: "JSON Schema definition for the tenant's data model"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SchemaDefinition"
+      responses:
+        '200':
+          description: "Schema updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaUpdateResponse"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '409':
+          $ref: "#/components/responses/Conflict"
+
+  /{tenantId}/data/{resource}:
+    parameters:
+      - name: tenantId
+        in: path
+        description: "ID of the tenant"
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: resource
+        in: path
+        description: "Resource type (table name) as defined in tenant schema"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "List/search resources"
+      description: "Returns a list of records for the specified resource based on filters and search parameters."
+      operationId: "listResources"
+      tags:
+        - "Data"
+      parameters:
+        - name: filter
+          in: query
+          description: "Filter by field values (format: filter[fieldName]=value)"
+          required: false
+          explode: true
+          schema:
+            type: object
+            additionalProperties: true
+        - name: q
+          in: query
+          description: "Free text search query"
+          required: false
+          schema:
+            type: string
+        - name: semantic
+          in: query
+          description: "Semantic search query"
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          description: "Offset for pagination"
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: sort
+          in: query
+          description: "Sort field and direction (format: fieldName(asc|desc))"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceList"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      summary: "Create a new record"
+      description: "Creates a new record in the specified resource (table) for the tenant."
+      operationId: "createResource"
+      tags:
+        - "Data"
+      requestBody:
+        description: "Record details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceCreate"
+      responses:
+        '201':
+          description: "Record created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '409':
+          $ref: "#/components/responses/Conflict"
+  
+  /{tenantId}/data/{resource}/{recordId}:
+    parameters:
+      - name: tenantId
+        in: path
+        description: "ID of the tenant"
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: resource
+        in: path
+        description: "Resource type (table name) as defined in tenant schema"
+        required: true
+        schema:
+          type: string
+      - name: recordId
+        in: path
+        description: "ID of the record"
+        required: true
+        schema:
+          type: string
+    get:
+      summary: "Get record by ID"
+      description: "Returns a single record by ID from the specified resource."
+      operationId: "getResource"
+      tags:
+        - "Data"
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+    put:
+      summary: "Update record"
+      description: "Updates an existing record with the provided details."
+      operationId: "updateResource"
+      tags:
+        - "Data"
+      requestBody:
+        description: "Updated record details"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResourceUpdate"
+      responses:
+        '200':
+          description: "Record updated successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+    delete:
+      summary: "Delete record"
+      description: "Deletes a record by ID from the specified resource."
+      operationId: "deleteResource"
+      tags:
+        - "Data"
+      responses:
+        '204':
+          description: "Record deleted successfully"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+  
+  /{tenantId}/search:
+    parameters:
+      - name: tenantId
+        in: path
+        description: "ID of the tenant"
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: "Semantic search across resources"
+      description: "Performs a semantic search across one or multiple resources within the tenant's data."
+      operationId: "semanticSearch"
+      tags:
+        - "Search"
+      parameters:
+        - name: query
+          in: query
+          description: "Semantic search query text"
+          required: true
+          schema:
+            type: string
+        - name: resources
+          in: query
+          description: "Resources to search (comma-separated list of table names)"
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: "Number of items per page"
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResults"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '501':
+          description: "Not implemented - semantic search is not enabled for the resources"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  
+  /{tenantId}/export:
+    parameters:
+      - name: tenantId
+        in: path
+        description: "ID of the tenant"
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: "Export tenant data"
+      description: "Exports all tenant data (all tables) as a JSON or SQL dump."
+      operationId: "exportTenantData"
+      tags:
+        - "Integration"
+      parameters:
+        - name: format
+          in: query
+          description: "Export format (json or sql)"
+          required: false
+          schema:
+            type: string
+            enum: [json, sql]
+            default: json
+      responses:
+        '200':
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportResult"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+  
+  /health:
+    get:
+      summary: "Health check"
+      description: "Check if the service is up and running."
+      operationId: "healthCheck"
+      tags:
+        - "Health"
+      responses:
+        '200':
+          description: "Service is healthy"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  version:
+                    type: string
+        '503':
+          description: "Service is unhealthy"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [error]
+                  message:
+                    type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT token obtained from the authentication service, must contain tenant context"
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: "API key for direct access"
+  
+  schemas:
+    SchemaDefinition:
+      type: object
+      properties:
+        version:
+          type: integer
+          description: "Schema version (for updates)"
+        entities:
+          type: object
+          description: "Entity definitions"
+          additionalProperties:
+            type: object
+            properties:
+              properties:
+                type: object
+                additionalProperties:
+                  type: object
+                  description: "Property definition (JSON Schema)"
+              primaryKey:
+                type: string
+                description: "Primary key field name"
+              foreignKeys:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: "Foreign key field name"
+                    references:
+                      type: object
+                      properties:
+                        entity:
+                          type: string
+                          description: "Referenced entity name"
+                        field:
+                          type: string
+                          description: "Referenced field name"
+      required:
+        - entities
+    
+    SchemaUpdateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: "Status message"
+        version:
+          type: integer
+          description: "New schema version"
+    
+    Resource:
+      type: object
+      description: "Generic resource record (fields depend on tenant schema)"
+      additionalProperties: true
+    
+    ResourceCreate:
+      type: object
+      description: "Generic resource creation request (fields depend on tenant schema)"
+      additionalProperties: true
+    
+    ResourceUpdate:
+      type: object
+      description: "Generic resource update request (fields depend on tenant schema)"
+      additionalProperties: true
+    
+    ResourceList:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resource"
+        pagination:
+          type: object
+          properties:
+            limit:
+              type: integer
+              description: "Items per page"
+            offset:
+              type: integer
+              description: "Current offset"
+            total:
+              type: integer
+              description: "Total number of items"
+            nextOffset:
+              type: integer
+              description: "Next offset value (if available)"
+    
+    SearchResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              resource:
+                type: string
+                description: "Resource type of the record"
+              recordId:
+                type: string
+                description: "ID of the record"
+              score:
+                type: number
+                description: "Similarity score (higher is more relevant)"
+              data:
+                $ref: "#/components/schemas/Resource"
+            required:
+              - resource
+              - recordId
+              - score
+              - data
+        pagination:
+          type: object
+          properties:
+            limit:
+              type: integer
+              description: "Items per page"
+            offset:
+              type: integer
+              description: "Current offset"
+            total:
+              type: integer
+              description: "Total number of items (if available)"
+    
+    ExportResult:
+      type: object
+      properties:
+        format:
+          type: string
+          enum: [json, sql]
+          description: "Format of the exported data"
+        data:
+          type: object
+          description: "Exported data as a JSON object (for json format)"
+          additionalProperties:
+            type: array
+            items:
+              $ref: "#/components/schemas/Resource"
+        downloadUrl:
+          type: string
+          description: "URL to download the export file (for large exports)"
+    
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: "Error message"
+        code:
+          type: string
+          description: "Error code"
+        details:
+          type: object
+          additionalProperties: true
+          description: "Additional error details"
+        incident:
+          type: string
+          description: "Incident ID for tracking"
+  
+  responses:
+    BadRequest:
+      description: "Bad request - request validation failed"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: "Unauthorized - missing or invalid authentication"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Forbidden:
+      description: "Forbidden - insufficient permissions"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: "Not found - resource does not exist"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Conflict:
+      description: "Conflict - resource already exists or version conflict"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+security:
+  - bearerAuth: []
+  - apiKey: [] 
