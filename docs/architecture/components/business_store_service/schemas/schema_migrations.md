@@ -63,12 +63,12 @@ Tracking the outcome of each migration attempt is crucial for operational monito
 
 ## Database Schema
 
-Table: `bss_metadata.schema_migrations`
+Table: `business_store_service.schema_migrations`
 
 | Column | Type | Nullable | Default | Description |
 |----|----|----|----|----|
 | migration_id | UUID | No | `gen_random_uuid()` | Primary key for this migration log record |
-| tenant_schema_id | UUID | No |    | Foreign key to the bss_metadata.tenant_schemas record this migration corresponds to |
+| tenant_schema_id | UUID | No |    | Foreign key to the business_store_service.tenant_schemas record this migration corresponds to |
 | tenant_id | UUID | No |    | Denormalized tenant identifier for easier querying |
 | version_applied | INTEGER | No |    | Denormalized schema version number attempted |
 | status | TEXT | No | `'pending'` | Status of the migration attempt (e.g., 'pending', 'success', 'failed') |
@@ -90,7 +90,7 @@ Table: `bss_metadata.schema_migrations`
 
 | Column | References | On Delete | Description |
 |----|----|----|----|
-| tenant_schema_id | bss_metadata.tenant_schemas(schema_id) | RESTRICT | Links migration record to the specific schema version being applied |
+| tenant_schema_id | business_store_service.tenant_schemas(schema_id) | RESTRICT | Links migration record to the specific schema version being applied |
 
 **Constraints:**
 
@@ -106,14 +106,14 @@ Table: `bss_metadata.schema_migrations`
 ```sql
 -- Get migration history for a specific tenant, most recent first
 SELECT migration_id, version_applied, status, details, created_at
-FROM bss_metadata.schema_migrations
+FROM business_store_service.schema_migrations
 WHERE tenant_id = $1
 ORDER BY created_at DESC
 LIMIT 50;
 
 -- Find failed migrations for a specific tenant schema version
 SELECT migration_id, details, created_at
-FROM bss_metadata.schema_migrations
+FROM business_store_service.schema_migrations
 WHERE tenant_schema_id = $1 AND status = 'failed';
 ```
 
@@ -121,7 +121,7 @@ WHERE tenant_schema_id = $1 AND status = 'failed';
 
 ```sql
 -- Record the start of a migration attempt
-INSERT INTO bss_metadata.schema_migrations (tenant_schema_id, tenant_id, version_applied, status, applied_by)
+INSERT INTO business_store_service.schema_migrations (tenant_schema_id, tenant_id, version_applied, status, applied_by)
 VALUES ($1, $2, $3, 'pending', $4);
 -- Returning migration_id might be useful
 ```
@@ -130,7 +130,7 @@ VALUES ($1, $2, $3, 'pending', $4);
 
 ```sql
 -- Update the status and details upon completion (success or failure)
-UPDATE bss_metadata.schema_migrations
+UPDATE business_store_service.schema_migrations
 SET status = $2, details = $3, updated_at = CURRENT_TIMESTAMP
 WHERE migration_id = $1;
 ```
@@ -168,7 +168,7 @@ Standard database migration tools should be used. Common changes might involve a
 | Column | Type | Nullable | Default | Description |
 |----|----|----|----|----|
 | migration_id | UUID | No | gen_random_uuid() | Primary key for this migration log record |
-| tenant_schema_id | UUID | No |    | Foreign key to the bss_metadata.tenant_schemas record this migration corresponds to |
+| tenant_schema_id | UUID | No |    | Foreign key to the business_store_service.tenant_schemas record this migration corresponds to |
 | tenant_id | UUID | No |    | Denormalized tenant identifier for easier querying |
 | version_applied | INTEGER | No |    | Denormalized schema version number attempted |
 | status | TEXT | No | 'pending' | Status of the migration attempt (e.g., 'pending', 'success', 'failed') |
@@ -190,7 +190,7 @@ Standard database migration tools should be used. Common changes might involve a
 
 | Column | References | On Delete | Description |
 |----|----|----|----|
-| tenant_schema_id | bss_metadata.tenant_schemas(schema_id) | RESTRICT | Links migration record to the specific schema version being applied |
+| tenant_schema_id | business_store_service.tenant_schemas(schema_id) | RESTRICT | Links migration record to the specific schema version being applied |
 
 ## Constraints
 
@@ -205,22 +205,22 @@ Standard database migration tools should be used. Common changes might involve a
 
 ```sql
 -- Get migration history for a specific tenant, most recent first
-SELECT migration_id, version_applied, status, details, created_at FROM bss_metadata.schema_migrations WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT 50;
+SELECT migration_id, version_applied, status, details, created_at FROM business_store_service.schema_migrations WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT 50;
 
 -- Find failed migrations for a specific tenant schema version
-SELECT migration_id, details, created_at FROM bss_metadata.schema_migrations WHERE tenant_schema_id = $1 AND status = 'failed';
+SELECT migration_id, details, created_at FROM business_store_service.schema_migrations WHERE tenant_schema_id = $1 AND status = 'failed';
 ```
 
 **Insert Example**
 
 ```sql
-INSERT INTO bss_metadata.schema_migrations (tenant_schema_id, tenant_id, version_applied, status, applied_by) VALUES ($1, $2, $3, 'pending', $4);
+INSERT INTO business_store_service.schema_migrations (tenant_schema_id, tenant_id, version_applied, status, applied_by) VALUES ($1, $2, $3, 'pending', $4);
 ```
 
 **Update Example**
 
 ```sql
-UPDATE bss_metadata.schema_migrations SET status = $2, details = $3, updated_at = CURRENT_TIMESTAMP WHERE migration_id = $1;
+UPDATE business_store_service.schema_migrations SET status = $2, details = $3, updated_at = CURRENT_TIMESTAMP WHERE migration_id = $1;
 ```
 
 ## Performance Considerations

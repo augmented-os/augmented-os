@@ -4,9 +4,9 @@
 
 The **Business Store Service** primarily interacts with the following data schemas and structures (each tenant gets its own schema in the database):
 
-* **Tenant Schema (PostgreSQL)**: Each tenant has a dedicated database schema (namespace) named, for example, `tenant_<tenantId>`. Within each such schema, tables for business entities (like `invoices`, `customers`, etc.) are created as defined by the tenant’s JSON Schema.
+* **Tenant Schema (PostgreSQL)**: Each tenant has a dedicated database schema (namespace) named, for example, `tenant_<tenantId>`. Within each such schema, tables for business entities (like `invoices`, `customers`, etc.) are created as defined by the tenant's JSON Schema.
 * **JSON Schema Definitions**: Tenants supply JSON Schema files describing their data model (what tables and fields they need). These schemas are stored in a **metadata repository** within BSS and are versioned to track changes over time.
-* **Metadata Repository**: A centralized schema (separate from tenant schemas, e.g., `bss_metadata`) that holds tables like `tenant_schemas` (tenant_id, schema_json, version, applied_at) and `schema_migrations` (migration details). This repository allows BSS to manage migrations and maintain a history of each tenant's schema evolution.
+* **Metadata Repository**: A centralized schema (separate from tenant schemas, e.g., `business_store_service`) that holds tables like `tenant_schemas` (tenant_id, schema_json, version, applied_at) and `schema_migrations` (migration details). This repository allows BSS to manage migrations and maintain a history of each tenant's schema evolution.
 
 This document focuses on how the Business Store Service component specifically implements and extends these canonical concepts. For standard Augmented OS schema definitions of common entities (if any exist), refer to that documentation. Here, we emphasize how BSS uses those patterns and introduces its own.
 
@@ -16,10 +16,10 @@ The Business Store Service extends the canonical schema patterns with additional
 
 ### Tenant Schema Structure
 
-For each tenant (identified by `tenant_id`), BSS creates a set of tables as defined by that tenant’s JSON Schema. For example, consider a generic scenario where each tenant wants to manage invoices and customers:
+For each tenant (identified by `tenant_id`), BSS creates a set of tables as defined by that tenant's JSON Schema. For example, consider a generic scenario where each tenant wants to manage invoices and customers:
 
-* **Customers Table** (`tenant_<tenantId>.customers`): Stores customer information. Every row implicitly belongs to the tenant via being in the tenant’s schema. Additionally, each table in a tenant schema also includes a `tenant_id UUID` column for RLS and cross-tenant queries if needed (populated with the owning tenant’s ID).
-* **Invoices Table** (`tenant_<tenantId>.invoices`): Stores invoice records. Contains standard fields as defined by the tenant’s schema (like `invoice_number`, `customer_id`, `amount`, etc.) and also has `tenant_id UUID` and metadata fields for auditing.
+* **Customers Table** (`tenant_<tenantId>.customers`): Stores customer information. Every row implicitly belongs to the tenant via being in the tenant's schema. Additionally, each table in a tenant schema also includes a `tenant_id UUID` column for RLS and cross-tenant queries if needed (populated with the owning tenant's ID).
+* **Invoices Table** (`tenant_<tenantId>.invoices`): Stores invoice records. Contains standard fields as defined by the tenant's schema (like `invoice_number`, `customer_id`, `amount`, etc.) and also has `tenant_id UUID` and metadata fields for auditing.
 
 **Example:** If tenant `abc-123` defines a simple model with customers and invoices, BSS will ensure the existence of schema `tenant_abc_123` with tables such as:
 
@@ -52,7 +52,7 @@ Here, both tables include `tenant_id` and an `embedding` field on `invoices` for
 
 ### JSON Schema Metadata
 
-Each tenant’s JSON Schema is used to generate SQL for tables and columns. BSS supports **data types mapping** from JSON Schema to PostgreSQL types (e.g., string -> TEXT, number -> DECIMAL, object -> JSONB if nested dynamic content is allowed). All tables must be fully defined; **BSS avoids using generic entity-attribute-value tables**, instead opting for concrete columns as specified.
+Each tenant's JSON Schema is used to generate SQL for tables and columns. BSS supports **data types mapping** from JSON Schema to PostgreSQL types (e.g., string -> TEXT, number -> DECIMAL, object -> JSONB if nested dynamic content is allowed). All tables must be fully defined; **BSS avoids using generic entity-attribute-value tables**, instead opting for concrete columns as specified.
 
 BSS stores each JSON Schema and tracks a **schema version**. When a new schema is applied, a migration may occur:
 
@@ -60,7 +60,7 @@ BSS stores each JSON Schema and tracks a **schema version**. When a new schema i
 * Removed fields -> optionally keep the column but mark it deprecated (actual removal may be deferred to avoid data loss, unless explicitly dropped after migration).
 * Modified field types -> possible if the type is compatible; otherwise, BSS may create a new column and migrate data.
 
-Example snippet of a JSON Schema for a tenant’s `invoice` table, stored in metadata:
+Example snippet of a JSON Schema for a tenant's `invoice` table, stored in metadata:
 
 ```json
 {
@@ -82,7 +82,7 @@ BSS will ensure `invoice_id` and `customer_id` are UUIDs in PostgreSQL, `issued_
 
 ### Data Access Patterns
 
-All queries and data modifications include the tenant context. Internally, connections are set with `SET search_path TO tenant_<tenantId>, public;` or equivalent to isolate to the tenant schema. Additionally, **RLS policies** on shared metadata tables use the `tenant_id` field to ensure a tenant’s session only sees their entries.
+All queries and data modifications include the tenant context. Internally, connections are set with `SET search_path TO tenant_<tenantId>, public;` or equivalent to isolate to the tenant schema. Additionally, **RLS policies** on shared metadata tables use the `tenant_id` field to ensure a tenant's session only sees their entries.
 
 The Business Store Service maintains the invariant that *each row knows its tenant*: even though the schema itself separates data, the extra `tenant_id` column is used for RLS and as a safeguard for any cross-schema operations (which are rare but possible for admin queries).
 
@@ -142,24 +142,30 @@ interface Payment {
 type PaymentStatus = 'processing' | 'completed' | 'failed' | 'refunded';
 ```
 
-If such an entity is included in a tenant’s schema, BSS will create a `payments` table within that tenant’s schema, including foreign keys (e.g., `invoice_id` references `invoices.invoice_id`). All such tables include `tenant_id` for double-layered security (schema-level and row-level).
+If such an entity is included in a tenant's schema, BSS will create a `payments` table within that tenant's schema, including foreign keys (e.g., `invoice_id` references `invoices.invoice_id`). All such tables include `tenant_id` for double-layered security (schema-level and row-level).
 
 ## Database Optimization
 
 The Business Store Service implements the following database optimizations:
 
-
-
-1. **Connection Pooling per Tenant** – Maintains a pool of database connections and reuses connections for the same tenant schema to leverage PostgreSQL’s per-connection search_path setting and reduce overhea】.
+1. **Connection Pooling per Tenant** – Maintains a pool of database connections and reuses connections for the same tenant schema to leverage PostgreSQL's per-connection search_path setting and reduce overhea】.
 2. **Prepared Statements & Query Plans** – Uses prepared statements for common queries (especially for CRUD on frequently accessed tables) to benefit from cached query plans, even with tenant schema switching.
 3. **Index Management** – Automatically creates indexes on critical columns like `invoice_id`, `customer_id`, foreign keys, and vector embeddings (using `ivfflat` or similar index for pgvector) to optimize lookup and similarity search.
-4. **Table Partitioning for Large Tenants** – Optionally partitions data by time or category if a single tenant’s table becomes very large (e.g., partition an invoices table by year) to improve query performance and maintenance.
+4. **Table Partitioning for Large Tenants** – Optionally partitions data by time or category if a single tenant's table becomes very large (e.g., partition an invoices table by year) to improve query performance and maintenance.
 5. **Caching Layer Integration** – Although the service is database-centric, it can integrate with a caching service (like Redis) for caching expensive aggregate queries or cross-tenant reports, to avoid frequent heavy DB loads.
 
 ## Related Schema Documentation
 
+### Internal Documentation
+* **[Tenant Schema Management](./implementation/tenant_schema_management.md)** – Details on how schemas are created and managed for tenants.
+* **[Schema Migrations](./schemas/schema_migrations.md)** – Information about how schema changes are handled and migrated.
+* **[Tenant Schemas](./schemas/tenant_schemas.md)** – Documentation on tenant schema structure and management.
+* **[Semantic Search Integration](./implementation/semantic_search_integration.md)** – Documentation of the `pgvector` extension usage for storing and querying embedding vectors in Postgres.
+* **[Security & Isolation](./implementation/security_and_isolation.md)** – How data isolation is implemented through Row-Level Security.
+* **[Overview](./overview.md)** – High-level architectural overview of the Business Store Service.
+
+### External Resources
 * **PostgreSQL Multi-Tenancy Patterns** – General guidelines on schema-per-tenant and row-level security (for deeper understanding of the approach).
 * **JSON Schema Usage** – Augmented OS documentation on how JSON Schemas define data models across services.
-* **pgvector** – Documentation of the `pgvector` extension usage for storing and querying embedding vectors in Postgres.
 
 

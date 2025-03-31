@@ -2,13 +2,13 @@
 
 ## Overview
 
-While the Business Store Service exposes a REST API for external use, it also interacts with other internal services within the Augmented OS ecosystem. These **internal interfaces** include event publishing, service-to-service API calls, and shared database or messaging patterns. Internal interfaces are not public APIs but are crucial for integration and orchestration of the system’s microservices.
+While the Business Store Service exposes a REST API for external use, it also interacts with other internal services within the Augmented OS ecosystem. These **internal interfaces** include event publishing, service-to-service API calls, and shared database or messaging patterns. Internal interfaces are not public APIs but are crucial for integration and orchestration of the system's microservices.
 
 Key internal interactions for Business Store Service include:
 
-* **Events**: Publishing events (e.g., “record created” or “schema updated”) to a message broker for other services like Observability, Task Execution, or external webhooks to consume.
-* **Service API Calls**: Outbound calls to other services’ APIs (e.g., calling Validation Service to verify a JSON Schema, contacting Auth Service for user/tenant info or encryption keys, and possibly calling Observability or Notification services).
-* **Shared DB Access**: In rare cases, read access by analytics or testing frameworks might query the Business Store Service’s database directly (but typically via the Business Store API or read replicas with proper credentials). We focus on standard patterns.
+* **Events**: Publishing events (e.g., "record created" or "schema updated") to a message broker for other services like Observability, Task Execution, or external webhooks to consume.
+* **Service API Calls**: Outbound calls to other services' APIs (e.g., calling Validation Service to verify a JSON Schema, contacting Auth Service for user/tenant info or encryption keys, and possibly calling Observability or Notification services).
+* **Shared DB Access**: In rare cases, read access by analytics or testing frameworks might query the Business Store Service's database directly (but typically via the Business Store API or read replicas with proper credentials). We focus on standard patterns.
 
 ## Event Interfaces
 
@@ -18,7 +18,7 @@ The Business Store Service publishes events to a messaging system (such as an in
 
 **Examples of events published:**
 
-* **Schema Updated Event**: When a tenant’s schema is successfully created or updated, publish an event like:
+* **Schema Updated Event**: When a tenant's schema is successfully created or updated, publish an event like:
   * Topic: `business_store.schema.updated`
   * Payload:
 
@@ -63,10 +63,10 @@ All events include the `tenantId` for context, a timestamp, and some unique even
 
 The Business Store Service might also subscribe to certain events from other services:
 
-* **Auth Service Events**: e.g., if a tenant is created or deleted in Auth Service, BSS should catch that to provision or deprovision the tenant’s schema:
+* **Auth Service Events**: e.g., if a tenant is created or deleted in Auth Service, BSS should catch that to provision or deprovision the tenant's schema:
   * Topic: `auth.tenant.created` – triggers BSS to call internal provisioning for a new schema (maybe starting with a default or waiting for a schema definition from the tenant).
-  * Topic: `auth.tenant.deleted` – triggers BSS to archive or drop the tenant’s schema (maybe after some grace period or backup). If not auto-handled, at least alert an admin to handle it.
-* **Validation Service**: Possibly doesn’t push events but responds to requests. However, if it did (like if some scheduled re-validation or an external schema change alert needed to propagate), BSS could subscribe.
+  * Topic: `auth.tenant.deleted` – triggers BSS to archive or drop the tenant's schema (maybe after some grace period or backup). If not auto-handled, at least alert an admin to handle it.
+* **Validation Service**: Possibly doesn't push events but responds to requests. However, if it did (like if some scheduled re-validation or an external schema change alert needed to propagate), BSS could subscribe.
 * **Testing Framework Service**: If the testing service wants to signal BSS to load some test data or environment, it could send an event. However, likely it would use an API call to BSS directly to load test data.
 
 ## Service-to-Service API Calls
@@ -78,9 +78,9 @@ The Business Store Service might also subscribe to certain events from other ser
   * If Validation Service is down or returns invalid, BSS will not proceed with schema update and will return error to client.
 * **Auth Service API**: Various interactions:
   * To **resolve user/tenant** info if needed (though JWT likely contains enough, sometimes might need to fetch more data or verify something).
-  * To fetch **encryption keys or secrets** if using Auth’s key management: e.g., `GET /api/auth/tenants/{tenantId}/keys/data-encryption-key` (just an example endpoint) to retrieve a key to use for encryption. This would be done at startup or first use and then cached.
+  * To fetch **encryption keys or secrets** if using Auth's key management: e.g., `GET /api/auth/tenants/{tenantId}/keys/data-encryption-key` (just an example endpoint) to retrieve a key to use for encryption. This would be done at startup or first use and then cached.
   * Possibly to record audit info? Or to get a service token for cross-service auth. Typically, each service might use a service account JWT or mutual TLS for internal calls. BSS would have credentials to call Auth and Validation.
-* **Observability/Logging Service API**: If there’s a centralized Logging service (or if using something like Elastic or a Logging Gateway), BSS might not call it directly but rather just emit logs to STDOUT or a collector. However, for metrics, it might push custom metrics if needed, though likely metrics are scraped (Prometheus).
+* **Observability/Logging Service API**: If there's a centralized Logging service (or if using something like Elastic or a Logging Gateway), BSS might not call it directly but rather just emit logs to STDOUT or a collector. However, for metrics, it might push custom metrics if needed, though likely metrics are scraped (Prometheus).
   * For example, if there's an incidents or alerts service, BSS might call it if a serious issue arises (like cannot apply a schema after several retries, send an alert).
 * **Task Execution Service API**: Could be two-way, but one pattern: BSS might schedule a job by calling Task Execution:
   * e.g., `POST /api/task/schedule` with a payload to execute an async task (like regenerate embeddings, or run a bulk operation on tenant data).
@@ -92,28 +92,28 @@ Other services usually use the same public API of BSS if they want data. For ins
 
 * **Testing Framework Service** might call BSS API to load or retrieve test data. It could also possibly use direct DB access if in a test environment, but that breaks encapsulation, so likely API.
 * **Observability** might call an internal endpoint or DB to gather stats if not using metrics scraping. But given we have metrics endpoint (`/metrics` Prometheus) and health endpoints, Observability can poll those.
-* **Auth Service** or others typically don’t need to call BSS except possibly during tenant deletion (Auth might call BSS to ensure data cleaned up), but that could also be event-driven as described.
+* **Auth Service** or others typically don't need to call BSS except possibly during tenant deletion (Auth might call BSS to ensure data cleaned up), but that could also be event-driven as described.
 
 ## Shared Database Access Patterns
 
 In principle, all access to tenant data should go through BSS to enforce business logic and security. However, there might be some scenarios:
 
-* **Analytics Service**: If there’s a separate analytics or reporting service, it might have read-only credentials to query the underlying database for complex queries (since doing everything through API could be slow). If so, it will need to respect the schema-per-tenant structure. For example, it might query across schemas by doing something like iterating schemas or using Postgres cross-schema queries. This is advanced and requires careful permissioning: likely there would be a special DB user with SELECT only on all tenant schemas, used by analytics jobs. BSS’s role is to ensure that user exists and has correct grants whenever a new schema is made.
-* **Backup/Restore**: A backup system might access the DB directly (dumping all schemas). That’s outside normal operations but worth noting.
+* **Analytics Service**: If there's a separate analytics or reporting service, it might have read-only credentials to query the underlying database for complex queries (since doing everything through API could be slow). If so, it will need to respect the schema-per-tenant structure. For example, it might query across schemas by doing something like iterating schemas or using Postgres cross-schema queries. This is advanced and requires careful permissioning: likely there would be a special DB user with SELECT only on all tenant schemas, used by analytics jobs. BSS's role is to ensure that user exists and has correct grants whenever a new schema is made.
+* **Backup/Restore**: A backup system might access the DB directly (dumping all schemas). That's outside normal operations but worth noting.
 
-Thus, internal interfaces include possibly direct DB use by trusted systems, but those are read-only and controlled. BSS’s documentation might note that any such access should be coordinated (like if a schema is changed, an analytics query might break if not using dynamic SQL, etc., so better to use the API or events to be notified of changes).
+Thus, internal interfaces include possibly direct DB use by trusted systems, but those are read-only and controlled. BSS's documentation might note that any such access should be coordinated (like if a schema is changed, an analytics query might break if not using dynamic SQL, etc., so better to use the API or events to be notified of changes).
 
 ## Retry Policies and Fallbacks
 
 For internal calls and events:
 
-* **Event Publish Failures**: If the message broker is down or fails to accept a message, BSS might retry a few times. If it’s not critical (like just a notification), it might drop after logging error. For critical events (like something another service absolutely needs), BSS could buffer and retry later or on startup. But a simpler approach: assume event infra is reliable, and log if not.
+* **Event Publish Failures**: If the message broker is down or fails to accept a message, BSS might retry a few times. If it's not critical (like just a notification), it might drop after logging error. For critical events (like something another service absolutely needs), BSS could buffer and retry later or on startup. But a simpler approach: assume event infra is reliable, and log if not.
 * **Service Call Failures**:
-  * Validation Service: if down, BSS can’t validate schemas => likely return error to client (“Validation service unavailable, please try later” with a 503). Possibly implement a local basic validation as a fallback for syntax at least.
+  * Validation Service: if down, BSS can't validate schemas => likely return error to client ("Validation service unavailable, please try later" with a 503). Possibly implement a local basic validation as a fallback for syntax at least.
   * Auth Service: if token introspection or key fetch fails, BSS should also fail safe (perhaps deny access if cannot verify). If key fetching fails for encryption, as noted, might queue for later.
   * Task Service: if scheduling a job fails, BSS may try again or perform the task synchronously as a fallback, depending on context.
 
-**Timeouts**: BSS will have timeouts on outbound calls (e.g., if Auth or Validation doesn’t respond in 2 seconds, abort). Also, a circuit breaker could be in place if a service is continuously failing.
+**Timeouts**: BSS will have timeouts on outbound calls (e.g., if Auth or Validation doesn't respond in 2 seconds, abort). Also, a circuit breaker could be in place if a service is continuously failing.
 
 **Bulkhead**: Keep internal calls from blocking main threads. For instance, do them in async manner or background threads where possible (especially embedding generation or large tasks).
 
@@ -123,10 +123,13 @@ The service likely uses environment variables or a service registry to know wher
 
 ## Related Documentation
 
-* **Operations - Configuration** – for details on how internal service endpoints or credentials are configured via environment variables or config files.
+* **[Operations - Configuration](../operations/configuration.md)** – for details on how internal service endpoints or credentials are configured via environment variables or config files.
 * **Auth Service Internal** – to know what events or calls Auth expects.
 * **Validation Service** – its API or events to integrate.
 * **Task Execution Service** – how jobs are defined or triggered. This internal doc references scheduling jobs for e.g., embedding generation, which is defined in implementation.
-* **Observability/Monitoring** – how internal failures (like a failing internal call) are logged or metered (e.g., a metric for “validation_service_errors_total” would be incremented on failures, as defined in Monitoring docs under External Service Metric】).
+* **[Observability/Monitoring](../operations/monitoring.md)** – how internal failures (like a failing internal call) are logged or metered (e.g., a metric for "validation_service_errors_total" would be incremented on failures, as defined in Monitoring docs under External Service Metric).
+* **[API Reference](./api.md)** – External API documentation for the Business Store Service.
+* **[Overview](../overview.md)** – High-level architectural overview of the Business Store Service.
+* **[Security & Isolation](../implementation/security_and_isolation.md)** – Details on how security is implemented, including internal service authentication.
 
 

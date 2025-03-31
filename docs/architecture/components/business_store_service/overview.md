@@ -4,7 +4,7 @@
 
 The **Business Store Service** (BSS) is a core component of the Augmented OS platform that manages multi-tenant business data in a flexible way. Each tenant can define a custom data model (e.g., for their invoices, customers, orders) which BSS enforces and stores using PostgreSQL schemas. By leveraging tenant-specific schemas, JSON Schema definitions, and advanced database features, BSS allows isolation and customization of data for each tenant while ensuring security and consistency.
 
-* **Multi-Tenant Data Store**: Uses a **schema-per-tenant model** in PostgreSQL where each tenant’s data resides in its own schema (namespace).
+* **Multi-Tenant Data Store**: Uses a **schema-per-tenant model** in PostgreSQL where each tenant's data resides in its own schema (namespace).
 * **Custom Data Models**: Tenants define their own tables and fields via JSON Schema metadata, enabling dynamic data models (no generic `entity_records` table; each table is fully defined per tenant).
 * **Secure Data Isolation**: Employs **Row-Level Security (RLS)** and encryption to ensure tenants can only access their own data. Each table row includes a `tenant_id` column for additional enforcement and cross-schema aggregation where needed.
 * **Semantic Search**: Integrates `pgvector` (PostgreSQL vector extension) to store vector embeddings of text content for **semantic search** across tenant data (e.g., enabling similarity queries on invoice descriptions).
@@ -12,10 +12,10 @@ The **Business Store Service** (BSS) is a core component of the Augmented OS pla
 
 ## Key Responsibilities
 
-* **Tenant Schema Management**: Create and update PostgreSQL schemas and tables according to tenant-provided JSON Schemas, ensuring each tenant’s data model is correctly implemented in the database.
+* **Tenant Schema Management**: Create and update PostgreSQL schemas and tables according to tenant-provided JSON Schemas, ensuring each tenant's data model is correctly implemented in the database.
 * **Data Persistence & Retrieval**: Provide APIs to **create, read, update, delete (CRUD)** business records (like invoices, customers) in a tenant-isolated manner, including support for bulk import/export.
 * **Security Enforcement**: Enforce RLS policies using `tenant_id` and manage encryption of sensitive fields (both at rest and in transit) using keys and roles from the Auth Service.
-* **Semantic Querying**: Accept data queries that leverage vector embeddings (via pgvector) to perform semantic similarity searches on textual data within a tenant’s records.
+* **Semantic Querying**: Accept data queries that leverage vector embeddings (via pgvector) to perform semantic similarity searches on textual data within a tenant's records.
 * **Integration Support**: Work in concert with other services – e.g., validate new tenant schemas via the Validation Service, log actions to the Observability Service, and process periodic tasks (like summarizing records) triggered by the Task Execution Service.
 
 ## Architecture Diagram
@@ -69,20 +69,42 @@ The service exposes the following primary interfaces:
 * **Public REST API**: Endpoints for managing tenant data and schemas, for example:
   * `POST /api/business/{tenantId}/data/{resource}` to create a new record (e.g., an invoice)
   * `GET /api/business/{tenantId}/data/{resource}/{id}` to retrieve a record
-  * `PUT /api/business/{tenantId}/schema` to submit or update the tenant’s data model schema (with validation)
+  * `PUT /api/business/{tenantId}/schema` to submit or update the tenant's data model schema (with validation)
   * \
     `GET /api/business/{tenantId}/search?query=...` to perform a semantic search over textual fields\*(These are fully documented in the API Reference.)\*
 * **Internal Event Interface**: The Business Store Service listens for or publishes events on an internal message bus, including:
-  * **Schema Change Events**: when a tenant’s schema is created or updated (for Validation and Testing services to react).
+  * **Schema Change Events**: when a tenant's schema is created or updated (for Validation and Testing services to react).
   * **Data Events**: e.g., a new invoice created event (for Task Execution Service to trigger follow-up actions like sending reminders).
 * **Database Interface (PostgreSQL)**: Though internal, BSS may allow controlled direct read access for analytics services via a read-only user, confined to RLS policies.
 
 ## Related Documentation
 
-* **Data Model** – Details of the tenant schemas, JSON Schema usage, and data entities
-* **API Reference** – Endpoint specifications and examples for interacting with BSS
-* **Security & Isolation** (implementation) – Deep dive into RLS, encryption, and auth integration
-* **Monitoring** – How to observe BSS’s health and performance through metrics and logs
-* **Auth Service Overview** (separate component) – For understanding how authentication and tenancy context are managed platform-wide
+* **[Data Model](./data_model.md)** – Details of the tenant schemas, JSON Schema usage, and data entities
+* **[API Reference](./interfaces/business-store-service-api.yaml)** – OpenAPI specification for the Business Store Service REST API
+* **[Tenant Schema Format](./interfaces/tenant_db_schema_format.md)** – Comprehensive guide to defining PostgreSQL-compatible tenant schemas
+* **[Entity Relationships](./interfaces/relationship_handling.md)** – How relationships between entities are handled by the API
+* **[Security & Isolation](./implementation/security_and_isolation.md)** – Deep dive into RLS, encryption, and tenant isolation guarantees
+
+### Tenant Isolation
+
+The Business Store Service enforces strict tenant isolation at multiple levels:
+
+1. **API Level**: Every API endpoint requires a tenant identifier (`/{tenantId}/...`) in the path
+2. **Authentication**: All requests are authenticated and validated against the tenant context in the JWT token
+3. **Authorization**: Attempts to access resources from a different tenant result in `403 Forbidden` responses
+4. **Database Level**: Each tenant has its own PostgreSQL schema, and row-level security enforces tenant boundaries
+5. **Event System**: Events and notifications are scoped to specific tenants
+
+There are no API endpoints that allow cross-tenant access or aggregation. Any such operations would be strictly internal administrative functions and not exposed through the public API.
+
+## Additional Resources
+
+* **[Schema Compatibility Guide](./interfaces/schema_compatibility_guide.md)** – Guide for migrating from previous entity-based format
+* **[Schema API Reconciliation](./interfaces/schema_api_reconciliation.md)** – Documentation of how the tenant schema format aligns with the API
+* **[Monitoring](./operations/monitoring.md)** – How to observe BSS's health and performance through metrics and logs
+
+For implementation details, see the documents in the **[implementation](./implementation/)** directory.
+
+For an overview of all Business Store Service documentation, see the **[README](./README.md)**.
 
 

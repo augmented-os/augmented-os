@@ -147,8 +147,10 @@ Recommended Grafana dashboard panels:
 
 ## Related Documentation
 
-* [Configuration](./configuration.md)
-* [Scaling](./scaling.md)
-* [Implementation Details](../implementation/module1.md)
+* **[Configuration](./configuration.md)** – Details on configuring monitoring settings
+* **[Scaling](./scaling.md)** – Scaling considerations for the Business Store Service
+* **[Security & Isolation](../implementation/security_and_isolation.md)** – Security-related monitoring aspects
+* **[Internal Interfaces](../interfaces/internal.md)** – How the service communicates with internal systems
+* **[Overview](../overview.md)** – High-level architectural overview of the Business Store Service
 
 

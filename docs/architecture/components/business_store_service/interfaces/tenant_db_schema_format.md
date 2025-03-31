@@ -371,4 +371,386 @@ The conversion tool (and potentially a JSON Schema validator for this format) sh
 
 The optional top-level `schemaVersion` field allows tracking the version of the schema definition itself using semantic versioning (e.g., `"1.2.0"`). This is primarily for human tracking and documentation. Schema evolution and migration strategies (like expand-and-contract) are processes applied *using* this format, potentially comparing different versions of this JSON file.
 
+## Complete Example with Relationships
+
+Below is a complete example of a tenant schema definition that includes multiple related tables with foreign key constraints:
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "extensions": ["uuid-ossp", "pgcrypto"],
+  "schemas": [
+    {
+      "name": "public",
+      "tables": [
+        {
+          "name": "customers",
+          "columns": {
+            "id": { 
+              "type": "uuid", 
+              "nullable": false, 
+              "default": "uuid_generate_v4()" 
+            },
+            "name": { 
+              "type": "varchar", 
+              "length": 100, 
+              "nullable": false 
+            },
+            "email": { 
+              "type": "varchar", 
+              "length": 255, 
+              "nullable": false 
+            },
+            "status": {
+              "type": "varchar",
+              "length": 20,
+              "default": "'active'"
+            },
+            "created_at": {
+              "type": "timestamp",
+              "withTimeZone": true,
+              "default": "NOW()",
+              "nullable": false
+            }
+          },
+          "primaryKey": ["id"],
+          "unique": [
+            {
+              "name": "customers_email_key",
+              "columns": ["email"]
+            }
+          ],
+          "indexes": [
+            {
+              "name": "idx_customer_email",
+              "columns": ["email"]
+            },
+            {
+              "name": "idx_customer_status",
+              "columns": ["status"]
+            }
+          ]
+        },
+        {
+          "name": "addresses",
+          "columns": {
+            "id": { 
+              "type": "uuid", 
+              "nullable": false, 
+              "default": "uuid_generate_v4()" 
+            },
+            "customer_id": { 
+              "type": "uuid", 
+              "nullable": false 
+            },
+            "type": {
+              "type": "varchar",
+              "length": 20,
+              "nullable": false
+            },
+            "street": { 
+              "type": "varchar", 
+              "length": 200, 
+              "nullable": false 
+            },
+            "city": { 
+              "type": "varchar", 
+              "length": 100, 
+              "nullable": false 
+            },
+            "state": { 
+              "type": "varchar", 
+              "length": 50 
+            },
+            "postal_code": { 
+              "type": "varchar", 
+              "length": 20
+            },
+            "country": { 
+              "type": "varchar", 
+              "length": 50, 
+              "nullable": false 
+            },
+            "is_default": {
+              "type": "boolean",
+              "default": "false",
+              "nullable": false
+            }
+          },
+          "primaryKey": ["id"],
+          "foreignKeys": [
+            {
+              "name": "fk_address_customer",
+              "columns": ["customer_id"],
+              "references": {
+                "table": "customers",
+                "columns": ["id"]
+              },
+              "onDelete": "CASCADE"
+            }
+          ]
+        },
+        {
+          "name": "products",
+          "columns": {
+            "id": { 
+              "type": "uuid", 
+              "nullable": false, 
+              "default": "uuid_generate_v4()" 
+            },
+            "name": { 
+              "type": "varchar", 
+              "length": 100, 
+              "nullable": false 
+            },
+            "description": { 
+              "type": "text" 
+            },
+            "price": { 
+              "type": "numeric", 
+              "precision": 10, 
+              "scale": 2, 
+              "nullable": false 
+            },
+            "inventory_count": {
+              "type": "integer",
+              "default": "0",
+              "nullable": false
+            },
+            "category_id": {
+              "type": "uuid",
+              "nullable": true
+            },
+            "created_at": {
+              "type": "timestamp",
+              "withTimeZone": true,
+              "default": "NOW()",
+              "nullable": false
+            }
+          },
+          "primaryKey": ["id"],
+          "foreignKeys": [
+            {
+              "name": "fk_product_category",
+              "columns": ["category_id"],
+              "references": {
+                "table": "categories",
+                "columns": ["id"]
+              },
+              "onDelete": "SET NULL"
+            }
+          ],
+          "checks": [
+            {
+              "name": "check_positive_price",
+              "expression": "price > 0"
+            }
+          ]
+        },
+        {
+          "name": "categories",
+          "columns": {
+            "id": { 
+              "type": "uuid", 
+              "nullable": false, 
+              "default": "uuid_generate_v4()" 
+            },
+            "name": { 
+              "type": "varchar", 
+              "length": 50, 
+              "nullable": false 
+            },
+            "parent_id": {
+              "type": "uuid",
+              "nullable": true
+            }
+          },
+          "primaryKey": ["id"],
+          "foreignKeys": [
+            {
+              "name": "fk_category_parent",
+              "columns": ["parent_id"],
+              "references": {
+                "table": "categories",
+                "columns": ["id"]
+              },
+              "onDelete": "SET NULL"
+            }
+          ],
+          "unique": [
+            {
+              "name": "categories_name_key",
+              "columns": ["name"]
+            }
+          ]
+        },
+        {
+          "name": "orders",
+          "columns": {
+            "id": { 
+              "type": "uuid", 
+              "nullable": false, 
+              "default": "uuid_generate_v4()" 
+            },
+            "customer_id": { 
+              "type": "uuid", 
+              "nullable": false 
+            },
+            "order_date": {
+              "type": "timestamp",
+              "withTimeZone": true,
+              "default": "NOW()",
+              "nullable": false
+            },
+            "status": {
+              "type": "order_status",
+              "nullable": false,
+              "default": "'pending'"
+            },
+            "shipping_address_id": {
+              "type": "uuid",
+              "nullable": true
+            },
+            "total_amount": {
+              "type": "numeric",
+              "precision": 12,
+              "scale": 2,
+              "nullable": false
+            },
+            "notes": {
+              "type": "text"
+            }
+          },
+          "primaryKey": ["id"],
+          "foreignKeys": [
+            {
+              "name": "fk_order_customer",
+              "columns": ["customer_id"],
+              "references": {
+                "table": "customers",
+                "columns": ["id"]
+              },
+              "onDelete": "RESTRICT"
+            },
+            {
+              "name": "fk_order_address",
+              "columns": ["shipping_address_id"],
+              "references": {
+                "table": "addresses",
+                "columns": ["id"]
+              },
+              "onDelete": "SET NULL"
+            }
+          ],
+          "indexes": [
+            {
+              "name": "idx_order_customer",
+              "columns": ["customer_id"]
+            },
+            {
+              "name": "idx_order_date",
+              "columns": ["order_date"]
+            },
+            {
+              "name": "idx_order_status",
+              "columns": ["status"]
+            }
+          ]
+        },
+        {
+          "name": "order_items",
+          "columns": {
+            "order_id": { 
+              "type": "uuid", 
+              "nullable": false 
+            },
+            "product_id": { 
+              "type": "uuid", 
+              "nullable": false 
+            },
+            "quantity": { 
+              "type": "integer", 
+              "nullable": false 
+            },
+            "unit_price": { 
+              "type": "numeric", 
+              "precision": 10, 
+              "scale": 2, 
+              "nullable": false 
+            },
+            "line_total": {
+              "type": "numeric",
+              "precision": 12,
+              "scale": 2,
+              "generated": "quantity * unit_price",
+              "stored": true
+            }
+          },
+          "primaryKey": ["order_id", "product_id"],
+          "foreignKeys": [
+            {
+              "name": "fk_order_item_order",
+              "columns": ["order_id"],
+              "references": {
+                "table": "orders",
+                "columns": ["id"]
+              },
+              "onDelete": "CASCADE"
+            },
+            {
+              "name": "fk_order_item_product",
+              "columns": ["product_id"],
+              "references": {
+                "table": "products",
+                "columns": ["id"]
+              },
+              "onDelete": "RESTRICT"
+            }
+          ],
+          "checks": [
+            {
+              "name": "check_positive_quantity",
+              "expression": "quantity > 0"
+            }
+          ]
+        }
+      ],
+      "enums": [
+        {
+          "name": "order_status",
+          "values": ["pending", "processing", "shipped", "delivered", "canceled"]
+        }
+      ],
+      "views": [
+        {
+          "name": "customer_order_summary",
+          "definition": "SELECT c.id AS customer_id, c.name, c.email, COUNT(o.id) AS order_count, SUM(o.total_amount) AS total_spent FROM customers c LEFT JOIN orders o ON c.id = o.customer_id GROUP BY c.id, c.name, c.email"
+        }
+      ]
+    }
+  ]
+}
+```
+
+This example demonstrates several relationship patterns:
+
+1. **One-to-Many relationships**: 
+   - Each customer can have multiple addresses (customer_id in addresses)
+   - Each customer can have multiple orders (customer_id in orders)
+   - Each category can have multiple products (category_id in products)
+   - Each order can have multiple order items (order_id in order_items)
+
+2. **Many-to-Many relationships**:
+   - Orders and Products are related through the order_items junction table
+
+3. **Self-referencing relationships**:
+   - Categories can have parent categories (parent_id in categories)
+
+4. **Different cascade behaviors**:
+   - CASCADE: When a customer is deleted, all their addresses are deleted (fk_address_customer)
+   - RESTRICT: Prevents deleting a customer if they have orders (fk_order_customer)
+   - SET NULL: If a category is deleted, products in that category have their category_id set to NULL (fk_product_category)
+
+For more details on how these relationships are handled by the API, see [Entity Relationships in the Business Store Service](./relationship_handling.md).
+
 

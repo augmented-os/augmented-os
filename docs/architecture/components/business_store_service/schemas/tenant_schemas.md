@@ -64,7 +64,7 @@ Tracking when a schema is applied and ensuring consistency during updates are ke
 
 ## Database Schema
 
-Table: `bss_metadata.tenant_schemas`
+Table: `business_store_service.tenant_schemas`
 
 | Column | Type | Nullable | Default | Description |
 |----|----|----|----|----|
@@ -103,14 +103,14 @@ Table: `bss_metadata.tenant_schemas`
 ```sql
 -- Get the latest applied schema version for a specific tenant
 SELECT schema_json, version
-FROM bss_metadata.tenant_schemas
+FROM business_store_service.tenant_schemas
 WHERE tenant_id = $1 AND applied_at IS NOT NULL
 ORDER BY version DESC
 LIMIT 1;
 
 -- Get a specific schema version for a tenant
 SELECT schema_id, schema_json, applied_at
-FROM bss_metadata.tenant_schemas
+FROM business_store_service.tenant_schemas
 WHERE tenant_id = $1 AND version = $2;
 ```
 
@@ -118,7 +118,7 @@ WHERE tenant_id = $1 AND version = $2;
 
 ```sql
 -- Insert a new schema version for a tenant (applied_at is initially NULL)
-INSERT INTO bss_metadata.tenant_schemas (tenant_id, version, schema_json)
+INSERT INTO business_store_service.tenant_schemas (tenant_id, version, schema_json)
 VALUES ($1, $2, $3);
 ```
 
@@ -126,7 +126,7 @@ VALUES ($1, $2, $3);
 
 ```sql
 -- Mark a specific schema version as applied
-UPDATE bss_metadata.tenant_schemas
+UPDATE business_store_service.tenant_schemas
 SET applied_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP
 WHERE tenant_id = $1 AND version = $2;
 ```
@@ -197,22 +197,22 @@ Schema migrations for this table itself (e.g., adding new metadata columns) shou
 
 ```sql
 -- Get the latest applied schema version for a specific tenant
-SELECT schema_json, version FROM bss_metadata.tenant_schemas WHERE tenant_id = $1 AND applied_at IS NOT NULL ORDER BY version DESC LIMIT 1;
+SELECT schema_json, version FROM business_store_service.tenant_schemas WHERE tenant_id = $1 AND applied_at IS NOT NULL ORDER BY version DESC LIMIT 1;
 
 -- Get a specific schema version for a tenant
-SELECT schema_id, schema_json, applied_at FROM bss_metadata.tenant_schemas WHERE tenant_id = $1 AND version = $2;
+SELECT schema_id, schema_json, applied_at FROM business_store_service.tenant_schemas WHERE tenant_id = $1 AND version = $2;
 ```
 
 **Insert Example**
 
 ```sql
-INSERT INTO bss_metadata.tenant_schemas (tenant_id, version, schema_json) VALUES ($1, $2, $3);
+INSERT INTO business_store_service.tenant_schemas (tenant_id, version, schema_json) VALUES ($1, $2, $3);
 ```
 
 **Update Example**
 
 ```sql
-UPDATE bss_metadata.tenant_schemas SET applied_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE tenant_id = $1 AND version = $2;
+UPDATE business_store_service.tenant_schemas SET applied_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE tenant_id = $1 AND version = $2;
 ```
 
 ## Performance Considerations

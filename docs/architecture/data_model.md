@@ -15,6 +15,8 @@ This document provides a comprehensive index of all database tables in the syste
 | [auth_service](./components/auth_service/data_model.md) | [permissions](./components/auth_service/schemas/permissions.md) | Permission definitions |
 | [auth_service](./components/auth_service/data_model.md) | [roles](./components/auth_service/schemas/roles.md) | Role definitions |
 | [auth_service](./components/auth_service/data_model.md) | [users](./components/auth_service/schemas/users.md) | User accounts and profiles |
+| [business_store_service](./components/business_store_service/data_model.md) | [tenant_schemas](./components/business_store_service/schemas/tenant_schemas.md) | JSON Schema definitions for tenants |
+| [business_store_service](./components/business_store_service/data_model.md) | [schema_migrations](./components/business_store_service/schemas/schema_migrations.md) | Schema migration history |
 | [event_processing_service](./components/event_processing_service/data_model.md) | [dead_letter_queue](./components/event_processing_service/schemas/dead_letter_queue.md) | Failed event storage |
 | [event_processing_service](./components/event_processing_service/data_model.md) | [event_definitions](./components/event_processing_service/schemas/event_definitions.md) | Templates for event types |
 | [event_processing_service](./components/event_processing_service/data_model.md) | [event_instances](./components/event_processing_service/schemas/event_instances.md) | Records of actual events |
@@ -35,6 +37,16 @@ This document provides a comprehensive index of all database tables in the syste
 | [workflow_orchestrator_service](./components/workflow_orchestrator_service/data_model.md) | [workflow_event_subscriptions](./components/workflow_orchestrator_service/schemas/workflow_event_subscriptions.md) | Event subscriptions for workflows |
 | [workflow_orchestrator_service](./components/workflow_orchestrator_service/data_model.md) | [workflow_event_triggers](./components/workflow_orchestrator_service/schemas/workflow_event_triggers.md) | Event-based workflow starters |
 | [workflow_orchestrator_service](./components/workflow_orchestrator_service/data_model.md) | [workflow_instances](./components/workflow_orchestrator_service/schemas/workflow_instances.md) | Running workflow executions |
+
+### Business Store Service Tenant Schemas
+
+In addition to the main `business_store_service` schema, the Business Store Service creates dynamic tenant-specific schemas for each customer:
+
+* **Tenant Schemas**: Named as `tenant_<tenantId>` (e.g., `tenant_abc_123`) 
+* Each tenant schema contains tables defined by that tenant's JSON Schema (e.g., `customers`, `invoices`)
+* Tables in tenant schemas are not listed in this central index as they are dynamically created and vary by tenant
+* All tenant-specific tables include a `tenant_id` column for Row-Level Security and cross-schema operations
+* For more details on tenant schemas, refer to the [Business Store Service Data Model](./components/business_store_service/data_model.md)
 
 ## Schema Design Principles
 

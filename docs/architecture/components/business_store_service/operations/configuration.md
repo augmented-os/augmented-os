@@ -85,7 +85,7 @@ Some configurations might be adjustable at runtime via admin endpoints or signal
 
 We consider typical differences:
 
-* **Development**: likely using local Postgres, maybe no Auth (or a dummy Auth with static tokens), semantic search might be disabled or use a mock, logging at DEBUG, and data resets often. Provide an easy way to disable Auth checks (like an env `BYPASS_AUTH=true` just for dev/testing to not require real tokens). Use of an in-memory validation if validation service isn’t running.
+* **Development**: likely using local Postgres, maybe no Auth (or a dummy Auth with static tokens), semantic search might be disabled or use a mock, logging at DEBUG, and data resets often. Provide an easy way to disable Auth checks (like an env `BYPASS_AUTH=true` just for dev/testing to not require real tokens). Use of an in-memory validation if validation service isn't running.
 * **Testing/Staging**: as close to production config as possible, but maybe smaller DB instance, and enabling verbose logs for troubleshooting. Possibly using smaller limits to catch issues (like lower rate limits or smaller timeouts to force edge cases).
 * **Production**: all security features on, connect to production Auth/Validation endpoints, proper DB credentials from secrets store, high timeouts for background tasks, etc. Possibly incorporate secrets via environment (like DB password via secret injection, not in plain config).
 
@@ -93,7 +93,7 @@ We consider typical differences:
 
 Sensitive config (DB credentials, API keys for embedding service, encryption keys, etc.) should not be in plain config files in source control. Use environment variables or secret management:
 
-* For example, `EMBEDDING_API_KEY` could be an env var set in deployment from a vault. The config loading should support pulling from env or separate file that’s not committed.
+* For example, `EMBEDDING_API_KEY` could be an env var set in deployment from a vault. The config loading should support pulling from env or separate file that's not committed.
 * If using Kubernetes, use Secrets and mount as env or volume.
 
 ## Configuration of RLS and Security
@@ -107,15 +107,12 @@ Sensitive config (DB credentials, API keys for embedding service, encryption key
 * Log level: INFO.
 * Metrics: enabled at `/metrics` without auth (if internal cluster).
 * Health endpoints: no auth and available. Possibly configurable prefix for them if needed.
-* Semantic search: default disabled if no embedding URL provided (so it doesn’t error out if not configured).
+* Semantic search: default disabled if no embedding URL provided (so it doesn't error out if not configured).
 * If any, default values for `MAX_SCHEMA_SIZE` (e.g., 100 KB) and `MAX_RECORD_SIZE` (maybe 1 MB) to catch anomalies.
 
 ## Configuration Best Practices
 
-
-
-
-1. **Keep config in one place**: Using env variables is straightforward. If using file, ensure it’s loaded early and overrides/merges with env vars logically (usually env var should override file for flexibility).
+1. **Keep config in one place**: Using env variables is straightforward. If using file, ensure it's loaded early and overrides/merges with env vars logically (usually env var should override file for flexibility).
 2. **Document each option**: This doc should be kept updated when new config options are added. Also in code, log the effective configuration at startup (except secrets) at DEBUG level, for traceability.
 3. **Fail fast on misconfig**: If required config is missing (like DB string or Auth keys), the service should log an ERROR and not proceed rather than running with partial functionality.
 4. **Use sane defaults**: So that the service can start in a dev environment with minimal env (maybe default to `localhost` DB with known creds, which dev can override via env; but in production those envs are always set explicitly).
@@ -163,10 +160,14 @@ Sensitive config (DB credentials, API keys for embedding service, encryption key
 
 ## Related Documentation
 
-* **Scaling** – config like DB_POOL_SIZE and any thread/worker counts ties into scaling. Also e.g., `MAX_WORKERS` if the service uses thread pool for parallel tasks.
-* **Monitoring** – some monitoring integration might require config (like if using an APM agent, maybe `APM_TOKEN` etc.).
-* **Security** – key management or auth config is touched here, but Security doc covers conceptual use.
-* **Interfaces** – if internal endpoints or event topics are configurable (like the broker address), mention here e.g., `EVENT_BROKER_URL` or `KAFKA_BROKERS`. (If BSS uses Kafka for events, we’d have config like bootstrap servers, topic names possibly.)
+* **[Scaling](./scaling.md)** – config like DB_POOL_SIZE and any thread/worker counts ties into scaling. Also e.g., `MAX_WORKERS` if the service uses thread pool for parallel tasks.
+* **[Monitoring](./monitoring.md)** – some monitoring integration might require config (like if using an APM agent, maybe `APM_TOKEN` etc.).
+* **[Security & Isolation](../implementation/security_and_isolation.md)** – key management or auth config is touched here, but Security doc covers conceptual use.
+* **[Internal Interfaces](../interfaces/internal.md)** – if internal endpoints or event topics are configurable (like the broker address), mention here e.g., `EVENT_BROKER_URL` or `KAFKA_BROKERS`. (If BSS uses Kafka for events, we'd have config like bootstrap servers, topic names possibly.)
 * **Deployment/DevOps Guides** – might outline sample config sets for different environments.
+* **[Overview](../overview.md)** – High-level architectural overview of the Business Store Service.
+* **[API Reference](../interfaces/api.md)** – How configuration affects API functionality.
+* **[Tenant Schema Management](../implementation/tenant_schema_management.md)** – How configuration affects schema management.
+* **[Semantic Search Integration](../implementation/semantic_search_integration.md)** – Configuration for semantic search features.
 
 

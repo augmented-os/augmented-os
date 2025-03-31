@@ -8,7 +8,7 @@ All API endpoints are prefixed under a base path, for example: `/api/business`.
 
 * **Base URL Path**: `/api/business/{tenantId}/...` – All endpoints require specifying the `tenantId` in the URL path to scope the request. This ensures multi-tenancy context is explicit and used for internal routing and security checks.
 * **Media Types**: The API expects and returns JSON (`application/json`) for request and response bodies.
-* **Authentication**: Use JWT Bearer tokens or API keys in the `Authorization` header. For example: `Authorization: Bearer <token>`. Each request must include a valid token that corresponds to the `{tenantId}` in the URL (or a system-level token for admin operations). If authentication fails or the token’s tenant does not match, a `401` or `403` will be returned.
+* **Authentication**: Use JWT Bearer tokens or API keys in the `Authorization` header. For example: `Authorization: Bearer <token>`. Each request must include a valid token that corresponds to the `{tenantId}` in the URL (or a system-level token for admin operations). If authentication fails or the token's tenant does not match, a `401` or `403` will be returned.
 * **Errors**: Errors follow a standard format with a JSON body like `{"error": "message", "code": "ERROR_CODE"}`. The HTTP status codes indicate error type (400 for bad requests, 401/403 for auth issues, 404 for not found, 409 for conflicts like version mismatch, 500 for internal errors). See **Error Handling** below for details.
 
 ## Endpoints
@@ -20,7 +20,7 @@ Below is a list of key API endpoints grouped by functionality.
 #### Update or Define Tenant Schema
 
 * **Endpoint**: `PUT /api/business/{tenantId}/schema`
-* **Description**: Define a new data model or update the existing data model for the tenant. The request body should contain a JSON Schema that describes the tables and fields. This operation will trigger validation and, if valid, apply the changes to the tenant’s database schema.
+* **Description**: Define a new data model or update the existing data model for the tenant. The request body should contain a JSON Schema that describes the tables and fields. This operation will trigger validation and, if valid, apply the changes to the tenant's database schema.
 * **Authentication**: Requires an authenticated user with a role that permits schema changes (e.g., `admin` role for the tenant).
 * **Request Body**: JSON object (the JSON Schema). For example:
 
@@ -84,7 +84,7 @@ Below is a list of key API endpoints grouped by functionality.
 
 ### Data Management (Generic CRUD)
 
-For each entity/table defined in the tenant’s schema, the service exposes CRUD endpoints dynamically. The placeholder `{resource}` below refers to the name of a data entity, for example `customers` or `invoices`. These names correspond to those defined in the JSON Schema.
+For each entity/table defined in the tenant's schema, the service exposes CRUD endpoints dynamically. The placeholder `{resource}` below refers to the name of a data entity, for example `customers` or `invoices`. These names correspond to those defined in the JSON Schema.
 
 #### Create Record
 
@@ -103,7 +103,7 @@ For each entity/table defined in the tenant’s schema, the service exposes CRUD
   ```
 
   If the primary key (`customer_id`) is omitted, the service can generate one (like a UUID) if configured to do so. Otherwise, the client must provide it.
-* **Response**: `201 Created` with a JSON body of the created record (including any generated fields such as `createdAt` timestamps or IDs if they weren’t provided). For example:
+* **Response**: `201 Created` with a JSON body of the created record (including any generated fields such as `createdAt` timestamps or IDs if they weren't provided). For example:
 
   ```json
   {
@@ -122,7 +122,7 @@ For each entity/table defined in the tenant’s schema, the service exposes CRUD
 * **Endpoint**: `GET /api/business/{tenantId}/data/{resource}/{recordId}`
 * **Description**: Retrieve a specific record by its primary key.
 * **Response**: `200 OK` with JSON object of the record. If the record includes any fields that are lists or objects (JSONB columns), they will appear as nested JSON.
-* **Errors**: `404 Not Found` if no record with that ID exists for this tenant/resource, `403 Forbidden` if the user doesn’t have access to that record (shouldn’t happen if token’s tenant matches, but could if additional row-level permission logic existed).
+* **Errors**: `404 Not Found` if no record with that ID exists for this tenant/resource, `403 Forbidden` if the user doesn't have access to that record (shouldn't happen if token's tenant matches, but could if additional row-level permission logic existed).
 
 #### Update Record
 
@@ -137,7 +137,7 @@ For each entity/table defined in the tenant’s schema, the service exposes CRUD
   }
   ```
 * **Response**: `200 OK` with the updated record JSON.
-* **Errors**: `400 Bad Request` if validation fails (e.g., wrong data type), `404 Not Found` if record doesn’t exist, `409 Conflict` if there is a version conflict (e.g., if using an optimistic locking field like `version` which the BSS might include and require in update to prevent lost updates).
+* **Errors**: `400 Bad Request` if validation fails (e.g., wrong data type), `404 Not Found` if record doesn't exist, `409 Conflict` if there is a version conflict (e.g., if using an optimistic locking field like `version` which the BSS might include and require in update to prevent lost updates).
 * **Note**: If optimistic concurrency is used, the client should send the last known `version` or `updatedAt` and the service will check it. If mismatch, returns a conflict.
 
 #### Delete Record
@@ -242,10 +242,14 @@ If the platform enforces rate limits, the Business Store Service will propagate 
 
 ## Related Documentation
 
-* **OpenAPI Spec** – See the `business-store-api.yaml` (hypothetical file) for the structured API definitions and schemas.
-* **Internal Interfaces** – For understanding how this service communicates behind the scenes (not needed for API consumers, but useful for developers).
-* **Examples** – The Examples directory has end-to-end usage scenarios demonstrating how to call these endpoints in sequence for common workflows.
+* **[OpenAPI Spec](./business-store-service-api.yaml)** – See the `business-store-service-api.yaml` for the structured API definitions and schemas.
+* **[Internal Interfaces](./internal.md)** – For understanding how this service communicates behind the scenes (not needed for API consumers, but useful for developers).
+* **[Examples](../examples/basic_example.md)** – The Examples directory has end-to-end usage scenarios demonstrating how to call these endpoints in sequence for common workflows.
 * **Auth Service API** – If needed, how to obtain tokens/keys to auth with this service (documented in Auth Service component).
-* **Monitoring** – The Observability of this API (what is logged and metered) is covered under the Monitoring documentation.
+* **[Monitoring](../operations/monitoring.md)** – The Observability of this API (what is logged and metered) is covered under the Monitoring documentation.
+* **[Overview](../overview.md)** – High-level architectural overview of the Business Store Service.
+* **[Data Model](../data_model.md)** – Details on the data structures that the API interacts with.
+* **[Tenant Schema Management](../implementation/tenant_schema_management.md)** – How schemas are managed via the API.
+* **[Security & Isolation](../implementation/security_and_isolation.md)** – Security considerations for API usage.
 
 
