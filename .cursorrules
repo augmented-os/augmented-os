@@ -6,24 +6,6 @@
 - Provide a brief summary of what was accomplished in the completed step
 - Ask if any adjustments are needed before proceeding
 
-### Documentation Analysis (Step 1)
-- Use list_dir and read_file tools to thoroughly explore the workflow_orchestrator directory
-- When creating the markdown table of file structure, include columns for: path, type (file/directory), purpose, and key sections
-- Be comprehensive in analyzing documentation patterns - look for repeated structures, formatting conventions, and cross-linking approaches
-- Save your findings in an organized format that you can reference for later steps
-
-### Template Design (Steps 2-4)
-- For template creation, focus on maintaining the same structure and organization as the original workflow_orchestrator docs
-- Include HTML comments (<!-- instructions here -->) in templates to guide users on how to fill in each section
-- When creating placeholder content, make it clear and instructive while being easy to replace
-- Balance between providing sufficient guidance and keeping templates clean/usable
-- Store templates in a logical directory structure that mirrors the workflow_orchestrator structure
-
-### Validation and Documentation (Steps 5-7)
-- Create comprehensive usage documentation with examples
-- When validating templates, use a systematic approach to ensure all aspects of the original documentation are covered
-- Document specific recommendations for future improvements with rationale
-
 ### General Guidelines
 - Prioritize thoroughness over speed
 - Document your thought process and decisions for key design choices

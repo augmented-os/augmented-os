@@ -1,5 +1,10 @@
-# Ignore .tasks directory
+# Ignore hidden directories
+.archive/
+.cursor/
 .tasks/
+
+# Ignore cursor rules
+.cursorrules
 
 # Dependency directories
 node_modules/
