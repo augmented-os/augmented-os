@@ -1,0 +1,14 @@
+{
+  "bundles": {
+    "web_app": {
+      "name": "web_app",
+      "description": "Web application docs",
+      "created": "2025-04-05T05:57:00.688Z",
+      "lastUsed": "2025-04-05T05:58:48.169Z",
+      "tags": [],
+      "files": [
+        "docs/architecture/components/web_application_service"
+      ]
+    }
+  }
+}
