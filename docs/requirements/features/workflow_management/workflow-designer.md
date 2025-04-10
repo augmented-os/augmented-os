@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Workflow Canvas is the core UI component that allows users to visually design, edit, and review workflow definitions. It provides a drag-and-drop interface for creating workflow nodes, connecting them with edges, and configuring their properties, enabling users to create complex workflow definitions without writing code.
+The Workflow Canvas is the core UI component that allows users to visually design, edit, and review workflow definitions. It provides a drag-and-drop interface for creating workflow nodes, connecting them with edges, and configuring their properties, enabling users to create complex workflow definitions without writing code. The canvas supports a rich set of node types for building sophisticated business processes, including automated tasks, human tasks, decision points, parallel execution, and event handling.
 
 ## User Stories
 
@@ -12,6 +12,12 @@ The Workflow Canvas is the core UI component that allows users to visually desig
 * As a workflow designer, I want to validate my workflow before saving so that I can identify and fix issues early.
 * As a workflow designer, I want to group related nodes together so that I can organize complex workflows.
 * As a workflow designer, I want to zoom and pan around the canvas so that I can work with large workflows.
+* As a workflow designer, I want to create conditional branches using decision nodes so that I can implement business logic.
+* As a workflow designer, I want to define parallel execution paths so that I can optimize workflow performance.
+* As a workflow designer, I want to include human tasks in my workflow so that I can handle steps requiring manual intervention.
+* As a workflow designer, I want to configure event-waiting steps so that I can create event-driven workflows.
+* As a workflow designer, I want to define and run tests for my workflow so that I can ensure it behaves correctly.
+* As a workflow designer, I want to configure advanced workflow settings like error handling and compensation so that I can handle edge cases.
 
 ## Target Users
 
@@ -25,12 +31,50 @@ This feature is primarily for:
 ### Must Have
 
 * Drag-and-drop interface for adding nodes to the canvas
+* Support for all core node types:
+  * TASK Nodes for automated system tasks, with distinct subtypes:
+    * CODE Nodes for script-based automation with code editor
+    * AI_AGENT Nodes for AI-powered automation with prompt configuration
+    * INTEGRATION Nodes for external system integration
+  * HUMAN_TASK Nodes for manual intervention steps
+  * DECISION Nodes for conditional branching
+  * PARALLEL Nodes for concurrent execution
+  * EVENT_WAIT Nodes for event-driven workflows
+  * Start/End Nodes for workflow boundaries
+* Node-specific configuration panels with:
+  * Input/output schema definition
+  * Data mapping between steps
+  * Conditional logic for decisions
+  * Assignment rules for human tasks
+  * Event patterns for wait states
+  * Code editor for CODE nodes with syntax highlighting and validation
+  * Prompt/instruction configuration for AI_AGENT nodes
+  * Connection configuration for INTEGRATION nodes
+* Advanced workflow settings:
+  * Output schema configuration
+  * Error handling and retry policies
+  * Compensation steps for rollback
+  * Execution logging configuration
+* Workflow testing capabilities:
+  * Test case definition
+  * Input data specification
+  * Expected output validation
+  * Execution path verification
 * Ability to create directed edges between nodes
 * Node configuration panel for editing node properties
 * Basic validation of workflow structure (no cycles, valid start/end points)
 * Ability to save and load workflow definitions
 * Undo/redo functionality for all canvas operations
 * Zoom in/out and panning capabilities
+* AI Assistant panel that provides:
+  * Context-aware guidance for workflow construction
+  * Suggestions for node configurations
+  * Help with data mapping and transformation
+  * Best practice recommendations
+* Workflow execution controls:
+  * Ability to initiate workflow execution from the designer
+  * Basic execution monitoring and status visualization
+  * Quick testing of workflows without leaving the designer
 
 ### Should Have
 
@@ -77,6 +121,7 @@ See the related [Workflow Canvas UI/UX Documentation](../../ui_ux/wireframes/wor
 The Workflow Canvas operates on a graph data model where nodes represent workflow tasks and edges represent execution flow. The canvas allows users to manipulate this graph visually:
 
 
+
 1. Users can add nodes by dragging them from a palette onto the canvas
 2. Users can connect nodes by creating edges from one node's output port to another node's input port
 3. Users can configure nodes by selecting them and editing properties in a panel
@@ -87,6 +132,7 @@ The Workflow Canvas operates on a graph data model where nodes represent workflo
 ### States and Transitions
 
 The canvas can exist in the following states:
+
 
 
 1. **Empty State**: No nodes present, showing guidance to get started
@@ -115,6 +161,18 @@ The canvas operates on the following data model:
   "id": "workflow-123",
   "name": "Example Workflow",
   "description": "A workflow that processes data",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      // JSON Schema definition for workflow inputs
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      // JSON Schema definition for workflow outputs
+    }
+  },
   "nodes": [
     {
       "id": "node-1",
@@ -124,11 +182,84 @@ The canvas operates on the following data model:
     },
     {
       "id": "node-2",
-      "type": "process",
+      "type": "task",
+      "task_subtype": "code",
       "position": { "x": 300, "y": 100 },
       "properties": {
-        "operation": "transform",
-        "parameters": {}
+        "language": "javascript",
+        "code": "function process(input) {\n  return { result: input.value * 2 };\n}",
+        "input_mapping": {
+          // Maps workflow state to task inputs
+        },
+        "output_mapping": {
+          // Maps task outputs to workflow state
+        },
+        "retry_policy": {
+          "max_attempts": 3,
+          "delay": "PT1M"
+        }
+      }
+    },
+    {
+      "id": "node-3",
+      "type": "task",
+      "task_subtype": "ai_agent",
+      "position": { "x": 400, "y": 100 },
+      "properties": {
+        "system_prompt": "You are a helpful assistant that processes customer inquiries.",
+        "user_prompt_template": "Process this customer inquiry: {{input.query}}",
+        "tools": ["search_knowledge_base", "fetch_customer_data"],
+        "constraints": {
+          "max_tokens": 1000,
+          "temperature": 0.7
+        },
+        "input_mapping": {
+          // Maps workflow state to agent inputs
+        },
+        "output_mapping": {
+          // Maps agent outputs to workflow state
+        }
+      }
+    },
+    {
+      "id": "node-4",
+      "type": "human_task",
+      "position": { "x": 500, "y": 100 },
+      "properties": {
+        "assignee_roles": ["reviewer"],
+        "form_definition": {
+          // Form fields and validation rules
+        },
+        "due_date": "PT24H"
+      }
+    },
+    {
+      "id": "node-5",
+      "type": "decision",
+      "position": { "x": 700, "y": 100 },
+      "properties": {
+        "conditions": [
+          {
+            "expression": "$.amount > 1000",
+            "target": "node-5"
+          },
+          {
+            "expression": "true",
+            "target": "node-6"
+          }
+        ]
+      }
+    },
+    {
+      "id": "node-5",
+      "type": "parallel",
+      "position": { "x": 900, "y": 100 },
+      "properties": {
+        "branches": [
+          ["node-7", "node-8"],
+          ["node-9", "node-10"]
+        ],
+        "join_type": "all"
       }
     }
   ],
@@ -146,6 +277,35 @@ The canvas operates on the following data model:
       "id": "group-1",
       "name": "Processing Group",
       "nodes": ["node-1", "node-2"]
+    }
+  ],
+  "error_handling": {
+    "default_retry_policy": {
+      "max_attempts": 3,
+      "delay": "PT1M"
+    },
+    "compensation_steps": {
+      // Steps to execute on failure
+    }
+  },
+  "test_cases": [
+    {
+      "id": "test-1",
+      "name": "Happy Path Test",
+      "input": {
+        // Test input data
+      },
+      "expected_output": {
+        // Expected output data
+      },
+      "assertions": [
+        {
+          "node": "node-2",
+          "expect": {
+            // Node-specific assertions
+          }
+        }
+      ]
     }
   ]
 }
@@ -219,20 +379,209 @@ This feature must comply with:
   * **Response**: Highlight the node and property field, prevent saving
   * **Recovery**: User must provide required properties
   * **Message to User**: "The \[Property Name\] is required for \[Node Type\] nodes."
+* **Invalid Decision Expression**:
+  * **Cause**: User enters an invalid condition expression in a decision node
+  * **Response**: Highlight the expression field, show syntax error details
+  * **Recovery**: User must correct the expression syntax
+  * **Message to User**: "The condition expression is invalid: \[Error Details\]"
+* **Incompatible Data Mapping**:
+  * **Cause**: User attempts to map incompatible data types between nodes
+  * **Response**: Highlight the incompatible fields, show type mismatch
+  * **Recovery**: User must correct the data mapping or add transformation
+  * **Message to User**: "Cannot map \[Source Type\] to \[Target Type\]. Please check the data mapping."
+
+## Workflow Testing Framework
+
+### Test Case Management
+
+* **Test Case Creation**:
+  * Define test inputs using JSON or form interface
+  * Specify expected outputs and intermediate states
+  * Configure node-specific assertions
+  * Set up mock responses for external services
+* **Test Execution**:
+  * Run tests in sandbox environment
+  * View real-time execution progress
+  * Inspect intermediate state at each node
+  * Compare actual vs expected results
+* **Test Results**:
+  * Detailed execution path visualization
+  * Node-by-node state inspection
+  * Assertion failure highlighting
+  * Performance metrics collection
+
+### Test Types
+
+* **Unit Tests**:
+  * Test individual node configurations
+  * Validate data transformations
+  * Verify decision logic
+  * Check event pattern matching
+* **Integration Tests**:
+  * Test end-to-end workflow execution
+  * Validate cross-node data flow
+  * Test error handling and compensation
+  * Verify external service integration
+* **Regression Tests**:
+  * Automated test suite execution
+  * Historical test case management
+  * Performance trend analysis
+  * Coverage reporting
+
+### Test Automation
+
+* **CI/CD Integration**:
+  * Automated test execution on workflow changes
+  * Test result reporting
+  * Version control integration
+  * Deployment pipeline integration
+* **Test Data Management**:
+  * Test data generation tools
+  * Data versioning
+  * Mock data management
+  * Test environment isolation
+
+## AI Assistant Integration
+
+The AI Assistant is a core feature of the workflow designer that provides intelligent assistance throughout the workflow creation process:
+
+### Capabilities
+
+* **Contextual Recommendations**:
+  * Suggest next steps based on the current workflow state
+  * Recommend node types based on the workflow's purpose
+  * Propose common patterns and best practices
+* **Configuration Assistance**:
+  * Provide guidance for complex node configurations
+  * Suggest input/output mappings based on data types
+  * Help craft effective decision conditions
+  * Generate starter code for CODE nodes
+  * Craft effective prompts for AI_AGENT nodes
+* **Problem Resolution**:
+  * Analyze validation errors and suggest fixes
+  * Identify potential logical issues in the workflow
+  * Recommend performance optimizations
+* **Learning Support**:
+  * Explain concepts and functionality
+  * Provide examples relevant to the current task
+  * Answer questions about workflow capabilities
+
+### Integration Points
+
+* The AI Assistant should be accessible from any part of the workflow designer
+* Assistant panel can be toggled to provide help without disrupting the workflow
+* Contextual help buttons throughout the interface can trigger specific assistant guidance
+* Automated suggestions can appear based on detected user needs or workflow state
+
+### Behavior
+
+* Assistant should maintain context across the workflow design session
+* Recommendations should be tailored to the user's skill level and preferences
+* AI should have access to workflow definition, node configurations, and validation state
+* Privacy controls should allow users to determine what information is shared with the assistant
+
+## Workflow Execution
+
+The workflow designer includes features for testing and executing workflows directly:
+
+### Execution Controls
+
+* **Test Execution**:
+  * Run button to execute the workflow with test inputs
+  * Ability to pause, resume, and stop execution
+  * Step-by-step execution mode for debugging
+* **Execution Visualization**:
+  * Real-time highlighting of active nodes
+  * Progress indicators for long-running steps
+  * Visual path tracing of execution flow
+  * State inspection at each node
+* **Status Monitoring**:
+  * Execution status dashboard
+  * Time elapsed and estimated completion
+  * Resource utilization metrics
+  * Error notifications with details
+
+### Integration with Testing Framework
+
+* Execution can be initiated from test cases
+* Actual vs. expected results comparison
+* Automated verification of assertions
+* Test run history and comparison
+
+### Limitations
+
+* Full production deployments are managed outside the designer
+* Resource-intensive workflows may have execution limits in the designer
+* Some integrations may be simulated in the test environment
 
 ## Acceptance Criteria
 
 
- 1. Users can drag and drop at least 5 different node types onto the canvas from a palette
- 2. Users can connect nodes with edges that respect the port compatibility rules
- 3. Users can select nodes and edit their properties in a properties panel
- 4. Users can move, resize, and delete nodes and edges
- 5. Canvas validates the workflow and prevents invalid operations
- 6. Users can save workflows and reload them with the exact same visual layout
- 7. Canvas supports undo/redo for at least 20 operations
- 8. Canvas allows zooming from 25% to 400% and panning across the entire workflow
- 9. Canvas supports workflows with at least 100 nodes with acceptable performance
-10. Canvas is fully accessible via keyboard controls and screen readers
+ 1. Users can drag and drop all supported node types onto the canvas:
+    * TASK nodes for automated operations
+    * HUMAN_TASK nodes for manual steps
+    * DECISION nodes for conditional branching
+    * PARALLEL nodes for concurrent execution
+    * EVENT_WAIT nodes for event handling
+    * Start/End nodes for workflow boundaries
+ 2. Users can connect nodes with edges that respect:
+    * Port compatibility rules
+    * Data type compatibility
+    * Valid workflow structure (no cycles)
+    * Branch/merge requirements for parallel execution
+ 3. Users can configure node properties through the properties panel:
+    * Task configuration and data mapping
+    * Human task forms and assignment rules
+    * Decision conditions and branching logic
+    * Parallel execution settings
+    * Event patterns and correlation rules
+ 4. Users can define and manage workflow tests:
+    * Create test cases with input data
+    * Define expected outputs
+    * Configure node-specific assertions
+    * Execute tests and view results
+    * Save and manage test suites
+ 5. Users can configure advanced workflow settings:
+    * Error handling and retry policies
+    * Compensation steps for rollback
+    * Execution logging levels
+    * Resource constraints
+ 6. Canvas validates the workflow and prevents invalid operations:
+    * Structure validation (connectivity, cycles)
+    * Configuration completeness
+    * Data type compatibility
+    * Expression syntax
+    * Resource constraints
+ 7. Users can save workflows and reload them with:
+    * Exact visual layout preservation
+    * All node configurations
+    * Test case definitions
+    * Advanced settings
+ 8. Canvas supports workflow organization features:
+    * Node grouping
+    * Visual layout tools
+    * Search and navigation
+    * Documentation annotations
+ 9. Canvas maintains performance requirements:
+    * Supports workflows with at least 100 nodes
+    * Rendering time < 500ms
+    * Operation response time < 100ms
+    * Memory usage < 50MB
+10. Canvas provides full accessibility:
+    * Keyboard navigation
+    * Screen reader support
+    * High contrast mode
+    * Alternative text-based view
+11. Canvas supports workflow testing capabilities:
+    * Test case management
+    * Test execution environment
+    * Results visualization
+    * CI/CD integration
+12. Canvas provides comprehensive error handling:
+    * Clear error messages
+    * Visual error indicators
+    * Guided error resolution
+    * Error state recovery
 
 ## Feature Dependencies
 
