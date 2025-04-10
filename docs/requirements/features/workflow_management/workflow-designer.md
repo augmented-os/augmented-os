@@ -151,6 +151,8 @@ The canvas operates on the following data model:
 }
 ```
 
+For the complete schema definition and additional details, refer to the [Workflow Definitions Schema Documentation](../../../architecture/components/workflow_orchestrator_service/schemas/workflow_definitions.md).
+
 ### Data Storage
 
 Workflow definitions will be stored in the workflow_definition table in the database, with the following structure:
