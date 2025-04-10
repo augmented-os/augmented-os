@@ -25,7 +25,7 @@ User journey documentation should be referenced when:
 
 When creating new user journey documentation, use the following template:
 
-* [User Journey Template](./template.md)
+* [User Journey Template](../../.templates/requirements/user-journey-template.md)
 
 ## Related Documentation
 

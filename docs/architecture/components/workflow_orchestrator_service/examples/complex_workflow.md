@@ -136,7 +136,7 @@ The following example illustrates a complex loan application workflow that inclu
     },
     {
       "stepId": "determine_approval_path",
-      "type": "CHOICE",
+      "type": "DECISION",
       "choices": [
         {
           "condition": "${workflow.state.steps.risk_assessment.output.riskScore < 30 && workflow.input.loanDetails.amount < 500000}",
@@ -257,7 +257,7 @@ The following example illustrates a complex loan application workflow that inclu
     },
     {
       "stepId": "determine_review_level",
-      "type": "CHOICE",
+      "type": "DECISION",
       "choices": [
         {
           "condition": "${workflow.state.steps.underwriter_review !== undefined}",
