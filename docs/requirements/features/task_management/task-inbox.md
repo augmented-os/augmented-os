@@ -1,3 +1,7 @@
+# Task Inbox
+
+> **Mode:** Run-Time
+
 # Feature Specification: Task Inbox
 
 ## Metadata

@@ -1,3 +1,7 @@
+# Workflow Designer Structure
+
+> **Mode:** Design-Time
+
 docs/requirements/features/workflow_management/
 ├── README.md (Overview of workflow management features)
 ├── workflow-designer/

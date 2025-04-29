@@ -1,4 +1,6 @@
-# User Journey: Connecting to an External System
+# Connect External System
+
+> **Mode:** Design-Time
 
 ## Overview
 

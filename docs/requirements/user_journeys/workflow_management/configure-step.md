@@ -1,3 +1,7 @@
+# Configure Workflow Step
+
+> **Mode:** Design-Time
+
 # User Journey: Configuring a Step within a Workflow
 
 ## Overview

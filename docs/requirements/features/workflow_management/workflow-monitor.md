@@ -1,4 +1,6 @@
-# Feature Specification: Workflow Monitor
+# Workflow Monitor
+
+> **Mode:** Run-Time
 
 ## Overview
 

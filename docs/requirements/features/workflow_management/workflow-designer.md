@@ -1,4 +1,6 @@
-# Feature Specification: Workflow Canvas
+# Workflow Designer
+
+> **Mode:** Design-Time
 
 ## Overview
 

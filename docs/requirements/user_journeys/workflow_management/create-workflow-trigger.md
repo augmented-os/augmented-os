@@ -1,3 +1,7 @@
+# Create Workflow Trigger
+
+> **Mode:** Design-Time
+
 # User Journey: Creating a Workflow Trigger
 
 ## Metadata

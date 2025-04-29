@@ -1,4 +1,6 @@
-# User Journey: Creating a New Workflow
+# Create a Workflow
+
+> **Mode:** Design-Time
 
 ## Overview
 

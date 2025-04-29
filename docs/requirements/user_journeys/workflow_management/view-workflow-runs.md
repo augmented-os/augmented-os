@@ -1,4 +1,6 @@
-# User Journey: View Workflow Runs
+# View Workflow Runs
+
+> **Mode:** Run-Time
 
 ## Overview
 
