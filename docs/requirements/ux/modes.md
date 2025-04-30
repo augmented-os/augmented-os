@@ -39,7 +39,7 @@ Keeping the concerns separate prevents screen clutter, simplifies permissions, a
 | **System Integrator**                          | Design‑time                  | • Registers connectors, sets up triggers & auth                                                      |
 | **Knowledge Worker / Approver**                | Run‑time                     | • Completes manual tasks, approvals, exception handling                                              |
 
-## 3  What lives in **both** modes?  What lives in **both** modes?
+## 3  What lives in **both** modes?
 
 - **Home / Dashboards** – high‑level KPIs surface aggregates from both layers.
 - **AI Copilot (CopilotKit)** – context‑aware overlay that follows the user everywhere.
