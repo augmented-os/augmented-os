@@ -154,9 +154,9 @@ Example status information:
 | integration_definition_id | UUID | Reference to integration definition |
 | name | VARCHAR(255) | Human-readable name for this instance |
 | description | TEXT | Optional description |
-| context_type | VARCHAR(50) | Context type (global, client, user) |
-| context_id | VARCHAR(255) | ID of client/user if scoped |
-| credentials | JSONB | Encrypted credentials (using pgcrypto) |
+| context_type | context_scope_enum | Context type ENUM ('global', 'client', 'user'), defaults to 'global' |
+| context_id | VARCHAR(255) | ID of client/user if scoped (NULL if context_type is 'global') |
+| credentials | BYTEA | Encrypted credentials (using pgcrypto via application layer) |
 | config | JSONB | Instance specific configuration |
 | status | JSONB | Current status information |
 | created_at | TIMESTAMP | Creation timestamp |

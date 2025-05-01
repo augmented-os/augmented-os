@@ -248,7 +248,7 @@ Each integration definition specifies the configuration required for instances:
 | version | VARCHAR(50) | Semantic version of this integration |
 | methods | JSONB | Available methods this integration provides |
 | config_schema | JSONB | Configuration schema for this integration |
-| auth_type | VARCHAR(50) | Authentication method (oauth2, apikey, custom) |
+| auth_type | auth_method_enum | Authentication method ENUM ('oauth2', 'apikey', 'custom') |
 | oauth2_config | JSONB | OAuth2 configuration if applicable |
 | created_at | TIMESTAMP | Creation timestamp |
 | updated_at | TIMESTAMP | Last update timestamp |
