@@ -153,7 +153,7 @@ interface IntegrationCredential {
 
 The Integration Service implements the following database optimizations:
 
-1. **Credential Isolation** - Credentials are stored in a separate table with enhanced encryption and restricted access patterns.
+1. **Credential Isolation** - Credentials are stored in an encrypted `BYTEA` column on the `integration_instances` table with enhanced encryption and restricted access patterns.
 2. **Method Execution Caching** - Frequently used integration responses are cached with appropriate TTLs based on method configuration.
 3. **Indexed Lookups** - Key fields like integrationDefinitionId, status, and lastUsedAt are indexed for efficient querying.
 4. **Audit Trail Partitioning** - Integration execution logs are partitioned by time period for efficient storage and querying.

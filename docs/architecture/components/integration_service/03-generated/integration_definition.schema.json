@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "integration_definition",
+  "title": "IntegrationDefinition",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/uuid"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "status": {
+      "enum": [
+        "active",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "createdAt": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "updatedAt": {
+      "$ref": "#/$defs/dateTime"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "type",
+    "version",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

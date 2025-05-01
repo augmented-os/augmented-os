@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "integration_instance",
+  "title": "IntegrationInstance",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/uuid"
+    },
+    "integrationId": {
+      "$ref": "#/$defs/uuid"
+    },
+    "status": {
+      "enum": [
+        "active",
+        "error",
+        "archived"
+      ]
+    },
+    "credentials": {
+      "$ref": "integration_credentials.schema.json"
+    },
+    "config": {
+      "$ref": "integration_config.schema.json"
+    },
+    "lastUsedAt": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "lastConnectedAt": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "createdAt": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "updatedAt": {
+      "$ref": "#/$defs/dateTime"
+    }
+  },
+  "required": [
+    "id",
+    "integrationId",
+    "status",
+    "credentials",
+    "config",
+    "createdAt",
+    "updatedAt"
+  ],
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

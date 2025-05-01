@@ -16,6 +16,7 @@ CREATE TABLE integration_definitions (
     config_schema JSONB,                           -- Configuration schema for this integration
     auth_type auth_method_enum NOT NULL,           -- Authentication method (using ENUM type)
     oauth2_config JSONB,                           -- OAuth2 configuration if applicable (nullable)
+    icon_url TEXT,                                 -- Optional URL for the integration's icon
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL, -- Creation timestamp
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL  -- Last update timestamp
 );
@@ -31,6 +32,7 @@ COMMENT ON COLUMN integration_definitions.methods IS 'JSONB array defining avail
 COMMENT ON COLUMN integration_definitions.config_schema IS 'JSONB schema defining configuration required for instances of this integration';
 COMMENT ON COLUMN integration_definitions.auth_type IS 'Authentication method used by the integration (Enum: auth_method_enum)';
 COMMENT ON COLUMN integration_definitions.oauth2_config IS 'JSONB containing OAuth2 specific configuration, applicable only if auth_type is "oauth2"';
+COMMENT ON COLUMN integration_definitions.icon_url IS 'Optional URL pointing to an icon representing this integration/provider.';
 COMMENT ON COLUMN integration_definitions.created_at IS 'Timestamp of when the record was created';
 COMMENT ON COLUMN integration_definitions.updated_at IS 'Timestamp of when the record was last updated';
 

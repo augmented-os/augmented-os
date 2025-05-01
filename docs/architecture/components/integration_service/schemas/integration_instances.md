@@ -156,7 +156,7 @@ Example status information:
 | description | TEXT | Optional description |
 | context_type | context_scope_enum | Context type ENUM ('global', 'client', 'user'), defaults to 'global' |
 | context_id | VARCHAR(255) | ID of client/user if scoped (NULL if context_type is 'global') |
-| credentials | BYTEA | Encrypted credentials (using pgcrypto via application layer) |
+| credentials | BYTEA | Encrypted credentials. Physical type is BYTEA, storing JSON encrypted by the application layer (e.g., using pgcrypto). |
 | config | JSONB | Instance specific configuration |
 | status | JSONB | Current status information |
 | created_at | TIMESTAMP | Creation timestamp |

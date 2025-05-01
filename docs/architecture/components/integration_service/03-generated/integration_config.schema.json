@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "integration_config",
+  "title": "IntegrationConfig",
+  "type": "object",
+  "properties": {
+    "webhookUrl": {
+      "type": "string",
+      "format": "uri"
+    },
+    "pollIntervalMinutes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60
+    }
+  },
+  "required": [
+    "webhookUrl"
+  ],
+  "additionalProperties": false
+}

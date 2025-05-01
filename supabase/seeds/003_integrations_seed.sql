@@ -4,7 +4,7 @@
 TRUNCATE TABLE public.integration_definitions CASCADE;
 
 INSERT INTO public.integration_definitions
-(integration_id, name, description, version, methods, config_schema, oauth2_config, auth_type, doc_url)
+(integration_id, name, description, version, methods, config_schema, oauth2_config, auth_type, icon_url)
 VALUES
 ('slack','Slack','Interact with Slack workspaces.','0.1.0',
 $$[
@@ -18,7 +18,7 @@ $${
  "scopes":["chat:write","reactions:write"]
 }$$::jsonb,
 'oauth2',
-'https://api.slack.com/web'
+'https://cdn.simpleicons.org/slack'
 ),
 ('google_sheets','Google Sheets','Read and write to Google Sheets spreadsheets.','0.1.0',
 $$[
@@ -32,7 +32,7 @@ $${
  "scopes":["https://www.googleapis.com/auth/spreadsheets"]
 }$$::jsonb,
 'oauth2',
-'https://developers.google.com/sheets/api'
+'https://cdn.simpleicons.org/googlesheets'
 ),
 ('gmail','Gmail','Send and manage Gmail messages.','0.1.0',
 $$[
@@ -45,7 +45,7 @@ $${
  "scopes":["https://www.googleapis.com/auth/gmail.send"]
 }$$::jsonb,
 'oauth2',
-'https://developers.google.com/gmail/api'
+'https://cdn.simpleicons.org/gmail'
 ),
 ('google_drive','Google Drive','Upload and manage files in Google Drive.','0.1.0',
 $$[
@@ -58,7 +58,7 @@ $${
  "scopes":["https://www.googleapis.com/auth/drive.file"]
 }$$::jsonb,
 'oauth2',
-'https://developers.google.com/drive/api'
+'https://cdn.simpleicons.org/googledrive'
 ),
 ('google_calendar','Google Calendar','Create and manage calendar events.','0.1.0',
 $$[
@@ -71,7 +71,7 @@ $${
  "scopes":["https://www.googleapis.com/auth/calendar.events"]
 }$$::jsonb,
 'oauth2',
-'https://developers.google.com/calendar/api'
+'https://cdn.simpleicons.org/googlecalendar'
 ),
 ('http','HTTP','Make arbitrary HTTP requests.','0.1.0',
 $$[
@@ -82,7 +82,7 @@ $${
 }$$::jsonb,
 NULL,
 'custom',
-'https://developer.mozilla.org/docs/Web/HTTP'
+'https://cdn.simpleicons.org/webrtc' -- Assuming HTTP/WebRTC icon
 ),
 ('notion','Notion','Create and manage Notion pages and databases.','0.1.0',
 $$[
@@ -95,7 +95,7 @@ $${
  "scopes":["databases:read","databases:write","pages:write"]
 }$$::jsonb,
 'oauth2',
-'https://developers.notion.com/reference/intro'
+'https://cdn.simpleicons.org/notion'
 ),
 ('openai','OpenAI','Access OpenAI language and embeddings models.','0.1.0',
 $$[
@@ -105,7 +105,7 @@ $$[
 '{}'::jsonb,
 NULL,
 'apikey',
-'https://platform.openai.com/docs/api-reference'
+'https://cdn.simpleicons.org/openai'
 ),
 ('airtable','Airtable','Create and read Airtable records.','0.1.0',
 $$[
@@ -116,7 +116,7 @@ $${
 }$$::jsonb,
 NULL,
 'apikey',
-'https://airtable.com/developers/web/api'
+'https://cdn.simpleicons.org/airtable'
 ),
 ('salesforce','Salesforce','Interact with Salesforce objects and SOQL.','0.1.0',
 $$[
@@ -130,7 +130,7 @@ $${
  "scopes":["api","refresh_token"]
 }$$::jsonb,
 'oauth2',
-'https://developer.salesforce.com/docs'
+'https://cdn.simpleicons.org/salesforce'
 ),
 ('hubspot','HubSpot','CRM interactions with HubSpot.','0.1.0',
 $$[
@@ -144,5 +144,80 @@ $${
  "scopes":["crm.objects.contacts.read","crm.objects.contacts.write"]
 }$$::jsonb,
 'oauth2',
-'https://developers.hubspot.com/docs/api'
+'https://cdn.simpleicons.org/hubspot'
 );
+
+-- Add other integrations like Xero, Discord, GitHub, Telegram, Dropbox, Stripe, Twilio, ClickUp, RSS if needed, matching the format
+
+-- ------------------------------------------------------------------
+-- Seed data for integration_instances
+-- ------------------------------------------------------------------
+
+-- Clear existing instances first (optional, but good practice if re-running seeds)
+-- TRUNCATE TABLE public.integration_instances CASCADE; -- Be cautious with CASCADE
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'slack-global-test', id, 'Slack Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'slack';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'google_sheets-global-test', id, 'Google Sheets Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'google_sheets';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'gmail-global-test', id, 'Gmail Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'gmail';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'google_drive-global-test', id, 'Google Drive Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'google_drive';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'google_calendar-global-test', id, 'Google Calendar Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'google_calendar';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'http-global-test', id, 'HTTP Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'http';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'notion-global-test', id, 'Notion Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'notion';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'openai-global-test', id, 'OpenAI Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'openai';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'airtable-global-test', id, 'Airtable Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'airtable';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'salesforce-global-test', id, 'Salesforce Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'salesforce';
+
+INSERT INTO public.integration_instances
+(instance_id, integration_definition_id, name, context_type, config, status, credentials)
+SELECT
+    'hubspot-global-test', id, 'HubSpot Global Test', 'global', '{}'::jsonb, '{"status": "active"}'::jsonb, NULL
+FROM public.integration_definitions WHERE integration_id = 'hubspot';
