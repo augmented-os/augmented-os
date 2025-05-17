@@ -7613,8 +7613,8 @@ System: [Shows confirmation]
 
 * [Dynamic Components](./dynamic_components.md)
 * [Split View Architecture](./split_view_architecture.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Service](../../task_execution_service.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
+* [Task Execution Service](../../task_execution_service/README.md)
 * [API Integration Patterns](../../technical_architecture/api_integration.md)
 
 ================
@@ -7801,8 +7801,8 @@ System: [RHS highlights the responsible party in the visualization]
 
 * [Split View Architecture](./split_view_architecture.md)
 * [Dynamic Components](./dynamic_components.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Service](../../task_execution_service.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
+* [Task Execution Service](../../task_execution_service/README.md)
 * [Accessibility Standards](../../design_system/accessibility.md)
 
 ================
@@ -8028,7 +8028,7 @@ The Authentication Management experience prioritizes accessibility with:
 * [Overview](./overview.md)
 * [Connector Setup](./connector_setup.md)
 * [Testing Integrations](./testing_integrations.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 ================
@@ -8248,7 +8248,7 @@ The Connector Setup experience prioritizes accessibility with:
 * [Overview](./overview.md)
 * [Authentication](./authentication.md)
 * [Testing Integrations](./testing_integrations.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 ================
@@ -8367,7 +8367,7 @@ To ensure secure integration management, the system implements:
 * [Connector Setup](./connector_setup.md)
 * [Authentication](./authentication.md)
 * [Testing Integrations](./testing_integrations.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 ================
@@ -8399,7 +8399,7 @@ This documentation covers the Integration Configuration user experience, which e
 
 * [Workflow Creation](../workflow_creation/overview.md)
 * [Task Management](../task_management/overview.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 ================
@@ -8628,7 +8628,7 @@ The Testing Integrations experience prioritizes accessibility with:
 * [Overview](./overview.md)
 * [Connector Setup](./connector_setup.md)
 * [Authentication](./authentication.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 ================
@@ -8744,7 +8744,7 @@ To ensure optimal performance, the Task Management experience implements:
 * [Task Execution](./task_execution.md)
 * [Task Monitoring](./task_monitoring.md)
 * [Workflow Creation](../workflow_creation/overview.md)
-* [Task Execution Service](../../task_execution_service.md)
+* [Task Execution Service](../../task_execution_service/README.md)
 
 ================
 File: user_experiences/task_management/README.md
@@ -8775,8 +8775,8 @@ This documentation covers the Task Management user experience, which enables use
 
 * [Workflow Creation](../workflow_creation/overview.md)
 * [Chat Interface](../chat_interface/overview.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Service](../../task_execution_service.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
+* [Task Execution Service](../../task_execution_service/README.md)
 
 ================
 File: user_experiences/task_management/task_execution.md
@@ -9553,7 +9553,7 @@ System: Executes the workflow in test mode and visualizes the execution path
 * [Task Configuration](./task_configuration.md)
 * [Testing & Deployment](./testing_deployment.md)
 * [UI Component Library](../../design_system/component_guidelines.md)
-* [Workflow Data Model](../../workflow_orchestrator/data_model.md)
+* [Workflow Data Model](../../workflow_orchestrator_service/data_model.md)
 * [Workflow Visualization](../chat_interface/workflow_visualization.md)
 
 ================
@@ -9642,7 +9642,7 @@ Multiple stakeholders can participate in the workflow development process throug
 * [Task Configuration](./task_configuration.md)
 * [Testing & Deployment](./testing_deployment.md)
 * [Workflow Visualization](../chat_interface/workflow_visualization.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
 
 ================
 File: user_experiences/workflow_creation/README.md
@@ -9672,8 +9672,8 @@ This documentation covers the Workflow Creation user experience, which enables u
 
 * [Chat Interface](../chat_interface/overview.md)
 * [Task Management](../task_management/overview.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Service](../../task_execution_service.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
+* [Task Execution Service](../../task_execution_service/README.md)
 
 ================
 File: user_experiences/workflow_creation/task_configuration.md
@@ -9886,8 +9886,8 @@ System: Validates the configuration and simulates the approval process
 
 * [Designer Interface](./designer.md)
 * [Testing & Deployment](./testing_deployment.md)
-* [Task Execution Service](../../task_execution_service.md)
-* [Integration Service](../../integration_service.md)
+* [Task Execution Service](../../task_execution_service/README.md)
+* [Integration Service](../../integration_service/README.md)
 * [Form Builder](../integration_configuration/connector_setup.md)
 
 ================
@@ -10100,7 +10100,7 @@ System: Executes the deployment, providing real-time status updates
 
 * [Designer Interface](./designer.md)
 * [Task Configuration](./task_configuration.md)
-* [Workflow Orchestrator Operations](../../workflow_orchestrator/operations/monitoring.md)
+* [Workflow Orchestrator Operations](../../workflow_orchestrator_service/operations/monitoring.md)
 * [Environment Management](../../technical_architecture/environment_management.md)
 * [CI/CD Integration](../../technical_architecture/ci_cd_integration.md)
 
@@ -10472,9 +10472,9 @@ The `user_experiences/` directory documents specific functional areas:
 
 ## Related Components
 
-* [Workflow Orchestrator](../workflow_orchestrator/README.md)
+* [Workflow Orchestrator](../workflow_orchestrator_service/README.md)
 * [Event Processing Service](../event_processing_service/README.md)
-* [Integration Service](../integration_service.md)
+* [Integration Service](../integration_service/README.md)
 * [UI Rendering Engine](../ui_rendering_engine.md)
 
 

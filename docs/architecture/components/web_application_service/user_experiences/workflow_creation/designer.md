@@ -170,7 +170,7 @@ System: Executes the workflow in test mode and visualizes the execution path
 * [Task Configuration](./task_configuration.md)
 * [Testing & Deployment](./testing_deployment.md)
 * [UI Component Library](../../design_system/component_guidelines.md)
-* [Workflow Data Model](../../workflow_orchestrator/data_model.md)
+* [Workflow Data Model](../../workflow_orchestrator_service/data_model.md)
 * [Workflow Visualization](../chat_interface/workflow_visualization.md)
 
 

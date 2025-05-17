@@ -210,6 +210,6 @@ System: [Shows confirmation]
 
 * [Dynamic Components](./dynamic_components.md)
 * [Split View Architecture](./split_view_architecture.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Service](../../task_execution_service.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
+* [Task Execution Service](../../task_execution_service/README.md)
 * [API Integration Patterns](../../technical_architecture/api_integration.md) 

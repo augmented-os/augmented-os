@@ -53,6 +53,6 @@ The `examples/` directory provides practical usage examples:
 
 * [Task Execution Service](../task_execution_service/)
 * [Event Processing Service](../event_processing_service/)
-* [Workflow Orchestrator](../workflow_orchestrator/)
+* [Workflow Orchestrator](../workflow_orchestrator_service/)
 
 

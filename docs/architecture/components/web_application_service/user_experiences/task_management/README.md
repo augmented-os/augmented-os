@@ -24,7 +24,7 @@ This documentation covers the Task Management user experience, which enables use
 
 * [Workflow Creation](../workflow_creation/overview.md)
 * [Chat Interface](../chat_interface/overview.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
-* [Task Execution Service](../../task_execution_service.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
+* [Task Execution Service](../../task_execution_service/README.md)
 
 

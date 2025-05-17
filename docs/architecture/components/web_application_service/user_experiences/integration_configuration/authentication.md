@@ -218,5 +218,5 @@ The Authentication Management experience prioritizes accessibility with:
 * [Overview](./overview.md)
 * [Connector Setup](./connector_setup.md)
 * [Testing Integrations](./testing_integrations.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md) 
