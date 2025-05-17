@@ -503,7 +503,7 @@ When working with task instances and workflow instances, follow these best pract
 ## Related Documentation
 
 * [Task Router](./task_router.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
 * [Data Model](../data_model.md)
 * [Error Handling](../operations/error_handling.md)
 * [Security Guidelines](../operations/security.md) 

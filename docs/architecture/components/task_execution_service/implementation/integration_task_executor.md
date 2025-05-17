@@ -429,6 +429,6 @@ Performance optimizations include:
 
 * [Data Model](../data_model.md)
 * [Task Router](./task_router.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [API Reference](../interfaces/api.md)
 * [Security Guidelines](../operations/security.md) 

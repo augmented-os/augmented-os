@@ -81,6 +81,6 @@ Multiple stakeholders can participate in the workflow development process throug
 * [Task Configuration](./task_configuration.md)
 * [Testing & Deployment](./testing_deployment.md)
 * [Workflow Visualization](../chat_interface/workflow_visualization.md)
-* [Workflow Orchestrator](../../workflow_orchestrator/overview.md)
+* [Workflow Orchestrator](../../workflow_orchestrator_service/overview.md)
 
 

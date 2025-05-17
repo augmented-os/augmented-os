@@ -111,7 +111,7 @@ To ensure secure integration management, the system implements:
 * [Connector Setup](./connector_setup.md)
 * [Authentication](./authentication.md)
 * [Testing Integrations](./testing_integrations.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 

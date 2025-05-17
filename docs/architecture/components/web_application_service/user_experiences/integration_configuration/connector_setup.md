@@ -212,7 +212,7 @@ The Connector Setup experience prioritizes accessibility with:
 * [Overview](./overview.md)
 * [Authentication](./authentication.md)
 * [Testing Integrations](./testing_integrations.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 

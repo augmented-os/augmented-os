@@ -221,5 +221,5 @@ The Testing Integrations experience prioritizes accessibility with:
 * [Overview](./overview.md)
 * [Connector Setup](./connector_setup.md)
 * [Authentication](./authentication.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md) 
