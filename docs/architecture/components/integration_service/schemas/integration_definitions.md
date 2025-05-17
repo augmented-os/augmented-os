@@ -25,6 +25,7 @@ Integration definitions specify the capabilities and requirements of external se
   "name": "string",                 // Human-readable name
   "description": "string",          // Detailed description
   "version": "string",              // Semantic version of this integration
+  "type": "integration | ai | documents | database",  // Integration type
   "methods": [                      // Available methods this integration provides
     {
       "id": "string",              // Method identifier (e.g., "create_invoice")
@@ -52,6 +53,32 @@ Integration definitions specify the capabilities and requirements of external se
     "tokenUrl": "string",
     "scopes": ["string"],
     "additionalParameters": { }
+  },
+  "aiConfig": {                    // If type is "ai"
+    "provider": "string",          // AI provider (e.g., "openai", "anthropic", "google")
+    "availableModels": [           // List of available models for this provider
+      {
+        "id": "string",           // Model identifier (e.g., "gpt-4", "claude-3")
+        "name": "string",         // Human-readable name
+        "description": "string",  // Model description
+        "capabilities": [         // List of model capabilities
+          "string"               // e.g., "text", "vision", "audio", "embedding"
+        ],
+        "contextWindow": number,  // Maximum context window size
+        "inputFormats": [        // Supported input formats
+          "string"              // e.g., "text", "image/png", "audio/mp3"
+        ],
+        "outputFormats": [       // Supported output formats
+          "string"              // e.g., "text", "json", "image/png"
+        ],
+        "maxTokens": number,     // Maximum output tokens
+        "costPerToken": {        // Cost information
+          "input": number,      // Cost per input token
+          "output": number      // Cost per output token
+        }
+      }
+    ],
+    "defaultModel": "string"      // Default model ID to use
   }
 }
 ```
@@ -246,16 +273,19 @@ Each integration definition specifies the configuration required for instances:
 | name | VARCHAR(255) | Human-readable name |
 | description | TEXT | Detailed description |
 | version | VARCHAR(50) | Semantic version of this integration |
+| type | VARCHAR(255) | Integration type: "integration", "ai", "documents", or "database" |
 | methods | JSONB | Available methods this integration provides |
 | config_schema | JSONB | Configuration schema for this integration |
 | auth_type | auth_method_enum | Authentication method ENUM ('oauth2', 'apikey', 'custom') |
 | oauth2_config | JSONB | OAuth2 configuration if applicable |
+| ai_config | JSONB | AI configuration if type is 'ai' |
 | created_at | TIMESTAMP | Creation timestamp |
 | updated_at | TIMESTAMP | Last update timestamp |
 
 **Indexes:**
 
 * `integration_definitions_integration_id_idx` UNIQUE on `integration_id` (for lookups)
+* `integration_definitions_type_idx` on `type` (for filtering by integration type)
 
 **JSON Schema (methods field):**
 
@@ -276,6 +306,55 @@ Each integration definition specifies the configuration required for instances:
 }
 ```
 
+**JSON Schema (ai_config field):**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "provider": { 
+      "type": "string",
+      "description": "AI provider identifier"
+    },
+    "availableModels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "capabilities": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "contextWindow": { "type": "integer" },
+          "inputFormats": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "outputFormats": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "maxTokens": { "type": "integer" },
+          "costPerToken": {
+            "type": "object",
+            "properties": {
+              "input": { "type": "number" },
+              "output": { "type": "number" }
+            }
+          }
+        },
+        "required": ["id", "name", "capabilities"]
+      }
+    },
+    "defaultModel": { "type": "string" }
+  },
+  "required": ["provider", "availableModels", "defaultModel"]
+}
+```
+
 ## Performance Considerations
 
 For integration definitions, consider these performance optimizations:
@@ -291,5 +370,206 @@ For integration definitions, consider these performance optimizations:
 * [Task Definitions](./task_definitions.md) - Task definitions that use integrations
 * [Workflow Definitions](./workflow_definitions.md) - Workflow definitions that incorporate tasks using integrations
 * [Database Architecture](../database_architecture.md) - Overall database architecture
+
+## AI Integration Type
+
+AI integrations have special considerations:
+
+* **Provider-Specific Configuration**: Each AI provider may have unique requirements and capabilities
+* **Model Selection**: Tasks can specify which model to use from the available models
+* **Cost Management**: AI operations often have usage-based pricing that needs to be tracked
+* **Input/Output Formats**: Different models support different types of inputs and outputs
+* **Context Management**: Models have varying context window sizes and token limits
+
+### Example AI Integration Definition
+
+```json
+{
+  "integrationId": "anthropic",
+  "name": "Anthropic Claude",
+  "description": "Integration with Anthropic's Claude AI models",
+  "version": "1.0.0",
+  "type": "ai",
+  "methods": [
+    {
+      "id": "complete",
+      "name": "Text Completion",
+      "description": "Generate text completion based on input prompt",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Input prompt for the model"
+          },
+          "modelId": {
+            "type": "string",
+            "description": "Optional model ID to use. Falls back to default if not specified."
+          },
+          "maxTokens": {
+            "type": "integer",
+            "description": "Maximum number of tokens to generate",
+            "default": 1000
+          },
+          "temperature": {
+            "type": "number",
+            "description": "Sampling temperature",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.7
+          }
+        },
+        "required": ["prompt"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "completion": {
+            "type": "string",
+            "description": "Generated text completion"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "promptTokens": {
+                "type": "integer",
+                "description": "Number of tokens in the prompt"
+              },
+              "completionTokens": {
+                "type": "integer",
+                "description": "Number of tokens in the completion"
+              },
+              "totalTokens": {
+                "type": "integer",
+                "description": "Total tokens used"
+              },
+              "cost": {
+                "type": "number",
+                "description": "Total cost of the operation"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "generate_image",
+      "name": "Image Generation",
+      "description": "Generate image based on text prompt",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Text prompt describing the desired image"
+          },
+          "modelId": {
+            "type": "string",
+            "description": "Optional model ID to use. Must support image generation capability."
+          },
+          "width": {
+            "type": "integer",
+            "description": "Width of the generated image in pixels",
+            "default": 1024
+          },
+          "height": {
+            "type": "integer",
+            "description": "Height of the generated image in pixels",
+            "default": 1024
+          },
+          "quality": {
+            "type": "string",
+            "enum": ["standard", "hd"],
+            "default": "standard",
+            "description": "Quality of the generated image"
+          }
+        },
+        "required": ["prompt"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the generated image"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "cost": {
+                "type": "number",
+                "description": "Cost of this image generation"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "defaultTemperature": {
+        "type": "number",
+        "description": "Default sampling temperature",
+        "default": 0.7
+      },
+      "defaultMaxTokens": {
+        "type": "integer",
+        "description": "Default maximum tokens",
+        "default": 1000
+      }
+    }
+  },
+  "authType": "apikey",
+  "aiConfig": {
+    "provider": "anthropic",
+    "availableModels": [
+      {
+        "id": "claude-3-opus",
+        "name": "Claude 3 Opus",
+        "description": "Most capable Claude model for complex tasks",
+        "capabilities": ["text", "vision"],
+        "contextWindow": 200000,
+        "inputFormats": ["text", "image/png", "image/jpeg"],
+        "outputFormats": ["text", "json"],
+        "maxTokens": 4096,
+        "costPerToken": {
+          "input": 0.000015,
+          "output": 0.000075
+        }
+      },
+      {
+        "id": "claude-3-sonnet",
+        "name": "Claude 3 Sonnet",
+        "description": "Balanced model for most tasks",
+        "capabilities": ["text", "vision"],
+        "contextWindow": 200000,
+        "inputFormats": ["text", "image/png", "image/jpeg"],
+        "outputFormats": ["text", "json"],
+        "maxTokens": 4096,
+        "costPerToken": {
+          "input": 0.000003,
+          "output": 0.000015
+        }
+      },
+      {
+        "id": "dall-e-3",
+        "name": "DALL-E 3",
+        "description": "Image generation model",
+        "capabilities": ["image_generation"],
+        "inputFormats": ["text"],
+        "outputFormats": ["image/png", "image/jpeg"],
+        "costPerImage": {
+          "standard": 0.040,
+          "hd": 0.080
+        }
+      }
+    ],
+    "defaultModel": "claude-3-sonnet"
+  }
+}
+```
 
 

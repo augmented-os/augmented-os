@@ -9,6 +9,8 @@ This directory contains detailed feature specifications for the system. Feature 
 * **[Workflow Designer](./workflow_designer/)**: Feature specifications for the workflow design capabilities
 * **[Task Management](./task_management/)**: Feature specifications for task creation, execution, and monitoring
 * **[Integration Hub](./integration_hub/)**: Feature specifications for managing integrations with external systems
+  * [Connector Instance Creation](./integration_hub/connector-instance-creation.md): Feature for setting up and authenticating connections to external systems
+  * [Connector Instance Viewing](./integration_hub/connector-instance-viewing.md): Feature for viewing, monitoring, and managing existing connections
 * **[Dashboards](./dashboards/)**: Feature specifications for data visualization and reporting dashboards
 
 ## How to Use This Documentation

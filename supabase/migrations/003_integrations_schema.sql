@@ -4,6 +4,7 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Create ENUM types
 CREATE TYPE auth_method_enum AS ENUM ('oauth2', 'apikey', 'custom');
 CREATE TYPE context_scope_enum AS ENUM ('global', 'client', 'user');
+CREATE TYPE integration_type_enum AS ENUM ('integration', 'ai', 'documents', 'database');
 
 -- Create the integration_definitions table
 CREATE TABLE integration_definitions (
@@ -12,10 +13,12 @@ CREATE TABLE integration_definitions (
     name VARCHAR(255) NOT NULL,                    -- Human-readable name
     description TEXT,                              -- Detailed description
     version VARCHAR(50) NOT NULL,                  -- Semantic version of this integration
+    type integration_type_enum DEFAULT 'integration' NOT NULL, -- Integration type
     methods JSONB,                                 -- Available methods this integration provides
     config_schema JSONB,                           -- Configuration schema for this integration
     auth_type auth_method_enum NOT NULL,           -- Authentication method (using ENUM type)
     oauth2_config JSONB,                           -- OAuth2 configuration if applicable (nullable)
+    ai_config JSONB,                               -- AI configuration if applicable (nullable)
     icon_url TEXT,                                 -- Optional URL for the integration's icon
     created_at TIMESTAMPTZ DEFAULT now() NOT NULL, -- Creation timestamp
     updated_at TIMESTAMPTZ DEFAULT now() NOT NULL  -- Last update timestamp
@@ -28,10 +31,12 @@ COMMENT ON COLUMN integration_definitions.integration_id IS 'Unique identifier f
 COMMENT ON COLUMN integration_definitions.name IS 'Human-readable name of the integration';
 COMMENT ON COLUMN integration_definitions.description IS 'Detailed description of the integration';
 COMMENT ON COLUMN integration_definitions.version IS 'Semantic version of the integration definition';
+COMMENT ON COLUMN integration_definitions.type IS 'Type of the integration';
 COMMENT ON COLUMN integration_definitions.methods IS 'JSONB array defining available methods (actions) the integration can perform';
 COMMENT ON COLUMN integration_definitions.config_schema IS 'JSONB schema defining configuration required for instances of this integration';
 COMMENT ON COLUMN integration_definitions.auth_type IS 'Authentication method used by the integration (Enum: auth_method_enum)';
 COMMENT ON COLUMN integration_definitions.oauth2_config IS 'JSONB containing OAuth2 specific configuration, applicable only if auth_type is "oauth2"';
+COMMENT ON COLUMN integration_definitions.ai_config IS 'JSONB containing AI specific configuration, applicable only if auth_type is "ai"';
 COMMENT ON COLUMN integration_definitions.icon_url IS 'Optional URL pointing to an icon representing this integration/provider.';
 COMMENT ON COLUMN integration_definitions.created_at IS 'Timestamp of when the record was created';
 COMMENT ON COLUMN integration_definitions.updated_at IS 'Timestamp of when the record was last updated';
