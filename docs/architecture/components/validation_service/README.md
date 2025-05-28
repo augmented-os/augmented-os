@@ -49,8 +49,8 @@ The `examples/` directory provides practical usage examples:
 
 ## Related Components
 
-* [Workflow Orchestrator](../workflow_orchestrator/): Uses validation for workflow input/output
+* [Workflow Orchestrator](../workflow_orchestrator_service/): Uses validation for workflow input/output
 * [Task Execution Service](../task_execution_service/): Validates task parameters and results
-* [Schema Registry](../schemas/schema_registry.md): Stores and manages validation schemas
+* [Schema Registry](./schemas/schema_registry.md): Stores and manages validation schemas
 
 

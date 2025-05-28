@@ -205,6 +205,6 @@ System: Executes the deployment, providing real-time status updates
 
 * [Designer Interface](./designer.md)
 * [Task Configuration](./task_configuration.md)
-* [Workflow Orchestrator Operations](../../workflow_orchestrator/operations/monitoring.md)
+* [Workflow Orchestrator Operations](../../workflow_orchestrator_service/operations/monitoring.md)
 * [Environment Management](../../technical_architecture/environment_management.md)
 * [CI/CD Integration](../../technical_architecture/ci_cd_integration.md) 

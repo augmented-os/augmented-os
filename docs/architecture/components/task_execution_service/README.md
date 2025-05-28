@@ -56,8 +56,8 @@ The `examples/` directory provides practical usage examples:
 
 <!-- List related components with links to their documentation -->
 
-* [Workflow Orchestrator](../workflow_orchestrator/)
-* [Integration Service](../integration_service.md)
-* [UI Framework](../ui_framework.md)
+* [Workflow Orchestrator](../workflow_orchestrator_service/)
+* [Integration Service](../integration_service/README.md)
+* [Web Application Service](../web_application_service/README.md)
 
 

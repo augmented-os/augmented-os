@@ -52,8 +52,8 @@ The `examples/` directory provides practical usage examples:
 
 ## Related Components
 
-* [Workflow Orchestrator](../workflow_orchestrator/)
-* [Integration Service](../integration_service.md)
-* [Task Execution Service](../task_execution_service.md)
+* [Workflow Orchestrator](../workflow_orchestrator_service/)
+* [Integration Service](../integration_service/README.md)
+* [Task Execution Service](../task_execution_service/README.md)
 
 

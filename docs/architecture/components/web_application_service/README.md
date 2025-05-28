@@ -51,9 +51,9 @@ The `user_experiences/` directory documents specific functional areas:
 
 ## Related Components
 
-* [Workflow Orchestrator](../workflow_orchestrator/README.md)
+* [Workflow Orchestrator](../workflow_orchestrator_service/README.md)
 * [Event Processing Service](../event_processing_service/README.md)
-* [Integration Service](../integration_service.md)
+* [Integration Service](../integration_service/README.md)
 * [UI Rendering Engine](../ui_rendering_engine.md)
 
 

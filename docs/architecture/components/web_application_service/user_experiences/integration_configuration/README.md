@@ -24,7 +24,7 @@ This documentation covers the Integration Configuration user experience, which e
 
 * [Workflow Creation](../workflow_creation/overview.md)
 * [Task Management](../task_management/overview.md)
-* [Integration Service](../../integration_service.md)
+* [Integration Service](../../integration_service/README.md)
 * [Integrations Schema](.././schemas/integrations.md)
 
 

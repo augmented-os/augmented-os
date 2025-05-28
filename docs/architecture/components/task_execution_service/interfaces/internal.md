@@ -316,7 +316,7 @@ When communication with dependent services fails, the following fallback mechani
 * [Public API](./api.md)
 * [Data Model](../data_model.md)
 * [Task Router Implementation](../implementation/task_router.md)
-* [Workflow Orchestrator Integration](../../workflow_orchestrator/interfaces/internal.md)
+* [Workflow Orchestrator Integration](../../workflow_orchestrator_service/interfaces/internal.md)
 * [Integration Service Interface](../../integration_service/interfaces/internal.md)
 
 
