@@ -78,8 +78,8 @@ This table tracks the implementation status of database tables defined in the [S
 | observability_service | observability_logs | [ ] | [ ] | No migration/seed found. |
 | observability_service | observability_metrics | [ ] | [ ] | No migration/seed found. |
 | observability_service | observability_traces | [ ] | [ ] | No migration/seed found. |
-| task_execution_service | task_definitions | [ ] | [ ] | No migration/seed found. |
-| task_execution_service | task_instances | [ ] | [ ] | No migration/seed found. |
+| task_execution_service | task_definitions | [x] | [-] | Migration exists (`005_task_execution_schema.sql`). No seed file. |
+| task_execution_service | task_instances | [x] | [-] | Migration exists (`005_task_execution_schema.sql`). No seed file. |
 | testing_framework_service | test_case_results | [ ] | [ ] | No migration/seed found. |
 | testing_framework_service | test_definitions | [ ] | [ ] | No migration/seed found. |
 | testing_framework_service | test_runs | [ ] | [ ] | No migration/seed found. |
