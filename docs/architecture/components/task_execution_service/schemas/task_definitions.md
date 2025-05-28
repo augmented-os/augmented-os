@@ -460,6 +460,6 @@ For task definitions, consider these performance optimizations:
 ## Related Documentation
 
 * [Task Instances](./task_instances.md) - Documentation for task instances
-* [Workflow Definitions](./workflow_definitions.md) - Documentation for workflow definitions
+* [Workflow Definitions](../../workflow_orchestrator_service/schemas/workflow_definitions.md) - Documentation for workflow definitions
 * [Workflow Instances](./workflow_instances.md) - Documentation for workflow instances
 * [UI Components](./ui_components.md) - Documentation for UI components

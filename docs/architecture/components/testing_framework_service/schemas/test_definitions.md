@@ -339,4 +339,4 @@ For test definitions, consider these performance optimizations:
 * [Test Runs](./test_runs.md) - Documentation for test execution records
 * [Test Case Results](./test_case_results.md) - Documentation for individual test case outcomes
 * [Task Definitions](./task_definitions.md) - Definition schema for tasks that can be tested
-* [Workflow Definitions](./workflow_definitions.md) - Definition schema for workflows that can be tested 
+* [Workflow Definitions](../../workflow_orchestrator_service/schemas/workflow_definitions.md) - Definition schema for workflows that can be tested 
