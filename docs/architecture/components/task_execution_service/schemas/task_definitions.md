@@ -24,16 +24,16 @@ Task definitions are templates that describe the atomic units of work within the
 {
   "taskId": "string",          // Unique identifier
   "name": "string",            // Human-readable name
-  "type": "automated | manual",
+  "type": "string",            // Task type (task_type enum: AUTOMATED, MANUAL, INTEGRATION)
   "implementation": {
-    "kind": "awsLambda | http | script | human | integration",
+    "kind": "string",          // Implementation kind (validated by JSON Schema: AWS_LAMBDA, HTTP, SCRIPT, HUMAN, INTEGRATION)
     "endpoint": "string",      // Implementation reference
     "parameters": { },         // Static configuration
     "integration": {
       "type": "string",
       "method": "string",
       "instanceSelector": {
-        "type": "explicit | rule",
+        "type": "string",      // Instance selector type (validated by JSON Schema: EXPLICIT, RULE)
         "value": "string",
         "parameters": { }
       }
@@ -51,7 +51,7 @@ Task definitions are templates that describe the atomic units of work within the
     {
       "componentId": "string",  // Reference to UI component definition
       "condition": "string",    // Optional condition for when to show this UI
-      "priority": number       // Order priority when multiple conditions match
+      "priority": 0            // Order priority when multiple conditions match
     }
   ]
 }
@@ -203,14 +203,14 @@ Example task using integration:
 {
   "taskId": "create-xero-invoice",
   "name": "Create Xero Invoice",
-  "type": "automated",
+  "type": "AUTOMATED",
   "implementation": {
-    "kind": "integration",
+    "kind": "INTEGRATION",
     "integration": {
       "type": "xero",
       "method": "create_invoice",
       "instanceSelector": {
-        "type": "explicit",
+        "type": "EXPLICIT",
         "value": "xero_main"
       }
     }
@@ -253,14 +253,14 @@ Example task with rule-based integration selection:
 {
   "taskId": "send-email",
   "name": "Send Email",
-  "type": "automated",
+  "type": "AUTOMATED",
   "implementation": {
-    "kind": "integration",
+    "kind": "INTEGRATION",
     "integration": {
       "type": "gmail",
       "method": "send_email",
       "instanceSelector": {
-        "type": "rule",
+        "type": "RULE",
         "value": "sender_match",
         "parameters": {
           "field": "from_address"
@@ -282,55 +282,149 @@ Example task with rule-based integration selection:
 
 ## Database Schema
 
+**Enums:**
+
+```sql
+-- Task type enum (used in dedicated column)
+CREATE TYPE task_type AS ENUM (
+  'AUTOMATED',
+  'MANUAL',
+  'INTEGRATION'
+);
+
+-- Note: Other enum-like values (implementation kind, instance selector type, security level) 
+-- are stored within JSONB fields and validated using JSON Schema constraints rather than 
+-- PostgreSQL enums. This provides more flexibility for these nested configuration values.
+```
+
 **Table: task_definitions**
 
 | Field | Type | Description |
 |----|----|----|
 | id | UUID | Primary key |
-| task_id | VARCHAR(255) | Unique business identifier for the task |
-| name | VARCHAR(255) | Human-readable name |
-| type | VARCHAR(50) | Task type (automated, manual) |
-| implementation | JSONB | Implementation details |
-| input_schema | JSONB | JSON Schema for task inputs |
-| output_schema | JSONB | JSON Schema for task outputs |
-| ui_components | JSONB | UI component references and conditions |
-| version | VARCHAR(50) | Version of this task definition |
-| created_at | TIMESTAMP | Creation timestamp |
-| updated_at | TIMESTAMP | Last update timestamp |
+| task_id | VARCHAR(255) | Unique business identifier for the task (NOT NULL, UNIQUE) |
+| name | VARCHAR(255) | Human-readable name (NOT NULL) |
+| description | TEXT | Detailed description (nullable) |
+| type | task_type | Task type (NOT NULL) |
+| version | VARCHAR(50) | Semantic version (NOT NULL) |
+| input_schema | JSONB | JSON Schema for task inputs (NOT NULL) |
+| output_schema | JSONB | JSON Schema for task outputs (NOT NULL) |
+| timeout | INTEGER | Maximum execution time in milliseconds (nullable) |
+| retry_policy | JSONB | Default retry policy (nullable) |
+| execution_config | JSONB | Configuration for execution (NOT NULL) |
+| ui_components | JSONB | UI component references and conditions (nullable) |
+| metadata | JSONB | Additional metadata (nullable) |
+| created_at | TIMESTAMPTZ | Creation timestamp (NOT NULL, DEFAULT NOW()) |
+| updated_at | TIMESTAMPTZ | Last update timestamp (NOT NULL, DEFAULT NOW()) |
+
+**Constraints:**
+
+```sql
+-- Primary key
+ALTER TABLE task_definitions ADD CONSTRAINT task_definitions_pkey PRIMARY KEY (id);
+
+-- Unique constraint on business identifier
+ALTER TABLE task_definitions ADD CONSTRAINT task_definitions_task_id_unique UNIQUE (task_id);
+
+-- Check constraints
+ALTER TABLE task_definitions 
+  ADD CONSTRAINT check_timeout_positive 
+  CHECK (timeout IS NULL OR timeout > 0);
+
+-- Automatic timestamp update trigger
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_task_definitions_updated_at 
+  BEFORE UPDATE ON task_definitions 
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+```
 
 **Indexes:**
 
-* `task_definitions_task_id_idx` UNIQUE on `task_id` (for lookups)
-* `task_definitions_type_idx` on `type` (for filtering by type)
+```sql
+-- Basic indexes
+CREATE UNIQUE INDEX task_definitions_task_id_idx ON task_definitions (task_id);
+CREATE INDEX task_definitions_type_idx ON task_definitions (type);
+CREATE INDEX task_definitions_version_idx ON task_definitions (version);
+CREATE INDEX task_definitions_created_at_idx ON task_definitions (created_at);
 
-**JSON Schema (implementation field):**
+-- JSONB indexes for nested data queries
+CREATE INDEX task_definitions_input_schema_gin_idx ON task_definitions USING GIN (input_schema);
+CREATE INDEX task_definitions_output_schema_gin_idx ON task_definitions USING GIN (output_schema);
+CREATE INDEX task_definitions_execution_config_gin_idx ON task_definitions USING GIN (execution_config);
+CREATE INDEX task_definitions_ui_components_gin_idx ON task_definitions USING GIN (ui_components);
+CREATE INDEX task_definitions_metadata_gin_idx ON task_definitions USING GIN (metadata);
+
+-- Specific JSONB field indexes for common queries
+CREATE INDEX task_definitions_executor_idx ON task_definitions 
+  USING BTREE ((execution_config->>'executor'));
+CREATE INDEX task_definitions_security_level_idx ON task_definitions 
+  USING BTREE ((execution_config->'securityContext'->>'securityLevel'));
+```
+
+**JSON Schema (execution_config field):**
 
 ```json
 {
   "type": "object",
   "properties": {
-    "kind": { 
-      "type": "string", 
-      "enum": ["awsLambda", "http", "script", "human", "integration"] 
-    },
-    "endpoint": { "type": "string" },
-    "parameters": { "type": "object" },
-    "integration": {
+    "executor": { "type": "string" },
+    "securityContext": {
       "type": "object",
       "properties": {
-        "type": { "type": "string" },
-        "method": { "type": "string" },
-        "instanceSelector": {
-          "type": "object",
-          "properties": {
-            "type": { "type": "string", "enum": ["explicit", "rule"] },
-            "value": { "type": "string" },
-            "parameters": { "type": "object" }
-          }
+        "runAs": { "type": "string" },
+        "permissions": { 
+          "type": "array", 
+          "items": { "type": "string" } 
+        },
+        "securityLevel": { 
+          "type": "string", 
+          "enum": ["LOW", "MEDIUM", "HIGH"] 
         }
-      }
+      },
+      "required": ["permissions", "securityLevel"]
+    },
+    "resourceRequirements": {
+      "type": "object",
+      "properties": {
+        "cpu": { "type": "string" },
+        "memory": { "type": "string" },
+        "disk": { "type": "string" },
+        "timeoutSeconds": { "type": "number" }
+      },
+      "required": ["cpu", "memory", "timeoutSeconds"]
+    },
+    "environmentVariables": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
     }
-  }
+  },
+  "required": ["executor"]
+}
+```
+
+**JSON Schema (retry_policy field):**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "maxRetries": { "type": "number" },
+    "retryInterval": { "type": "number" },
+    "backoffMultiplier": { "type": "number" },
+    "maxRetryInterval": { "type": "number" },
+    "retryableErrors": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["maxRetries", "retryInterval", "backoffMultiplier"]
 }
 ```
 
@@ -355,15 +449,17 @@ Example task with rule-based integration selection:
 
 For task definitions, consider these performance optimizations:
 
-* Use versioning to allow for evolution without breaking existing workflows
-* Index frequently queried fields for faster lookup
-* Keep task definitions focused and modular to promote reuse
-* Limit the complexity of conditional UI components to prevent rendering performance issues
-* Consider caching frequently used task definitions to reduce database load
+* **Strategic Indexing**: Create indices on frequently queried fields including type, version, and task_id
+* **JSONB Optimization**: Use GIN indexes on JSONB fields for filtering based on nested configuration data
+* **Versioning Strategy**: Use semantic versioning to allow for evolution without breaking existing workflows
+* **Caching**: Consider caching frequently used task definitions to reduce database load
+* **Modular Design**: Keep task definitions focused and modular to promote reuse
+* **UI Component Complexity**: Limit the complexity of conditional UI components to prevent rendering performance issues
+* **Query Optimization**: Leverage specific JSONB field indexes for common configuration queries
 
 ## Related Documentation
 
 * [Task Instances](./task_instances.md) - Documentation for task instances
 * [Workflow Definitions](./workflow_definitions.md) - Documentation for workflow definitions
 * [Workflow Instances](./workflow_instances.md) - Documentation for workflow instances
-* [UI Components](./ui_components.md) - Documentation for UI components 
+* [UI Components](./ui_components.md) - Documentation for UI components
