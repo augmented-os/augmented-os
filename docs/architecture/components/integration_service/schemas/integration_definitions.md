@@ -368,7 +368,7 @@ For integration definitions, consider these performance optimizations:
 
 * [Integration Instances](./integration_instances.md) - Documentation for integration instances
 * [Task Definitions](./task_definitions.md) - Task definitions that use integrations
-* [Workflow Definitions](./workflow_definitions.md) - Workflow definitions that incorporate tasks using integrations
+* [Workflow Definitions](../../workflow_orchestrator_service/schemas/workflow_definitions.md) - Workflow definitions that incorporate tasks using integrations
 * [Database Architecture](../database_architecture.md) - Overall database architecture
 
 ## AI Integration Type
