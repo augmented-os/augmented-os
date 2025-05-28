@@ -126,7 +126,7 @@ Event definitions specify the structure and metadata for event types within the 
 ## Related Documentation
 
 * [Event Instances](./event_instances.md) - Schema for event instances
-* [Workflow Definitions](./workflow_definitions.md) - Schema for workflow definitions
+* [Workflow Definitions](../../workflow_orchestrator_service/schemas/workflow_definitions.md) - Schema for workflow definitions
 * [Tasks Schema](./tasks.md) - Schema for task definitions and instances
 
 

@@ -2,23 +2,24 @@
 -- Description: Creates the task_definitions table with all necessary constraints, indexes, and triggers
 -- Based on: docs/architecture/components/task_execution_service/schemas/task_definitions.md
 
--- Create task type enum
-CREATE TYPE task_type AS ENUM (
-  'AUTOMATED',
-  'MANUAL',
-  'INTEGRATION'
-);
+-- Enable pgcrypto extension if not already enabled
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- Create function for automatic timestamp updates
-CREATE OR REPLACE FUNCTION update_updated_at_column()
+-- Create ENUM types
+CREATE TYPE task_type AS ENUM ('AUTOMATED', 'MANUAL', 'INTEGRATION');
+CREATE TYPE task_status AS ENUM ('PENDING', 'ASSIGNED', 'RUNNING', 'COMPLETED', 'FAILED', 'CANCELLED', 'TIMED_OUT');
+CREATE TYPE task_priority AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL');
+
+-- Helper function for updated_at timestamps
+CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ language 'plpgsql';
+$$ LANGUAGE plpgsql;
 
--- Create task_definitions table
+-- Table: task_definitions
 CREATE TABLE task_definitions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   task_id VARCHAR(255) NOT NULL UNIQUE,
@@ -34,20 +35,11 @@ CREATE TABLE task_definitions (
   ui_components JSONB,
   metadata JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT check_timeout_positive CHECK (timeout IS NULL OR timeout > 0)
 );
 
--- Add check constraints
-ALTER TABLE task_definitions 
-  ADD CONSTRAINT check_timeout_positive 
-  CHECK (timeout IS NULL OR timeout > 0);
-
--- Create automatic timestamp update trigger
-CREATE TRIGGER update_task_definitions_updated_at 
-  BEFORE UPDATE ON task_definitions 
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Create basic indexes
+-- Indexes for task_definitions
 CREATE UNIQUE INDEX task_definitions_task_id_idx ON task_definitions (task_id);
 CREATE INDEX task_definitions_type_idx ON task_definitions (type);
 CREATE INDEX task_definitions_version_idx ON task_definitions (version);
@@ -61,10 +53,13 @@ CREATE INDEX task_definitions_ui_components_gin_idx ON task_definitions USING GI
 CREATE INDEX task_definitions_metadata_gin_idx ON task_definitions USING GIN (metadata);
 
 -- Create specific JSONB field indexes for common queries
-CREATE INDEX task_definitions_executor_idx ON task_definitions 
-  USING BTREE ((execution_config->>'executor'));
-CREATE INDEX task_definitions_security_level_idx ON task_definitions 
-  USING BTREE ((execution_config->'securityContext'->>'securityLevel'));
+CREATE INDEX task_definitions_executor_idx ON task_definitions USING BTREE ((execution_config->>'executor'));
+CREATE INDEX task_definitions_security_level_idx ON task_definitions USING BTREE ((execution_config->'securityContext'->>'securityLevel'));
+
+-- Trigger to update updated_at on modification
+CREATE TRIGGER set_timestamp_task_definitions
+BEFORE UPDATE ON task_definitions
+FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp();
 
 -- Add comments for documentation
 COMMENT ON TABLE task_definitions IS 'Task definitions are templates that describe atomic units of work within the workflow system';
@@ -89,29 +84,11 @@ COMMENT ON COLUMN task_definitions.updated_at IS 'Timestamp when the task defini
 -- Based on: docs/architecture/components/task_execution_service/schemas/task_instances.md
 -- ============================================================================
 
--- Create additional enums for task instances
-CREATE TYPE task_status AS ENUM (
-  'PENDING',
-  'ASSIGNED', 
-  'RUNNING',
-  'COMPLETED',
-  'FAILED',
-  'CANCELLED',
-  'TIMED_OUT'
-);
-
-CREATE TYPE task_priority AS ENUM (
-  'LOW',
-  'MEDIUM',
-  'HIGH', 
-  'CRITICAL'
-);
-
--- Create task_instances table
+-- Table: task_instances
 CREATE TABLE task_instances (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  task_definition_id UUID NOT NULL,
-  workflow_instance_id UUID,
+  task_definition_id UUID NOT NULL REFERENCES task_definitions(id),
+  workflow_instance_id UUID REFERENCES workflow_instances(id),
   step_id VARCHAR(255) NOT NULL,
   status task_status NOT NULL,
   type task_type NOT NULL,
@@ -126,34 +103,12 @@ CREATE TABLE task_instances (
   execution_metadata JSONB NOT NULL,
   version INTEGER NOT NULL DEFAULT 1,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT check_retry_count_non_negative CHECK (retry_count >= 0),
+  CONSTRAINT check_version_positive CHECK (version > 0)
 );
 
--- Add foreign key constraints
-ALTER TABLE task_instances 
-  ADD CONSTRAINT fk_task_instances_task_definition 
-  FOREIGN KEY (task_definition_id) REFERENCES task_definitions(id);
-
--- Note: workflow_instances table constraint will be added when that table is created
--- ALTER TABLE task_instances 
---   ADD CONSTRAINT fk_task_instances_workflow_instance 
---   FOREIGN KEY (workflow_instance_id) REFERENCES workflow_instances(id);
-
--- Add check constraints for task instances
-ALTER TABLE task_instances 
-  ADD CONSTRAINT check_retry_count_non_negative 
-  CHECK (retry_count >= 0);
-
-ALTER TABLE task_instances 
-  ADD CONSTRAINT check_version_positive 
-  CHECK (version > 0);
-
--- Create automatic timestamp update trigger for task instances
-CREATE TRIGGER update_task_instances_updated_at 
-  BEFORE UPDATE ON task_instances 
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Create basic indexes for task instances
+-- Create indexes for task instances
 CREATE INDEX task_instances_task_definition_idx ON task_instances (task_definition_id);
 CREATE INDEX task_instances_workflow_idx ON task_instances (workflow_instance_id);
 CREATE INDEX task_instances_status_idx ON task_instances (status);
@@ -161,12 +116,12 @@ CREATE INDEX task_instances_type_idx ON task_instances (type);
 CREATE INDEX task_instances_executor_idx ON task_instances (executor_id);
 CREATE INDEX task_instances_assignee_idx ON task_instances (assignee);
 CREATE INDEX task_instances_priority_idx ON task_instances (priority);
+CREATE INDEX task_instances_created_at_idx ON task_instances (created_at);
 
 -- Create composite indexes for common query patterns
 CREATE INDEX task_instances_status_priority_idx ON task_instances (status, priority);
 CREATE INDEX task_instances_workflow_status_idx ON task_instances (workflow_instance_id, status);
 CREATE INDEX task_instances_type_status_idx ON task_instances (type, status);
-CREATE INDEX task_instances_created_at_idx ON task_instances (created_at);
 
 -- Create JSONB indexes for nested data queries
 CREATE INDEX task_instances_input_gin_idx ON task_instances USING GIN (input);
@@ -175,28 +130,31 @@ CREATE INDEX task_instances_error_gin_idx ON task_instances USING GIN (error);
 CREATE INDEX task_instances_execution_metadata_gin_idx ON task_instances USING GIN (execution_metadata);
 
 -- Create specific JSONB field indexes for common queries
-CREATE INDEX task_instances_error_code_idx ON task_instances 
-  USING BTREE ((error->>'code')) WHERE error IS NOT NULL;
-CREATE INDEX task_instances_start_time_idx ON task_instances 
-  USING BTREE ((execution_metadata->>'start_time'));
+CREATE INDEX task_instances_error_code_idx ON task_instances USING BTREE ((error->>'code')) WHERE error IS NOT NULL;
+CREATE INDEX task_instances_start_time_idx ON task_instances USING BTREE ((execution_metadata->>'start_time'));
 
--- Add comments for task instances documentation
-COMMENT ON TABLE task_instances IS 'Task instances represent individual executions of task definitions within workflows';
+-- Trigger to update updated_at on modification
+CREATE TRIGGER set_timestamp_task_instances
+BEFORE UPDATE ON task_instances
+FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp();
+
+-- Add comments for documentation
+COMMENT ON TABLE task_instances IS 'Task instances represent actual executions of task definitions within workflow instances';
 COMMENT ON COLUMN task_instances.id IS 'Primary key UUID';
-COMMENT ON COLUMN task_instances.task_definition_id IS 'Reference to the task definition template';
-COMMENT ON COLUMN task_instances.workflow_instance_id IS 'Reference to the parent workflow instance (optional)';
-COMMENT ON COLUMN task_instances.step_id IS 'Step identifier within the workflow';
+COMMENT ON COLUMN task_instances.task_definition_id IS 'Reference to the task definition this instance is based on';
+COMMENT ON COLUMN task_instances.workflow_instance_id IS 'Reference to the workflow instance this task belongs to';
+COMMENT ON COLUMN task_instances.step_id IS 'Identifier for the step within the workflow';
 COMMENT ON COLUMN task_instances.status IS 'Current execution status of the task';
-COMMENT ON COLUMN task_instances.type IS 'Type of task: AUTOMATED, MANUAL, or INTEGRATION';
-COMMENT ON COLUMN task_instances.input IS 'Input data provided for task execution';
-COMMENT ON COLUMN task_instances.output IS 'Output data produced by task execution';
-COMMENT ON COLUMN task_instances.error IS 'Error information if the task failed';
-COMMENT ON COLUMN task_instances.executor_id IS 'ID of the executor handling this task';
-COMMENT ON COLUMN task_instances.assignee IS 'For manual tasks, the assigned user or role';
-COMMENT ON COLUMN task_instances.priority IS 'Execution priority level';
+COMMENT ON COLUMN task_instances.type IS 'Task type inherited from definition';
+COMMENT ON COLUMN task_instances.input IS 'Input data provided to the task';
+COMMENT ON COLUMN task_instances.output IS 'Output data produced by the task';
+COMMENT ON COLUMN task_instances.error IS 'Error information if task failed';
+COMMENT ON COLUMN task_instances.executor_id IS 'Identifier of the executor handling this task';
+COMMENT ON COLUMN task_instances.assignee IS 'User assigned to manual tasks';
+COMMENT ON COLUMN task_instances.priority IS 'Execution priority of the task';
 COMMENT ON COLUMN task_instances.retry_count IS 'Number of retry attempts made';
-COMMENT ON COLUMN task_instances.retry_policy IS 'Retry policy configuration for handling failures';
-COMMENT ON COLUMN task_instances.execution_metadata IS 'Execution-specific metadata including timing and environment';
-COMMENT ON COLUMN task_instances.version IS 'Version for optimistic concurrency control';
+COMMENT ON COLUMN task_instances.retry_policy IS 'Retry policy for this specific instance';
+COMMENT ON COLUMN task_instances.execution_metadata IS 'Metadata about task execution including timing and context';
+COMMENT ON COLUMN task_instances.version IS 'Version number for optimistic locking';
 COMMENT ON COLUMN task_instances.created_at IS 'Timestamp when the task instance was created';
 COMMENT ON COLUMN task_instances.updated_at IS 'Timestamp when the task instance was last updated';

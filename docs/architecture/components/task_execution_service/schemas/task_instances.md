@@ -352,8 +352,9 @@ For task instances, consider these performance optimizations:
 ## Related Documentation
 
 * [Task Definitions](./task_definitions.md) - Documentation for task definitions
-* [Workflow Instances](./workflow_instances.md) - Documentation for workflow instances
-* [Workflow Definitions](./workflow_definitions.md) - Documentation for workflow definitions
-* [Event Definitions](./event_definitions.md) - Documentation for event definitions
+* [Workflow Instances](../../workflow_orchestrator_service/schemas/workflow_instances.md) - Documentation for workflow instances
+* [Workflow Definitions](../../workflow_orchestrator_service/schemas/workflow_definitions.md) - Documentation for workflow definitions
+* [Event Definitions](../../event_processing_service/schemas/event_definitions.md) - Documentation for event definitions
+
 
 

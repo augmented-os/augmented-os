@@ -231,7 +231,7 @@ For event sequences, consider these performance optimizations:
 
 * [Event Definitions](./event_definitions.md) - Schema for event type definitions
 * [Event Instances](./event_instances.md) - Schema for event instances
-* [Workflow Definitions](./workflow_definitions.md) - Schema for workflow definitions
+* [Workflow Definitions](../../workflow_orchestrator_service/schemas/workflow_definitions.md) - Schema for workflow definitions
 * [Database Architecture](../database_architecture.md) - Overall database architecture
 
 
