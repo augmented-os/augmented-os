@@ -22,6 +22,7 @@ const mockTask: Task = {
   id: 1,
   title: 'Review Term Sheet - TechCorp',
   company: 'TechCorp',
+  type: 'term-sheet-review',
   dueDate: '2024-01-15',
   status: 'pending',
   priority: 'High',
@@ -40,13 +41,13 @@ const mockTaskDetails: TaskDetail = {
       term: 'Valuation',
       value: '$10M',
       standard: '$8M',
-      flag: true
+      flag: 'warning'
     },
     {
       term: 'Board Seats',
       value: '2',
       standard: '1',
-      flag: false
+      flag: 'success'
     }
   ]
 };
@@ -169,7 +170,7 @@ export function testLoadingAndErrorStates() {
  * Helper function for testing review message generation
  */
 export function testGenerateReviewMessage(task: Task, taskDetails: TaskDetail): string {
-  const nonStandardTerms = taskDetails.extractedTerms.filter(term => term.flag);
+  const nonStandardTerms = taskDetails.extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning');
   const termDescriptions = nonStandardTerms
     .map((term, index) => `${index + 1}. ${term.value} ${term.term} (we require ${term.standard})`)
     .join('\n');

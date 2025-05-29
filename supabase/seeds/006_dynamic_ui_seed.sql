@@ -23,10 +23,14 @@ INSERT INTO ui_components (component_id, name, description, component_type, titl
 }'::jsonb,
 '[
   {
-    "actionKey": "refresh_data",
-    "label": "Refresh",
-    "style": "secondary",
-    "icon": "refresh"
+    "actionKey": "request_review",
+    "label": "Request Review", 
+    "style": "secondary"
+  },
+  {
+    "actionKey": "approve",
+    "label": "Approve",
+    "style": "primary"
   }
 ]'::jsonb),
 
@@ -141,18 +145,12 @@ INSERT INTO ui_components (component_id, name, description, component_type, titl
 ]'::jsonb),
 
 -- Term Sheet Summary Display - Replaces TaskSummaryCard component
-('term-sheet-summary', 'Term Sheet Summary', 'Display term sheet details in a summary card', 'Display', 'Term Sheet Summary', 
+('term-sheet-summary', 'Term Sheet Summary', 'Display term sheet details in a summary card', 'Display', '', 
 NULL,
-'[
-  {
-    "actionKey": "view_details",
-    "label": "View Details",
-    "style": "secondary"
-  }
-]'::jsonb),
+NULL),
 
 -- Extracted Terms Table Display - Replaces ExtractedTermsTable component
-('extracted-terms-table', 'Extracted Terms Table', 'Display extracted terms with conditional highlighting for flagged terms', 'Display', 'Extracted Terms', 
+('extracted-terms-table', 'Extracted Terms Table', 'Display extracted terms with conditional highlighting for flagged terms', 'Display', '', 
 NULL,
 NULL),
 
@@ -188,7 +186,7 @@ SET
   display_template = NULL,
   custom_props = jsonb_build_object(
     'displayType', 'card',
-    'title', 'Term Sheet Summary',
+    'title', 'Company Details',
     'fields', jsonb_build_array(
       jsonb_build_object('key', 'company', 'label', 'Company'),
       jsonb_build_object('key', 'valuation', 'label', 'Valuation'),
@@ -205,6 +203,7 @@ SET
   display_template = NULL,
   custom_props = jsonb_build_object(
     'displayType', 'table',
+    'title', 'Extracted Terms',
     'columns', jsonb_build_array(
       jsonb_build_object('key', 'term', 'label', 'Term', 'width', 'w-1/4'),
       jsonb_build_object('key', 'value', 'label', 'Value', 'width', 'w-1/4'),
@@ -216,7 +215,24 @@ SET
         'render', 'status-badge'
       )
     ),
-    'rowClassName', 'flag-based',
+    'flagConfig', jsonb_build_object(
+      'field', 'flag',
+      'configName', 'compliance',
+      'styles', jsonb_build_object(
+        'error', 'bg-red-50',
+        'warning', 'bg-amber-50',
+        'success', 'bg-green-50',
+        'info', 'bg-cyan-50',
+        'pending', 'bg-neutral-50'
+      ),
+      'badgeConfigs', jsonb_build_object(
+        'error', jsonb_build_object('class', 'bg-red-100 text-red-900', 'text', 'Violation'),
+        'warning', jsonb_build_object('class', 'bg-amber-100 text-amber-900', 'text', 'Non-standard'),
+        'success', jsonb_build_object('class', 'bg-green-100 text-green-900', 'text', 'Compliant'),
+        'info', jsonb_build_object('class', 'bg-cyan-100 text-cyan-900', 'text', 'Reference'),
+        'pending', jsonb_build_object('class', 'bg-neutral-100 text-neutral-900', 'text', 'Under Review')
+      )
+    ),
     'dataKey', 'extractedTerms'
   )
 WHERE component_id = 'extracted-terms-table';

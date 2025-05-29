@@ -1,4 +1,5 @@
-import { Task } from '../types';
+import { Task, FlagType } from '../types';
+import { isFlagProblematic } from './styleHelpers';
 
 /**
  * Filters tasks based on text search criteria

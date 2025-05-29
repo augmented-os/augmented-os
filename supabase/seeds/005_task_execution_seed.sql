@@ -220,7 +220,7 @@ INSERT INTO task_definitions (
                 "term": {"type": "string"},
                 "value": {"type": "string"},
                 "standard": {"type": "string"},
-                "flag": {"type": "boolean"}
+                "flag": {"type": "string", "enum": ["error", "warning", "success", "info", "pending"], "description": "Semantic flag indicating the status of this term"}
               }
             }
           }
@@ -334,7 +334,8 @@ INSERT INTO task_instances (
   retry_count,
   retry_policy,
   execution_metadata,
-  version
+  version,
+  task_reference
 ) VALUES (
   (SELECT id FROM task_definitions WHERE task_id = 'review-term-sheet'),
   (SELECT id FROM workflow_instances WHERE correlation_id = 'term-sheet-techstart-2024-001'),
@@ -360,19 +361,19 @@ INSERT INTO task_instances (
           "term": "Pre-money Valuation",
           "value": "$50M",
           "standard": "$40-60M",
-          "flag": false
+          "flag": "success"
         },
         {
           "term": "Liquidation Preference",
           "value": "2x Non-participating",
           "standard": "1x Non-participating", 
-          "flag": true
+          "flag": "warning"
         },
         {
           "term": "Board Composition",
           "value": "2 Investor, 1 Founder, 2 Independent",
           "standard": "1 Investor, 2 Founder, 1 Independent",
-          "flag": true
+          "flag": "warning"
         }
       ]
     },
@@ -399,7 +400,8 @@ INSERT INTO task_instances (
       "riskLevel": "medium"
     }
   }'::jsonb,
-  1
+  1,
+  'TechStart Inc.'
 );
 
 -- Task Instance 2: Pending Review 
@@ -419,7 +421,8 @@ INSERT INTO task_instances (
   retry_count,
   retry_policy,
   execution_metadata,
-  version
+  version,
+  task_reference
 ) VALUES (
   (SELECT id FROM task_definitions WHERE task_id = 'review-term-sheet'),
   (SELECT id FROM workflow_instances WHERE correlation_id = 'term-sheet-ai-startup-2024-002'),
@@ -444,13 +447,13 @@ INSERT INTO task_instances (
           "term": "Pre-money Valuation",
           "value": "$25M",
           "standard": "$20-30M",
-          "flag": false
+          "flag": "success"
         },
         {
           "term": "Liquidation Preference",
           "value": "1x Non-participating",
           "standard": "1x Non-participating",
-          "flag": false
+          "flag": "success"
         }
       ]
     },
@@ -477,7 +480,8 @@ INSERT INTO task_instances (
       "riskLevel": "low"
     }
   }'::jsonb,
-  1
+  1,
+  'AI Startup Co.'
 );
 
 -- Task Instance 3: Pending Review
@@ -497,7 +501,8 @@ INSERT INTO task_instances (
   retry_count,
   retry_policy,
   execution_metadata,
-  version
+  version,
+  task_reference
 ) VALUES (
   (SELECT id FROM task_definitions WHERE task_id = 'review-term-sheet'),
   (SELECT id FROM workflow_instances WHERE correlation_id = 'term-sheet-fintech-2024-003'),
@@ -523,19 +528,19 @@ INSERT INTO task_instances (
           "term": "Pre-money Valuation",
           "value": "$100M",
           "standard": "$60-80M",
-          "flag": true
+          "flag": "warning"
         },
         {
           "term": "Liquidation Preference",
           "value": "3x Participating",
           "standard": "1x Non-participating",
-          "flag": true
+          "flag": "error"
         },
         {
           "term": "Anti-dilution",
           "value": "Full Ratchet",
           "standard": "Weighted Average",
-          "flag": true
+          "flag": "error"
         }
       ]
     },
@@ -562,6 +567,7 @@ INSERT INTO task_instances (
       "riskLevel": "high"
     }
   }'::jsonb,
-  1
+  1,
+  'FinTech Solutions Ltd.'
 );
 

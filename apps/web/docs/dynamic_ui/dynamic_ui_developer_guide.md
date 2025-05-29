@@ -46,7 +46,7 @@ interface UIComponentSchema {
   title: string;
   fields?: FormField[];
   actions?: ActionButton[];
-  displayTemplate?: string;
+  displayTemplate?: string; // DEPRECATED - use customProps.displayType instead
   layout?: LayoutConfig;
   customProps?: Record<string, any>;
   version?: string;
@@ -1632,4 +1632,5 @@ export const FormField = React.memo<FormFieldProps>(({ field, value, error, onCh
 * [Dynamic UI System Overview](./dynamic_ui_system.md) - High-level architecture
 * [UI Components Schema](../schemas/ui_components.md) - Database schema
 * [Component Library](../technical_architecture/component_library.md) - Base components
-* [State Management](../technical_architecture/state_management.md) - Redux patterns 
+* [State Management](../technical_architecture/state_management.md) - Redux patterns
+* [Universal Flag System](../../../docs/architecture/universal-flag-system.md) - Flag system documentation

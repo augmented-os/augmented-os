@@ -32,21 +32,24 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
   }
 
   const isGrid = config.layout === 'grid' || config.layout === undefined;
+  
+  // Don't render title if className includes 'mb-0' (indicates controlled context)
+  const shouldRenderTitle = title && !className?.includes('mb-0');
 
   return (
     <div className={cn("mb-6", className)}>
-      {title && (
-        <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
+      {shouldRenderTitle && (
+        <h3 className="text-lg font-medium text-gray-900 mb-4">{title}</h3>
       )}
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
         <div className={cn(
-          "p-4",
-          isGrid ? "grid grid-cols-2 gap-4" : "space-y-3"
+          "p-6",
+          isGrid ? "grid grid-cols-2 gap-6" : "space-y-4"
         )}>
           {config.fields.map((field) => (
             <div key={field.key}>
-              <p className="text-sm font-medium text-gray-500">{field.label}</p>
-              <div className="mt-1 text-sm text-gray-900">
+              <p className="text-sm font-medium text-gray-500 mb-1">{field.label}</p>
+              <div className="text-sm text-gray-900 font-medium">
                 {field.render 
                   ? field.render(data[field.key])
                   : String(data[field.key] || 'N/A')

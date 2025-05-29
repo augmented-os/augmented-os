@@ -10,6 +10,21 @@ CREATE TYPE task_type AS ENUM ('AUTOMATED', 'MANUAL', 'INTEGRATION');
 CREATE TYPE task_status AS ENUM ('PENDING', 'ASSIGNED', 'RUNNING', 'COMPLETED', 'FAILED', 'CANCELLED', 'TIMED_OUT');
 CREATE TYPE task_priority AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL');
 
+-- ==========================================================================
+-- UNIVERSAL FLAG SYSTEM
+-- Define flag types for semantic row styling across business scenarios
+-- ==========================================================================
+
+CREATE TYPE flag_type AS ENUM (
+  'error',    -- Red: critical issues, violations, failures
+  'warning',  -- Orange/Yellow: needs attention, non-standard  
+  'success',  -- Green: approved, compliant, good
+  'info',     -- Blue: informational, neutral highlight
+  'pending'   -- Gray: awaiting action, in progress
+);
+
+COMMENT ON TYPE flag_type IS 'Universal flag types for semantic row styling across business scenarios';
+
 -- Helper function for updated_at timestamps
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
@@ -18,6 +33,91 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- ==========================================================================
+-- FLAG CONFIGURATION TABLE
+-- Store reusable flag configurations for different business contexts
+-- ==========================================================================
+
+CREATE TABLE flag_configurations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  config_name text NOT NULL UNIQUE,
+  description text,
+  flag_styles jsonb NOT NULL DEFAULT '{}'::jsonb,
+  badge_configs jsonb NOT NULL DEFAULT '{}'::jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+COMMENT ON TABLE flag_configurations IS 'Reusable flag styling configurations for different business contexts';
+COMMENT ON COLUMN flag_configurations.flag_styles IS 'CSS classes for row styling by flag type';
+COMMENT ON COLUMN flag_configurations.badge_configs IS 'Badge configurations (class, text) by flag type';
+
+-- Create indexes for flag_configurations
+CREATE INDEX idx_flag_configurations_config_name ON flag_configurations(config_name);
+CREATE INDEX idx_flag_configurations_created_at ON flag_configurations(created_at);
+
+-- Trigger to update updated_at on modification for flag_configurations
+CREATE TRIGGER set_timestamp_flag_configurations
+BEFORE UPDATE ON flag_configurations
+FOR EACH ROW EXECUTE FUNCTION trigger_set_timestamp();
+
+-- Insert standard flag configurations
+INSERT INTO flag_configurations (config_name, description, flag_styles, badge_configs) VALUES 
+-- Default configuration for general business scenarios
+('default', 'Standard flag configuration for general business scenarios', 
+'{
+  "error": "bg-red-50 border-l-4 border-red-400",
+  "warning": "bg-orange-50 border-l-4 border-orange-400",
+  "success": "bg-green-50 border-l-4 border-green-400", 
+  "info": "bg-blue-50 border-l-4 border-blue-400",
+  "pending": "bg-gray-50 border-l-4 border-gray-400"
+}'::jsonb,
+'{
+  "error": {"class": "bg-red-100 text-red-800", "text": "Critical"},
+  "warning": {"class": "bg-orange-100 text-orange-800", "text": "Warning"},
+  "success": {"class": "bg-green-100 text-green-800", "text": "Approved"},
+  "info": {"class": "bg-blue-100 text-blue-800", "text": "Info"},
+  "pending": {"class": "bg-gray-100 text-gray-800", "text": "Pending"}
+}'::jsonb),
+
+-- Financial review specific configuration
+('financial_review', 'Flag configuration optimized for financial data review',
+'{
+  "error": "bg-red-50 border-l-4 border-red-500",
+  "warning": "bg-yellow-50 border-l-4 border-yellow-500",
+  "success": "bg-emerald-50 border-l-4 border-emerald-500",
+  "info": "bg-indigo-50 border-l-4 border-indigo-500",
+  "pending": "bg-slate-50 border-l-4 border-slate-500"
+}'::jsonb,
+'{
+  "error": {"class": "bg-red-100 text-red-900", "text": "Risk"},
+  "warning": {"class": "bg-yellow-100 text-yellow-900", "text": "Review"},
+  "success": {"class": "bg-emerald-100 text-emerald-900", "text": "Compliant"},
+  "info": {"class": "bg-indigo-100 text-indigo-900", "text": "Note"},
+  "pending": {"class": "bg-slate-100 text-slate-900", "text": "Analysis"}
+}'::jsonb),
+
+-- Compliance/Legal configuration
+('compliance', 'Flag configuration for compliance and legal review processes',
+'{
+  "error": "bg-red-50 border-l-4 border-red-600",
+  "warning": "bg-amber-50 border-l-4 border-amber-600", 
+  "success": "bg-green-50 border-l-4 border-green-600",
+  "info": "bg-cyan-50 border-l-4 border-cyan-600",
+  "pending": "bg-neutral-50 border-l-4 border-neutral-600"
+}'::jsonb,
+'{
+  "error": {"class": "bg-red-100 text-red-900", "text": "Violation"},
+  "warning": {"class": "bg-amber-100 text-amber-900", "text": "Non-standard"},
+  "success": {"class": "bg-green-100 text-green-900", "text": "Compliant"},
+  "info": {"class": "bg-cyan-100 text-cyan-900", "text": "Reference"},
+  "pending": {"class": "bg-neutral-100 text-neutral-900", "text": "Under Review"}
+}'::jsonb);
+
+-- ==========================================================================
+-- TASK DEFINITIONS TABLE
+-- ==========================================================================
 
 -- Table: task_definitions
 CREATE TABLE task_definitions (
@@ -102,6 +202,7 @@ CREATE TABLE task_instances (
   retry_count INTEGER NOT NULL DEFAULT 0,
   retry_policy JSONB,
   execution_metadata JSONB NOT NULL,
+  task_reference TEXT,
   version INTEGER NOT NULL DEFAULT 1,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -118,6 +219,7 @@ CREATE INDEX task_instances_type_idx ON task_instances (type);
 CREATE INDEX task_instances_executor_idx ON task_instances (executor_id);
 CREATE INDEX task_instances_assignee_idx ON task_instances (assignee);
 CREATE INDEX task_instances_priority_idx ON task_instances (priority);
+CREATE INDEX task_instances_task_reference_idx ON task_instances (task_reference);
 CREATE INDEX task_instances_created_at_idx ON task_instances (created_at);
 
 -- Create composite indexes for common query patterns
@@ -159,6 +261,7 @@ COMMENT ON COLUMN task_instances.priority IS 'Execution priority of the task';
 COMMENT ON COLUMN task_instances.retry_count IS 'Number of retry attempts made';
 COMMENT ON COLUMN task_instances.retry_policy IS 'Retry policy for this specific instance';
 COMMENT ON COLUMN task_instances.execution_metadata IS 'Metadata about task execution including timing and context';
+COMMENT ON COLUMN task_instances.task_reference IS 'Universal reference identifier for displaying task context in UI (e.g., company name, document title, entity name)';
 COMMENT ON COLUMN task_instances.version IS 'Version number for optimistic locking';
 COMMENT ON COLUMN task_instances.created_at IS 'Timestamp when the task instance was created';
 COMMENT ON COLUMN task_instances.updated_at IS 'Timestamp when the task instance was last updated';

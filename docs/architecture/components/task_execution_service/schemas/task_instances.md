@@ -46,6 +46,7 @@ Each task instance is created from a task definition template:
     "duration": 0,                   // Execution duration in milliseconds (optional)
     "execution_environment": "string" // Environment where task was executed
   },
+  "task_reference": "string",        // Universal reference identifier for UI display (e.g., company name, document title, entity name) (optional)
   "version": 1,                      // For optimistic concurrency control
   "created_at": "string",            // ISO timestamp (TIMESTAMPTZ)
   "updated_at": "string"             // ISO timestamp (TIMESTAMPTZ)
@@ -178,6 +179,7 @@ Example of a completed automated task instance:
     "duration": 5000,
     "execution_environment": "prod-integration-cluster"
   },
+  "task_reference": "INV-2023-001",
   "version": 1,
   "created_at": "2023-05-10T14:29:55Z",
   "updated_at": "2023-05-10T14:30:05Z"
@@ -208,6 +210,7 @@ Example of a pending manual task instance:
     "start_time": "2023-05-10T14:30:10Z",
     "execution_environment": "manual-task-system"
   },
+  "task_reference": "INV-2023-001",
   "version": 1,
   "created_at": "2023-05-10T14:30:10Z",
   "updated_at": "2023-05-10T14:30:10Z"
@@ -266,6 +269,7 @@ CREATE TYPE task_priority AS ENUM (
 | retry_count | INTEGER | Number of retry attempts (NOT NULL, DEFAULT 0) |
 | retry_policy | JSONB | How to handle failures (nullable) |
 | execution_metadata | JSONB | Execution-specific metadata (NOT NULL) |
+| task_reference | VARCHAR(255) | Universal reference identifier for UI display (e.g., company name, document title, entity name) (nullable) |
 | version | INTEGER | For optimistic concurrency control (NOT NULL, DEFAULT 1) |
 | created_at | TIMESTAMPTZ | Creation timestamp (NOT NULL, DEFAULT NOW()) |
 | updated_at | TIMESTAMPTZ | Last update timestamp (NOT NULL, DEFAULT NOW()) |
@@ -324,6 +328,7 @@ CREATE INDEX task_instances_type_idx ON task_instances (type);
 CREATE INDEX task_instances_executor_idx ON task_instances (executor_id);
 CREATE INDEX task_instances_assignee_idx ON task_instances (assignee);
 CREATE INDEX task_instances_priority_idx ON task_instances (priority);
+CREATE INDEX task_instances_task_reference_idx ON task_instances (task_reference);
 
 -- Composite indexes for common query patterns
 CREATE INDEX task_instances_status_priority_idx ON task_instances (status, priority);

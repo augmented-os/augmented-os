@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '../types/supabaseTypes';
+import { FlagType } from '@/features/taskInbox/types';
 
 // Use the correct type references
 export type TaskInstance = Tables<'task_instances'>;
@@ -27,7 +28,7 @@ export interface TaskDetails {
     term: string;
     value: string;
     standard: string;
-    flag: boolean;
+    flag: FlagType;
   }[];
 }
 
@@ -147,7 +148,7 @@ function extractFlags(extractedTerms: any[]): string[] {
   const flags: string[] = [];
   
   extractedTerms.forEach(term => {
-    if (term.flag) {
+    if (term.flag && (term.flag === 'error' || term.flag === 'warning')) {
       flags.push(`${term.term}: ${term.value}`);
     }
   });

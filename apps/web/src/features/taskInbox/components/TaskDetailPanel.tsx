@@ -47,6 +47,9 @@ export function TaskDetailPanel({ task, taskDetails, onAction }: TaskDetailPanel
       dueDate: task.dueDate,
       flags: task.flags || [],
       
+      // Universal task reference from database
+      task_reference: taskDetails.task_reference,
+      
       // Task details for display components (matching template expectations)
       company: taskDetails.company,
       valuation: taskDetails.valuation,
@@ -62,6 +65,7 @@ export function TaskDetailPanel({ task, taskDetails, onAction }: TaskDetailPanel
     // Debug logging to see data structure
     console.log('prepareTaskData result:', {
       taskId: task.id,
+      task_reference: taskData.task_reference,
       company: taskDetails.company,
       extractedTermsCount: taskDetails.extractedTerms?.length || 0,
       extractedTermsPreview: taskDetails.extractedTerms?.slice(0, 2),

@@ -42,6 +42,7 @@ interface TaskInstance {
     duration?: number;                   // Execution duration in milliseconds
     executionEnvironment: string;        // Environment where task was executed
   };
+  taskReference?: string;                // Universal reference identifier for UI display (e.g., company name, document title, entity name)
   version: number;                       // For optimistic concurrency control
   createdAt: string;                     // ISO timestamp
   updatedAt: string;                     // ISO timestamp

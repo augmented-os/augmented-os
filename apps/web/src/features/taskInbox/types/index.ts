@@ -18,11 +18,14 @@ export interface Task {
   description: string;
 }
 
+// Universal flag types for semantic row styling
+export type FlagType = 'error' | 'warning' | 'success' | 'info' | 'pending' | null;
+
 export interface ExtractedTerm {
   term: string;
   value: string;
   standard: string;
-  flag: boolean;
+  flag: FlagType;
 }
 
 export interface TaskDetail {

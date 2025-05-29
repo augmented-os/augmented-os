@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '../types/supabaseTypes';
+import { FlagType } from '@/features/taskInbox/types';
 
 // Use the correct type references
 export type TaskInstance = Tables<'task_instances'>;
@@ -27,8 +28,9 @@ export interface TaskDetails {
     term: string;
     value: string;
     standard: string;
-    flag: boolean;
+    flag: FlagType;
   }[];
+  task_reference: string;
 }
 
 /**
@@ -92,6 +94,7 @@ export async function fetchTaskDetails(taskId: string): Promise<TaskDetails | nu
       input,
       output,
       execution_metadata,
+      task_reference,
       task_definition:task_definition_id (
         name,
         description
@@ -118,7 +121,8 @@ export async function fetchTaskDetails(taskId: string): Promise<TaskDetails | nu
     investment: submissionData.investment || 'Unknown',
     equity: submissionData.equity || 'Unknown',
     documents: submissionData.documents || [],
-    extractedTerms: submissionData.extractedTerms || []
+    extractedTerms: submissionData.extractedTerms || [],
+    task_reference: data.task_reference || submissionData.company || 'Unknown Entity'
   };
 }
 
@@ -147,7 +151,7 @@ function extractFlags(extractedTerms: any[]): string[] {
   const flags: string[] = [];
   
   extractedTerms.forEach(term => {
-    if (term.flag) {
+    if (term.flag && (term.flag === 'error' || term.flag === 'warning')) {
       flags.push(`${term.term}: ${term.value}`);
     }
   });
