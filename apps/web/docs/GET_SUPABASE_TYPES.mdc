@@ -1,0 +1,76 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Updating Supabase Types
+
+This guide explains how to update your TypeScript types when your Supabase schema changes.
+
+## Prerequisites
+
+- The local Supabase Docker containers must be running
+- Supabase CLI installed (available through npx)
+
+## Quick Update Method
+
+Run the npm script:
+
+```bash
+npm run gen:types
+```
+
+This will connect to your local Supabase Docker instance and generate updated TypeScript types in `src/types/supabaseTypes.ts`.
+
+## Manual Method
+
+If you need to run the command directly (without npm):
+
+```bash
+npx supabase gen types typescript --db-url postgresql://postgres:postgres@localhost:54322/postgres > src/types/supabaseTypes.ts
+```
+
+## Troubleshooting
+
+### Docker Container Not Running
+
+If you get an error about connection failure, make sure your Docker containers are running:
+
+```bash
+docker ps | grep supabase
+```
+
+You should see containers including `supabase_db_*` running. If not, start your local Supabase instance.
+
+### Port Number Changed
+
+If the port number for the Postgres database has changed (default is 54322), update it in the command:
+
+```bash
+npx supabase gen types typescript --db-url postgresql://postgres:postgres@localhost:YOUR_PORT/postgres > src/types/supabaseTypes.ts
+```
+
+And update the npm script in package.json accordingly.
+
+### Working with Remote Supabase
+
+If you need to generate types from a remote Supabase instance instead of local:
+
+```bash
+# Using project ID
+npx supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/supabaseTypes.ts
+
+# OR using database URL
+npx supabase gen types typescript --db-url postgresql://postgres:PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres > src/types/supabaseTypes.ts
+```
+
+## What's Happening
+
+This command connects to the Postgres database in your local Supabase Docker setup, analyzes the schema, and generates TypeScript type definitions that match your database structure.
+
+The generated types are saved to `src/types/supabaseTypes.ts` and can be imported throughout your codebase for type-safe database operations.
+
+## Further Reading
+
+- [Supabase CLI Documentation](https://supabase.com/docs/guides/cli/getting-started)
+- [Supabase TypeScript Support](https://supabase.com/docs/guides/api/generating-types)

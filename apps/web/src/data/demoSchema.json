@@ -1,0 +1,187 @@
+{
+    "schemaVersion": "1.0.0",
+    "version": 1,
+    "extensions": [
+      "uuid-ossp"
+    ],
+    "schemas": [
+      {
+        "name": "public",
+        "tables": [
+          {
+            "name": "customers",
+            "columns": {
+              "id": {
+                "type": "uuid",
+                "nullable": false,
+                "default": "uuid_generate_v4()"
+              },
+              "name": {
+                "type": "varchar",
+                "length": 100,
+                "nullable": false
+              },
+              "email": {
+                "type": "varchar",
+                "length": 255,
+                "nullable": true
+              },
+              "created_at": {
+                "type": "timestamp",
+                "withTimeZone": true,
+                "default": "NOW()",
+                "nullable": false
+              }
+            },
+            "primaryKey": [
+              "id"
+            ]
+          },
+          {
+            "name": "products",
+            "columns": {
+              "id": {
+                "type": "uuid",
+                "nullable": false,
+                "default": "uuid_generate_v4()"
+              },
+              "name": {
+                "type": "varchar",
+                "length": 150,
+                "nullable": false
+              },
+              "price": {
+                "type": "numeric",
+                "precision": 10,
+                "scale": 2,
+                "nullable": false
+              },
+              "description": {
+                "type": "text",
+                "nullable": true
+              }
+            },
+            "primaryKey": [
+              "id"
+            ]
+          },
+          {
+            "name": "orders",
+            "columns": {
+              "id": {
+                "type": "uuid",
+                "nullable": false,
+                "default": "uuid_generate_v4()"
+              },
+              "customer_id": {
+                "type": "uuid",
+                "nullable": false
+              },
+              "order_date": {
+                "type": "timestamp",
+                "withTimeZone": true,
+                "default": "NOW()",
+                "nullable": false
+              },
+              "status": {
+                "type": "varchar",
+                "length": 20,
+                "nullable": false,
+                "default": "'Pending'"
+              },
+              "total_amount": {
+                "type": "numeric",
+                "precision": 12,
+                "scale": 2,
+                "nullable": true
+              }
+            },
+            "primaryKey": [
+              "id"
+            ],
+            "foreignKeys": [
+              {
+                "name": "fk_order_customer",
+                "columns": [
+                  "customer_id"
+                ],
+                "references": {
+                  "table": "customers",
+                  "columns": [
+                    "id"
+                  ]
+                },
+                "onDelete": "RESTRICT"
+              }
+            ],
+            "indexes": [
+              {
+                "name": "idx_orders_customer_id",
+                "columns": [
+                  "customer_id"
+                ]
+              }
+            ]
+          },
+          {
+            "name": "order_items",
+            "columns": {
+              "order_id": {
+                "type": "uuid",
+                "nullable": false
+              },
+              "product_id": {
+                "type": "uuid",
+                "nullable": false
+              },
+              "quantity": {
+                "type": "integer",
+                "nullable": false
+              },
+              "unit_price": {
+                "type": "numeric",
+                "precision": 10,
+                "scale": 2,
+                "nullable": false
+              }
+            },
+            "primaryKey": {
+              "name": "order_items_pkey",
+              "columns": [
+                "order_id",
+                "product_id"
+              ]
+            },
+            "foreignKeys": [
+              {
+                "name": "fk_order_item_order",
+                "columns": [
+                  "order_id"
+                ],
+                "references": {
+                  "table": "orders",
+                  "columns": [
+                    "id"
+                  ]
+                },
+                "onDelete": "CASCADE"
+              },
+              {
+                "name": "fk_order_item_product",
+                "columns": [
+                  "product_id"
+                ],
+                "references": {
+                  "table": "products",
+                  "columns": [
+                    "id"
+                  ]
+                },
+                "onDelete": "RESTRICT"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

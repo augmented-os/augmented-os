@@ -1,0 +1,13 @@
+{
+  "bundles": {
+    "workflowDesigner-815": {
+      "name": "workflowDesigner",
+      "created": "2025-04-16T11:08:11.819Z",
+      "lastUsed": "2025-04-21T14:25:53.255Z",
+      "tags": [],
+      "files": [
+        "src/features/workflowDesigner"
+      ]
+    }
+  }
+}
