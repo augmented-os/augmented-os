@@ -28,6 +28,7 @@ Each task instance is created from a task definition template:
   "id": "string",                    // UUID for the instance
   "task_definition_id": "string",    // Reference to task definition
   "workflow_instance_id": "string",  // Reference to parent workflow instance (optional)
+  "workflow_definition_id": "string", // Reference to workflow definition for efficient filtering (optional)
   "step_id": "string",               // Step identifier within workflow
   "status": "string",                // Current execution status (task_status enum: PENDING, ASSIGNED, RUNNING, COMPLETED, FAILED, CANCELLED, TIMED_OUT)
   "type": "string",                  // Type of task (task_type enum: AUTOMATED, MANUAL, INTEGRATION)
@@ -45,6 +46,7 @@ Each task instance is created from a task definition template:
     "duration": 0,                   // Execution duration in milliseconds (optional)
     "execution_environment": "string" // Environment where task was executed
   },
+  "task_reference": "string",        // Universal reference identifier for UI display (e.g., company name, document title, entity name) (optional)
   "version": 1,                      // For optimistic concurrency control
   "created_at": "string",            // ISO timestamp (TIMESTAMPTZ)
   "updated_at": "string"             // ISO timestamp (TIMESTAMPTZ)
@@ -149,6 +151,7 @@ Example of a completed automated task instance:
   "id": "f8c3de3d-1fea-4d7c-a8b0-29f63c4c3454",
   "task_definition_id": "e7d6c5b4-a321-4567-90ab-22222222222",
   "workflow_instance_id": "a1b2c3d4-5678-90ab-cdef-11111111111",
+  "workflow_definition_id": "b2c3d4e5-6789-01ab-cdef-22222222222",
   "step_id": "create_invoice",
   "status": "COMPLETED",
   "type": "INTEGRATION",
@@ -176,6 +179,7 @@ Example of a completed automated task instance:
     "duration": 5000,
     "execution_environment": "prod-integration-cluster"
   },
+  "task_reference": "INV-2023-001",
   "version": 1,
   "created_at": "2023-05-10T14:29:55Z",
   "updated_at": "2023-05-10T14:30:05Z"
@@ -189,6 +193,7 @@ Example of a pending manual task instance:
   "id": "a7b8c9d0-1234-5678-90ab-33333333333",
   "task_definition_id": "f9e8d7c6-4321-8765-ba09-44444444444",
   "workflow_instance_id": "a1b2c3d4-5678-90ab-cdef-11111111111",
+  "workflow_definition_id": "b2c3d4e5-6789-01ab-cdef-22222222222",
   "step_id": "review_invoice",
   "status": "PENDING",
   "type": "MANUAL",
@@ -205,6 +210,7 @@ Example of a pending manual task instance:
     "start_time": "2023-05-10T14:30:10Z",
     "execution_environment": "manual-task-system"
   },
+  "task_reference": "INV-2023-001",
   "version": 1,
   "created_at": "2023-05-10T14:30:10Z",
   "updated_at": "2023-05-10T14:30:10Z"
@@ -250,6 +256,7 @@ CREATE TYPE task_priority AS ENUM (
 | id | UUID | Primary key |
 | task_definition_id | UUID | Reference to task definition (NOT NULL) |
 | workflow_instance_id | UUID | Reference to workflow instance (nullable) |
+| workflow_definition_id | UUID | Reference to workflow definition for efficient filtering (nullable) |
 | step_id | VARCHAR(255) | Step identifier within workflow (NOT NULL) |
 | status | task_status | Current execution status (NOT NULL) |
 | type | task_type | Type of task (NOT NULL) |
@@ -262,6 +269,7 @@ CREATE TYPE task_priority AS ENUM (
 | retry_count | INTEGER | Number of retry attempts (NOT NULL, DEFAULT 0) |
 | retry_policy | JSONB | How to handle failures (nullable) |
 | execution_metadata | JSONB | Execution-specific metadata (NOT NULL) |
+| task_reference | VARCHAR(255) | Universal reference identifier for UI display (e.g., company name, document title, entity name) (nullable) |
 | version | INTEGER | For optimistic concurrency control (NOT NULL, DEFAULT 1) |
 | created_at | TIMESTAMPTZ | Creation timestamp (NOT NULL, DEFAULT NOW()) |
 | updated_at | TIMESTAMPTZ | Last update timestamp (NOT NULL, DEFAULT NOW()) |
@@ -280,6 +288,10 @@ ALTER TABLE task_instances
 ALTER TABLE task_instances 
   ADD CONSTRAINT fk_task_instances_workflow_instance 
   FOREIGN KEY (workflow_instance_id) REFERENCES workflow_instances(id);
+
+ALTER TABLE task_instances 
+  ADD CONSTRAINT fk_task_instances_workflow_definition 
+  FOREIGN KEY (workflow_definition_id) REFERENCES workflow_definitions(id);
 
 -- Check constraints
 ALTER TABLE task_instances 
@@ -310,15 +322,18 @@ CREATE TRIGGER update_task_instances_updated_at
 -- Basic indexes
 CREATE INDEX task_instances_task_definition_idx ON task_instances (task_definition_id);
 CREATE INDEX task_instances_workflow_idx ON task_instances (workflow_instance_id);
+CREATE INDEX task_instances_workflow_definition_idx ON task_instances (workflow_definition_id);
 CREATE INDEX task_instances_status_idx ON task_instances (status);
 CREATE INDEX task_instances_type_idx ON task_instances (type);
 CREATE INDEX task_instances_executor_idx ON task_instances (executor_id);
 CREATE INDEX task_instances_assignee_idx ON task_instances (assignee);
 CREATE INDEX task_instances_priority_idx ON task_instances (priority);
+CREATE INDEX task_instances_task_reference_idx ON task_instances (task_reference);
 
 -- Composite indexes for common query patterns
 CREATE INDEX task_instances_status_priority_idx ON task_instances (status, priority);
 CREATE INDEX task_instances_workflow_status_idx ON task_instances (workflow_instance_id, status);
+CREATE INDEX task_instances_workflow_def_status_idx ON task_instances (workflow_definition_id, status);
 CREATE INDEX task_instances_type_status_idx ON task_instances (type, status);
 CREATE INDEX task_instances_created_at_idx ON task_instances (created_at);
 
@@ -341,6 +356,7 @@ For task instances, consider these performance optimizations:
 
 * **Strategic Indexing**: Create indices on frequently queried fields including status, type, priority, executor_id, and assignee
 * **Composite Indexes**: Use composite indexes for common query patterns like `(status, priority)` for priority queuing and `(workflow_instance_id, status)` for workflow-related queries
+* **Workflow Definition Denormalization**: The `workflow_definition_id` field is denormalized from the workflow instance relationship to enable efficient filtering by workflow type without expensive joins
 * **JSONB Optimization**: Consider GIN indexes on JSONB fields (input, output, error, execution_metadata) for filtering based on nested data
 * **Pagination**: Implement pagination when retrieving large sets of task instances, especially for status-based queries
 * **Retention Policies**: Consider retention policies for completed task instances to manage database growth

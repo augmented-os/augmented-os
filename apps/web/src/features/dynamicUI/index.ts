@@ -4,9 +4,6 @@ export { DynamicForm } from './components/DynamicForm';
 export { DynamicDisplay } from './components/DynamicDisplay';
 export { DynamicUIErrorBoundary } from './components/DynamicUIErrorBoundary';
 
-// Schema management API
-export * as schemaService from './api/schemaService';
-
 // Schema state management hooks
 export {
   useSchemaQuery,
@@ -50,7 +47,6 @@ export type {
   FormSection
 } from './types/schemas';
 
-export type { DatabaseUISchema } from './api/schemaService';
 export type { 
   MigrationResult, 
   MigrationOptions 

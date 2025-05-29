@@ -1,11 +1,11 @@
 import React from 'react';
-import { Task } from '../types';
-import { TaskListItem } from './TaskListItem';
+import { TaskListItem as TaskItem } from './TaskListItem';
+import { TaskListItem as TaskData } from '../../../data/taskInstancesService';
 
 interface TaskListPanelProps {
-  tasks: Task[];
-  selectedTaskId: number | null;
-  onTaskSelect: (taskId: number) => void;
+  tasks: TaskData[];
+  selectedTaskId: string | null;
+  onTaskSelect: (taskId: string) => void;
 }
 
 export function TaskListPanel({ tasks, selectedTaskId, onTaskSelect }: TaskListPanelProps) {
@@ -68,7 +68,7 @@ export function TaskListPanel({ tasks, selectedTaskId, onTaskSelect }: TaskListP
       
       <div className="divide-y divide-gray-200">
         {tasks.map((task) => (
-          <TaskListItem 
+          <TaskItem 
             key={task.id}
             task={task}
             isSelected={task.id === selectedTaskId}

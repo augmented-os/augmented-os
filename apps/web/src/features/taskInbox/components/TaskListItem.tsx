@@ -1,8 +1,8 @@
 import React from 'react';
-import { Task } from '../types';
+import { TaskListItem as TaskData } from '../../../data/taskInstancesService';
 
 interface TaskListItemProps {
-  task: Task;
+  task: TaskData;
   isSelected: boolean;
   onSelect: () => void;
 }
@@ -17,9 +17,28 @@ export function TaskListItem({ task, isSelected, onSelect }: TaskListItemProps) 
     }
   };
   
+  // Debug logging to understand selection state
+  console.log(`TaskListItem ${task.title}:`, {
+    id: task.id,
+    isSelected,
+    willHaveBorder: isSelected
+  });
+  
+  // Use only inline styles for border/background to avoid CSS conflicts
+  const itemStyle = {
+    padding: '1rem',
+    cursor: 'pointer',
+    borderLeft: isSelected ? '4px solid #3b82f6' : '4px solid transparent',
+    backgroundColor: isSelected ? '#eff6ff' : 'transparent',
+    transition: 'all 0.2s ease'
+  };
+  
   return (
     <div 
-      className={`p-4 cursor-pointer hover:bg-gray-50 ${isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : 'border-l-4 border-transparent'}`}
+      className="hover:bg-gray-50"
+      style={itemStyle}
+      data-selected={isSelected}
+      data-task-id={task.id}
       onClick={onSelect}
     >
       <div className="flex justify-between items-start">

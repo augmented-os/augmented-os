@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { UIComponentSchema } from '../types/schemas';
-import * as schemaService from '../api/schemaService';
+import * as uiComponentService from '@/data/uiComponentService';
 
 // Query keys for React Query
 export const SCHEMA_QUERY_KEYS = {
-  all: ['schemas'] as const,
+  all: ['uiComponentSchemas'] as const,
   lists: () => [...SCHEMA_QUERY_KEYS.all, 'list'] as const,
   list: (filters?: string) => [...SCHEMA_QUERY_KEYS.lists(), filters] as const,
   details: () => [...SCHEMA_QUERY_KEYS.all, 'detail'] as const,
@@ -38,7 +38,7 @@ export interface SchemasQueryResult {
 export function useSchemaQuery(componentId: string): SchemaQueryResult {
   const result = useQuery({
     queryKey: SCHEMA_QUERY_KEYS.detail(componentId),
-    queryFn: () => schemaService.getSchema(componentId),
+    queryFn: () => uiComponentService.getUIComponentSchema(componentId),
     enabled: Boolean(componentId),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: (failureCount, error: Error) => {
@@ -64,7 +64,7 @@ export function useSchemaQuery(componentId: string): SchemaQueryResult {
 export function useSchemasQuery(): SchemasQueryResult {
   const result = useQuery({
     queryKey: SCHEMA_QUERY_KEYS.list(),
-    queryFn: schemaService.listSchemas,
+    queryFn: uiComponentService.listUIComponentSchemas,
     staleTime: 2 * 60 * 1000, // 2 minutes
     retry: 3
   });
@@ -84,7 +84,7 @@ export function useCreateSchemaMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: schemaService.createSchema,
+    mutationFn: uiComponentService.createUIComponentSchema,
     onSuccess: (newSchema) => {
       // Update the schemas list cache
       queryClient.setQueryData<UIComponentSchema[]>(
@@ -102,7 +102,7 @@ export function useCreateSchemaMutation() {
       );
     },
     onError: (error) => {
-      console.error('Failed to create schema:', error);
+      console.error('Failed to create UI component schema:', error);
     }
   });
 }
@@ -115,7 +115,7 @@ export function useUpdateSchemaMutation() {
 
   return useMutation({
     mutationFn: ({ componentId, updates }: { componentId: string; updates: Partial<UIComponentSchema> }) =>
-      schemaService.updateSchema(componentId, updates),
+      uiComponentService.updateUIComponentSchema(componentId, updates),
     onSuccess: (updatedSchema) => {
       // Update the individual schema cache
       queryClient.setQueryData(
@@ -135,7 +135,7 @@ export function useUpdateSchemaMutation() {
       );
     },
     onError: (error) => {
-      console.error('Failed to update schema:', error);
+      console.error('Failed to update UI component schema:', error);
     }
   });
 }
@@ -147,7 +147,7 @@ export function useDeleteSchemaMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: schemaService.deleteSchema,
+    mutationFn: uiComponentService.deleteUIComponentSchema,
     onSuccess: (_, componentId) => {
       // Remove from individual schema cache
       queryClient.removeQueries({
@@ -164,7 +164,7 @@ export function useDeleteSchemaMutation() {
       );
     },
     onError: (error) => {
-      console.error('Failed to delete schema:', error);
+      console.error('Failed to delete UI component schema:', error);
     }
   });
 }
@@ -178,8 +178,8 @@ export function usePrefetchSchema() {
   return (componentId: string) => {
     queryClient.prefetchQuery({
       queryKey: SCHEMA_QUERY_KEYS.detail(componentId),
-      queryFn: () => schemaService.getSchema(componentId),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      queryFn: () => uiComponentService.getUIComponentSchema(componentId),
+      staleTime: 5 * 60 * 1000, // 5 minutes,
     });
   };
 }
@@ -201,7 +201,7 @@ export function useInvalidateSchemas() {
         queryKey: SCHEMA_QUERY_KEYS.lists()
       });
     },
-    invalidateSchema: (componentId: string) => {
+    invalidateDetail: (componentId: string) => {
       queryClient.invalidateQueries({
         queryKey: SCHEMA_QUERY_KEYS.detail(componentId)
       });
@@ -210,18 +210,15 @@ export function useInvalidateSchemas() {
 }
 
 /**
- * Utility function to get cached schema data without triggering a request
+ * Helper function to get cached schema data
  */
 export function getCachedSchema(queryClient: ReturnType<typeof useQueryClient>, componentId: string): UIComponentSchema | undefined {
   return queryClient.getQueryData(SCHEMA_QUERY_KEYS.detail(componentId));
 }
 
 /**
- * Utility function to set schema data in cache
+ * Helper function to set cached schema data
  */
 export function setCachedSchema(queryClient: ReturnType<typeof useQueryClient>, schema: UIComponentSchema): void {
-  queryClient.setQueryData(
-    SCHEMA_QUERY_KEYS.detail(schema.componentId),
-    schema
-  );
+  queryClient.setQueryData(SCHEMA_QUERY_KEYS.detail(schema.componentId), schema);
 } 

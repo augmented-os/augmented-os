@@ -1,4 +1,4 @@
-import { Task } from '../types';
+import { Task, FlagType } from '../types';
 
 /**
  * Formats the flags count with proper pluralization
@@ -54,6 +54,15 @@ export function formatNonStandardTermsMessage(flaggedTermsCount: number): string
   }
   
   return `This term sheet contains ${flaggedTermsCount} non-standard term${flaggedTermsCount !== 1 ? 's' : ''} that require${flaggedTermsCount === 1 ? 's' : ''} attention.`;
+}
+
+/**
+ * Counts terms with problematic flags (error or warning)
+ * @param extractedTerms Array of extracted terms
+ * @returns Number of terms with error or warning flags
+ */
+export function countProblematicTerms(extractedTerms: Array<{flag: FlagType}>): number {
+  return extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning').length;
 }
 
 /**

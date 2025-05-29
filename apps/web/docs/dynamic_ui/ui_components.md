@@ -63,7 +63,7 @@ They are designed to be:
       "visibleIf": "string"   // Condition for when to show this action
     }
   ],
-  "displayTemplate": "string", // For display components, template with placeholders
+  "displayTemplate": "string", // For display components, template with placeholders (DEPRECATED)
   "customProps": {            // Additional properties for custom components
     "key": "value"
   }
@@ -304,8 +304,101 @@ Example display component:
 **Notes:**
 
 * UI components are versioned to allow for evolution without breaking existing tasks
-* The display_template field can contain HTML with placeholders for data
-* For complex custom components, the custom_props field allows for component-specific configuration
+* The display_template field is deprecated in favor of atomic display components via customProps
+* Flag configurations integrate with the Universal Flag System for semantic row styling
+* Validation rules are stored separately to enable reuse across multiple components
+* Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
+
+## Universal Flag System Integration
+
+The UI Components system integrates with the Universal Flag System to provide semantic row styling and status indication across different business scenarios.
+
+### Flag Configuration Structure
+
+```json
+{
+  "flagConfig": {
+    "field": "string",        // Field name containing the flag value
+    "configName": "string",   // Reference to flag_configurations table
+    "styles": {               // CSS classes for row styling by flag type
+      "error": "string",      // Red styling for critical issues
+      "warning": "string",    // Orange/Yellow styling for warnings
+      "success": "string",    // Green styling for approved/compliant items
+      "info": "string",       // Blue styling for informational items
+      "pending": "string"     // Gray styling for pending items
+    },
+    "badgeConfigs": {         // Badge configurations by flag type
+      "error": {"class": "string", "text": "string"},
+      "warning": {"class": "string", "text": "string"},
+      "success": {"class": "string", "text": "string"},
+      "info": {"class": "string", "text": "string"},
+      "pending": {"class": "string", "text": "string"}
+    }
+  }
+}
+```
+
+### Atomic Display Components
+
+The system now supports atomic display components through the `customProps.displayType` configuration:
+
+#### Table Display with Flag Configuration
+
+```json
+{
+  "componentId": "extracted-terms-table",
+  "componentType": "Display",
+  "customProps": {
+    "displayType": "table",
+    "columns": [
+      {"key": "term", "label": "Term"},
+      {"key": "value", "label": "Value"},
+      {"key": "flag", "label": "Status", "render": "status-badge"}
+    ],
+    "flagConfig": {
+      "field": "flag",
+      "configName": "compliance",
+      "styles": {
+        "error": "bg-red-50 border-l-4 border-red-600",
+        "warning": "bg-amber-50 border-l-4 border-amber-600",
+        "success": "bg-green-50 border-l-4 border-green-600"
+      },
+      "badgeConfigs": {
+        "error": {"class": "bg-red-100 text-red-900", "text": "Violation"},
+        "warning": {"class": "bg-amber-100 text-amber-900", "text": "Non-standard"},
+        "success": {"class": "bg-green-100 text-green-900", "text": "Compliant"}
+      }
+    },
+    "dataKey": "extractedTerms"
+  }
+}
+```
+
+Example display component (LEGACY - use atomic components instead):
+
+```json
+{
+  "componentId": "invoice-summary",
+  "name": "Invoice Summary",
+  "description": "Summary view of invoice details",
+  "componentType": "Display",
+  "title": "Invoice {{data.invoice_number}}",
+  "displayTemplate": "<div class='summary'><p>Amount: {{data.currency}}{{data.amount}}</p><p>Status: {{data.status}}</p><p>Due Date: {{formatDate(data.due_date)}}</p></div>",
+  "actions": [
+    {
+      "actionKey": "view_details",
+      "label": "View Full Details",
+      "style": "secondary"
+    }
+  ]
+}
+```
+
+**Notes:**
+
+* UI components are versioned to allow for evolution without breaking existing tasks
+* The display_template field is deprecated in favor of atomic display components via customProps
+* Flag configurations integrate with the Universal Flag System for semantic row styling
 * Validation rules are stored separately to enable reuse across multiple components
 * Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
 

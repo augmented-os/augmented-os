@@ -52,6 +52,8 @@ export interface FormField {
   helpText?: string;
   /** Whether the field is required for form submission */
   required?: boolean;
+  /** Additional custom properties for specialized field types (e.g., accept/multiple for file inputs) */
+  customProps?: Record<string, unknown>;
 }
 
 /**
@@ -118,7 +120,7 @@ export interface ValidationRuleReference {
 
 /**
  * Layout configuration for organizing form fields and UI elements.
- * Supports column layouts, custom ordering, and sectioned grouping.
+ * Supports column layouts, custom ordering, sectioned grouping, and task view layouts.
  */
 export interface LayoutConfig {
   /** Number of columns for form field layout */
@@ -126,9 +128,26 @@ export interface LayoutConfig {
   /** Array of form sections for grouping related fields */
   sections?: FormSection[];
   /** Spacing variant between form elements */
-  spacing?: 'compact' | 'normal' | 'spacious';
+  spacing?: 'compact' | 'normal' | 'spacious' | 'sm' | 'md' | 'lg';
   /** Custom order for field rendering (overrides default order) */
   order?: string[];
+  
+  // Task view layout properties
+  /** Type of layout: grid for multi-component layouts, single for single component */
+  type?: 'grid' | 'single';
+  /** Array of layout areas for grid layouts */
+  areas?: Array<{
+    /** Component ID to render in this area */
+    component: string;
+    /** Grid span configuration (e.g., "span 8", "span 12") */
+    grid?: string;
+    /** Visual order for this area */
+    order?: number;
+  }>;
+  /** Single component ID for single layouts */
+  component?: string;
+  /** CSS class name to apply to the layout container */
+  className?: string;
 }
 
 /**

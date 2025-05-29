@@ -116,8 +116,8 @@ export function TaskActionPanel({
           taskStatus: task.status,
           taskId: task.id,
           company: task.company,
-          hasNonStandardTerms: taskDetails?.extractedTerms?.some(term => term.flag) || false,
-          nonStandardTermsCount: taskDetails?.extractedTerms?.filter(term => term.flag).length || 0
+          hasNonStandardTerms: taskDetails?.extractedTerms?.some(term => term.flag === 'error' || term.flag === 'warning') || false,
+          nonStandardTermsCount: taskDetails?.extractedTerms?.filter(term => term.flag === 'error' || term.flag === 'warning').length || 0
         } as Record<string, unknown>}
         onAction={handleAction}
       />

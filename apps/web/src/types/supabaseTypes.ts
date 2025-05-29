@@ -456,9 +456,11 @@ export type Database = {
           status: Database["public"]["Enums"]["task_status"]
           step_id: string
           task_definition_id: string
+          task_reference: string | null
           type: Database["public"]["Enums"]["task_type"]
           updated_at: string
           version: number
+          workflow_definition_id: string | null
           workflow_instance_id: string | null
         }
         Insert: {
@@ -476,9 +478,11 @@ export type Database = {
           status: Database["public"]["Enums"]["task_status"]
           step_id: string
           task_definition_id: string
+          task_reference?: string | null
           type: Database["public"]["Enums"]["task_type"]
           updated_at?: string
           version?: number
+          workflow_definition_id?: string | null
           workflow_instance_id?: string | null
         }
         Update: {
@@ -496,9 +500,11 @@ export type Database = {
           status?: Database["public"]["Enums"]["task_status"]
           step_id?: string
           task_definition_id?: string
+          task_reference?: string | null
           type?: Database["public"]["Enums"]["task_type"]
           updated_at?: string
           version?: number
+          workflow_definition_id?: string | null
           workflow_instance_id?: string | null
         }
         Relationships: [
@@ -507,6 +513,13 @@ export type Database = {
             columns: ["task_definition_id"]
             isOneToOne: false
             referencedRelation: "task_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_instances_workflow_definition_id_fkey"
+            columns: ["workflow_definition_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_definitions"
             referencedColumns: ["id"]
           },
           {

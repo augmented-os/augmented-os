@@ -22,9 +22,9 @@ export function TaskDetailHeader({ task, taskDetails, isLoading, error }: TaskDe
             <div className="mt-2 flex items-center space-x-4 text-sm text-gray-600">
               <span>Status: <span className="font-medium">{task.status}</span></span>
               <span>Terms: <span className="font-medium">{taskDetails.extractedTerms.length}</span></span>
-              {taskDetails.extractedTerms.filter(term => term.flag).length > 0 && (
+              {taskDetails.extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning').length > 0 && (
                 <span className="text-yellow-600">
-                  <span className="font-medium">{taskDetails.extractedTerms.filter(term => term.flag).length}</span> flagged
+                  <span className="font-medium">{taskDetails.extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning').length}</span> flagged
                 </span>
               )}
             </div>

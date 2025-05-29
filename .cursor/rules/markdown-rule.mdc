@@ -1,9 +1,0 @@
----
-description: Working with markdown files
-globs: *.md
-alwaysApply: false
----
-
-# Markdown rules
-
-- 

@@ -118,9 +118,34 @@ You need to implement a dynamic UI system for AugmentedOS that renders user inte
 ```
 
 ### 2. Display Components  
-**Purpose**: Present information with template interpolation
-**Example**: Invoice summaries, status displays, data presentations
+**Purpose**: Present information with atomic display components or template interpolation (legacy)
+**Example**: Data tables, status displays, data presentations
 
+Modern atomic display component (recommended):
+```json
+{
+  "componentId": "invoice-summary",
+  "componentType": "Display",
+  "customProps": {
+    "displayType": "card",
+    "fields": [
+      {"key": "invoice_number", "label": "Invoice"},
+      {"key": "amount", "label": "Amount"},
+      {"key": "status", "label": "Status"},
+      {"key": "due_date", "label": "Due Date"}
+    ]
+  },
+  "actions": [
+    {
+      "actionKey": "view_details",
+      "label": "View Full Details",
+      "style": "secondary"
+    }
+  ]
+}
+```
+
+Legacy display template (deprecated):
 ```json
 {
   "componentId": "invoice-summary",

@@ -63,9 +63,157 @@ They are designed to be:
       "visibleIf": "string"   // Condition for when to show this action
     }
   ],
-  "displayTemplate": "string", // For display components, template with placeholders
+  "displayTemplate": "string", // For display components, template with placeholders (DEPRECATED)
   "customProps": {            // Additional properties for custom components
     "key": "value"
+  }
+}
+```
+
+## Atomic Display Components
+
+The UI Components system now supports atomic display components through the `customProps.displayType` configuration. This replaces the deprecated `displayTemplate` approach.
+
+### Table Display Component
+
+```json
+{
+  "componentId": "extracted-terms-table",
+  "componentType": "Display",
+  "customProps": {
+    "displayType": "table",
+    "title": "Extracted Terms",
+    "columns": [
+      {"key": "term", "label": "Term", "width": "w-1/4"},
+      {"key": "value", "label": "Value", "width": "w-1/4"},
+      {"key": "standard", "label": "Standard", "width": "w-1/4"},
+      {"key": "flag", "label": "Status", "width": "w-1/4", "render": "status-badge"}
+    ],
+    "flagConfig": {
+      "field": "flag",
+      "configName": "compliance",
+      "styles": {
+        "error": "bg-red-50 border-l-4 border-red-600",
+        "warning": "bg-amber-50 border-l-4 border-amber-600",
+        "success": "bg-green-50 border-l-4 border-green-600",
+        "info": "bg-cyan-50 border-l-4 border-cyan-600",
+        "pending": "bg-neutral-50 border-l-4 border-neutral-600"
+      },
+      "badgeConfigs": {
+        "error": {"class": "bg-red-100 text-red-900", "text": "Violation"},
+        "warning": {"class": "bg-amber-100 text-amber-900", "text": "Non-standard"},
+        "success": {"class": "bg-green-100 text-green-900", "text": "Compliant"},
+        "info": {"class": "bg-cyan-100 text-cyan-900", "text": "Reference"},
+        "pending": {"class": "bg-neutral-100 text-neutral-900", "text": "Under Review"}
+      }
+    },
+    "dataKey": "extractedTerms"
+  }
+}
+```
+
+### Card Display Component
+
+```json
+{
+  "componentId": "company-summary",
+  "componentType": "Display",
+  "customProps": {
+    "displayType": "card",
+    "title": "Company Details",
+    "fields": [
+      {"key": "company", "label": "Company"},
+      {"key": "valuation", "label": "Valuation"},
+      {"key": "investment", "label": "Investment Amount"},
+      {"key": "equity", "label": "Equity"}
+    ],
+    "layout": "grid"
+  }
+}
+```
+
+### Action Buttons Component
+
+```json
+{
+  "componentId": "task-action-buttons",
+  "componentType": "Display",
+  "customProps": {
+    "displayType": "actions"
+  },
+  "actions": [
+    {"actionKey": "approve", "label": "Approve", "style": "primary"},
+    {"actionKey": "reject", "label": "Reject", "style": "danger"},
+    {"actionKey": "request_changes", "label": "Request Changes", "style": "secondary"}
+  ]
+}
+```
+
+## Universal Flag System Integration
+
+The UI Components system integrates with the Universal Flag System to provide semantic row styling and status indication across different business scenarios.
+
+### Flag Configuration Structure
+
+```json
+{
+  "flagConfig": {
+    "field": "string",        // Field name containing the flag value
+    "configName": "string",   // Reference to flag_configurations table
+    "styles": {               // CSS classes for row styling by flag type
+      "error": "string",      // Red styling for critical issues
+      "warning": "string",    // Orange/Yellow styling for warnings
+      "success": "string",    // Green styling for approved/compliant items
+      "info": "string",       // Blue styling for informational items
+      "pending": "string"     // Gray styling for pending items
+    },
+    "badgeConfigs": {         // Badge configurations by flag type
+      "error": {"class": "string", "text": "string"},
+      "warning": {"class": "string", "text": "string"},
+      "success": {"class": "string", "text": "string"},
+      "info": {"class": "string", "text": "string"},
+      "pending": {"class": "string", "text": "string"}
+    }
+  }
+}
+```
+
+### Flag Configuration Presets
+
+The system supports predefined flag configurations for different business contexts:
+
+* **`default`**: General purpose styling suitable for most scenarios
+* **`financial_review`**: Optimized for financial data review with enhanced color schemes
+* **`compliance`**: Specialized for compliance and legal review processes
+
+## Layout Configuration
+
+UI Components support advanced layout configurations for complex interfaces:
+
+### Grid Layout
+
+```json
+{
+  "layout": {
+    "type": "grid",
+    "areas": [
+      {"component": "term-sheet-summary", "grid": "span 12", "order": 1},
+      {"component": "extracted-terms-table", "grid": "span 12", "order": 2}
+    ],
+    "spacing": "lg",
+    "className": "task-review-layout"
+  }
+}
+```
+
+### Single Component Layout
+
+```json
+{
+  "layout": {
+    "type": "single",
+    "component": "review-request-form",
+    "className": "review-request-layout"
   }
 }
 ```
@@ -162,7 +310,8 @@ Example form component:
       "type": "textarea",
       "placeholder": "Provide any additional comments...",
       "validationRules": ["required"],
-      "visibleIf": "decision === 'reject' || decision === 'more_info'"
+      "visibleIf": "decision === 'reject' || decision === 'more_info'",
+      "helpText": "Required when rejecting or requesting more information"
     }
   ],
   "actions": [
@@ -181,23 +330,43 @@ Example form component:
 }
 ```
 
-Example display component:
+Example atomic table display component with flag configuration:
 
 ```json
 {
-  "componentId": "invoice-summary",
-  "name": "Invoice Summary",
-  "description": "Summary view of invoice details",
+  "componentId": "extracted-terms-table",
+  "name": "Extracted Terms Table",
+  "description": "Display extracted terms with universal flag system styling",
   "componentType": "Display",
-  "title": "Invoice {{data.invoice_number}}",
-  "displayTemplate": "<div class='summary'><p>Amount: {{data.currency}}{{data.amount}}</p><p>Status: {{data.status}}</p><p>Due Date: {{formatDate(data.due_date)}}</p></div>",
-  "actions": [
-    {
-      "actionKey": "view_details",
-      "label": "View Full Details",
-      "style": "secondary"
-    }
-  ]
+  "customProps": {
+    "displayType": "table",
+    "title": "Extracted Terms",
+    "columns": [
+      {"key": "term", "label": "Term", "width": "w-1/4"},
+      {"key": "value", "label": "Value", "width": "w-1/4"},
+      {"key": "standard", "label": "Standard", "width": "w-1/4"},
+      {"key": "flag", "label": "Status", "width": "w-1/4", "render": "status-badge"}
+    ],
+    "flagConfig": {
+      "field": "flag",
+      "configName": "compliance",
+      "styles": {
+        "error": "bg-red-50 border-l-4 border-red-600",
+        "warning": "bg-amber-50 border-l-4 border-amber-600",
+        "success": "bg-green-50 border-l-4 border-green-600",
+        "info": "bg-cyan-50 border-l-4 border-cyan-600",
+        "pending": "bg-neutral-50 border-l-4 border-neutral-600"
+      },
+      "badgeConfigs": {
+        "error": {"class": "bg-red-100 text-red-900", "text": "Violation"},
+        "warning": {"class": "bg-amber-100 text-amber-900", "text": "Non-standard"},
+        "success": {"class": "bg-green-100 text-green-900", "text": "Compliant"},
+        "info": {"class": "bg-cyan-100 text-cyan-900", "text": "Reference"},
+        "pending": {"class": "bg-neutral-100 text-neutral-900", "text": "Under Review"}
+      }
+    },
+    "dataKey": "extractedTerms"
+  }
 }
 ```
 
@@ -216,7 +385,7 @@ Example display component:
 | fields | JSONB | Field definitions for forms |
 | layout | JSONB | Layout configuration |
 | actions | JSONB | Action button definitions |
-| display_template | TEXT | Template for display components |
+| display_template | TEXT | Template for display components (DEPRECATED) |
 | custom_props | JSONB | Additional properties for custom components |
 | created_at | TIMESTAMP | Creation timestamp |
 | updated_at | TIMESTAMP | Last update timestamp |
@@ -301,11 +470,45 @@ Example display component:
 }
 ```
 
+**JSON Schema (customProps.flagConfig field):**
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "field": { "type": "string", "description": "Field name containing the flag value" },
+    "configName": { "type": "string", "description": "Reference to flag_configurations table" },
+    "styles": {
+      "type": "object",
+      "properties": {
+        "error": { "type": "string" },
+        "warning": { "type": "string" },
+        "success": { "type": "string" },
+        "info": { "type": "string" },
+        "pending": { "type": "string" }
+      }
+    },
+    "badgeConfigs": {
+      "type": "object",
+      "properties": {
+        "error": { "type": "object", "properties": { "class": { "type": "string" }, "text": { "type": "string" } } },
+        "warning": { "type": "object", "properties": { "class": { "type": "string" }, "text": { "type": "string" } } },
+        "success": { "type": "object", "properties": { "class": { "type": "string" }, "text": { "type": "string" } } },
+        "info": { "type": "object", "properties": { "class": { "type": "string" }, "text": { "type": "string" } } },
+        "pending": { "type": "object", "properties": { "class": { "type": "string" }, "text": { "type": "string" } } }
+      }
+    }
+  },
+  "required": ["field"]
+}
+```
+
 **Notes:**
 
 * UI components are versioned to allow for evolution without breaking existing tasks
-* The display_template field can contain HTML with placeholders for data
-* For complex custom components, the custom_props field allows for component-specific configuration
+* The display_template field is deprecated in favor of atomic display components via customProps
+* The customProps field supports atomic display components (table, card, actions) with standardized configurations
+* Flag configurations integrate with the Universal Flag System for semantic row styling
 * Validation rules are stored separately to enable reuse across multiple components
 * Following our schema convention, all top-level fields from the JSON structure are represented as columns, while nested objects remain as JSONB
 

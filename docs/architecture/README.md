@@ -19,6 +19,7 @@ This approach creates a system that is both powerful and flexible, while maintai
 
 * [Overview](./overview.md) - High-level architecture overview
 * [Database Architecture](./database_architecture.md) - Database design and implementation
+* [Universal Flag System](./universal-flag-system.md) - Semantic row styling and status indication system
 * [Components](./components/) - Functional system components
   * [Auth Service](./components/auth_service/) - Authentication and authorization service
   * [Event Processing Service](./components/event_processing_service/)
