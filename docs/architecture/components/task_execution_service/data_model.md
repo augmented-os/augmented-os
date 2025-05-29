@@ -25,6 +25,7 @@ interface TaskInstance {
   id: string;                            // UUID for the instance
   taskDefinitionId: string;              // Reference to task definition
   workflowInstanceId?: string;           // Reference to parent workflow (if any)
+  workflowDefinitionId?: string;         // Reference to workflow definition for efficient filtering
   status: TaskStatus;                    // Current execution status
   type: TaskType;                        // Type of task
   input: Record<string, any>;            // Input data provided for execution
@@ -131,9 +132,10 @@ The Task Execution Service implements the following database optimizations:
 
 1. **Task Status Indexing** - Indexes on task status for efficient querying of tasks by state
 2. **Composite Indexes** - Composite indexes on workflowInstanceId + status for efficient workflow-related queries
-3. **Partitioning Strategy** - Tasks are partitioned by creation date for improved query performance
-4. **Execution Metadata** - Frequently accessed execution metadata is denormalized for performance
-5. **Archiving Strategy** - Completed tasks older than a configurable threshold are archived to maintain performance
+3. **Workflow Definition Denormalization** - The workflow_definition_id is denormalized in task_instances to enable efficient filtering without joins
+4. **Partitioning Strategy** - Tasks are partitioned by creation date for improved query performance
+5. **Execution Metadata** - Frequently accessed execution metadata is denormalized for performance
+6. **Archiving Strategy** - Completed tasks older than a configurable threshold are archived to maintain performance
 
 ## Related Schema Documentation
 

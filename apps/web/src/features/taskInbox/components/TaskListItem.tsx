@@ -1,8 +1,8 @@
 import React from 'react';
-import { Task } from '../types';
+import { TaskListItem as TaskData } from '../../../data/taskInstancesService';
 
 interface TaskListItemProps {
-  task: Task;
+  task: TaskData;
   isSelected: boolean;
   onSelect: () => void;
 }

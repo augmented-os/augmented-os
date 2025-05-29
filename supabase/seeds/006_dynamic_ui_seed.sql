@@ -3,6 +3,48 @@
 
 -- Remove existing example data and insert task inbox components
 
+-- =============================================================================
+-- TOP-LEVEL TASK VIEW COMPONENTS
+-- These orchestrate the complete UI for specific tasks
+-- =============================================================================
+
+-- Main Task View: Review Term Sheet
+-- This is the top-level component that orchestrates the entire term sheet review UI
+INSERT INTO ui_components (component_id, name, description, component_type, title, layout, actions) VALUES
+('task-view-review-term-sheet', 'Term Sheet Review Task View', 'Complete UI layout for term sheet review task', 'Display', 'Review Term Sheet', 
+'{
+  "type": "grid",
+  "areas": [
+    {"component": "term-sheet-summary", "grid": "span 12", "order": 1},
+    {"component": "extracted-terms-table", "grid": "span 12", "order": 2}
+  ],
+  "spacing": "lg",
+  "className": "task-review-layout"
+}'::jsonb,
+'[
+  {
+    "actionKey": "refresh_data",
+    "label": "Refresh",
+    "style": "secondary",
+    "icon": "refresh"
+  }
+]'::jsonb),
+
+-- Task View: Review Request Form
+-- For requesting revisions from companies
+('task-view-review-request', 'Review Request Task View', 'Complete UI for requesting term sheet revisions', 'Display', 'Request Term Sheet Revisions',
+'{
+  "type": "single",
+  "component": "review-request-form",
+  "className": "review-request-layout"
+}'::jsonb,
+NULL);
+
+-- =============================================================================
+-- INDIVIDUAL UI COMPONENTS
+-- These are the building blocks used by the task views above
+-- =============================================================================
+
 -- Task Review Form - Replaces hardcoded TaskDetailPanel logic
 INSERT INTO ui_components (component_id, name, description, component_type, title, fields, actions) VALUES
 ('task-review-form', 'Task Review Form', 'Term sheet review form with decision workflow', 'Form', 'Review Decision', 
@@ -119,31 +161,76 @@ NULL),
 NULL,
 '[
   {
-    "actionKey": "request_review",
-    "label": "Request Review",
-    "style": "secondary",
-    "visibleIf": "taskStatus !== ''completed'' && taskStatus !== ''approved''"
-  },
-  {
     "actionKey": "approve",
     "label": "Approve",
-    "style": "primary",
-    "confirmation": "Are you sure you want to approve this term sheet?",
-    "visibleIf": "taskStatus !== ''completed'' && taskStatus !== ''approved''"
+    "style": "primary"
+  },
+  {
+    "actionKey": "reject",
+    "label": "Reject",
+    "style": "danger"
+  },
+  {
+    "actionKey": "request_changes",
+    "label": "Request Changes",
+    "style": "secondary"
   }
 ]'::jsonb);
 
--- Update the display_template for the term sheet summary
+-- =============================================================================
+-- ATOMIC COMPONENT CONFIGURATIONS
+-- JSON configurations for atomic display components (no more HTML templates)
+-- =============================================================================
+
+-- Update term-sheet-summary to use atomic CardDisplay configuration  
 UPDATE ui_components 
-SET display_template = '<div class="mb-6"><h3 class="text-lg font-medium text-gray-900 mb-2">Term Sheet Summary</h3><div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden"><div class="grid grid-cols-2 gap-4 p-4 border-b border-gray-200"><div><p class="text-sm font-medium text-gray-500">Company</p><p class="mt-1 text-sm text-gray-900">{{company}}</p></div><div><p class="text-sm font-medium text-gray-500">Valuation</p><p class="mt-1 text-sm text-gray-900">{{valuation}}</p></div><div><p class="text-sm font-medium text-gray-500">Investment Amount</p><p class="mt-1 text-sm text-gray-900">{{investment}}</p></div><div><p class="text-sm font-medium text-gray-500">Equity</p><p class="mt-1 text-sm text-gray-900">{{equity}}</p></div></div><div class="p-4"><p class="text-sm font-medium text-gray-500 mb-2">Attached Documents</p>{{#each documents}}<div class="flex items-center text-sm text-blue-600 hover:text-blue-800 mb-1"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" /></svg>{{this}}</div>{{/each}}</div></div></div>'
+SET 
+  display_template = NULL,
+  custom_props = jsonb_build_object(
+    'displayType', 'card',
+    'title', 'Term Sheet Summary',
+    'fields', jsonb_build_array(
+      jsonb_build_object('key', 'company', 'label', 'Company'),
+      jsonb_build_object('key', 'valuation', 'label', 'Valuation'),
+      jsonb_build_object('key', 'investment', 'label', 'Investment Amount'),
+      jsonb_build_object('key', 'equity', 'label', 'Equity')
+    ),
+    'layout', 'grid'
+  )
 WHERE component_id = 'term-sheet-summary';
 
--- Update the display_template for the extracted terms table
+-- Update extracted-terms-table to use atomic TableDisplay configuration
 UPDATE ui_components 
-SET display_template = '<div><h3 class="text-lg font-medium text-gray-900 mb-2">Extracted Terms</h3><div class="overflow-hidden border border-gray-200 rounded-lg shadow-sm"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Term</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Standard</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">{{#each extractedTerms}}<tr class="{{#if flag}}bg-red-50{{/if}}"><td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{term}}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{value}}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{standard}}</td><td class="px-6 py-4 whitespace-nowrap">{{#if flag}}<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Non-standard</span>{{else}}<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Standard</span>{{/if}}</td></tr>{{/each}}</tbody></table></div></div>'
+SET 
+  display_template = NULL,
+  custom_props = jsonb_build_object(
+    'displayType', 'table',
+    'columns', jsonb_build_array(
+      jsonb_build_object('key', 'term', 'label', 'Term', 'width', 'w-1/4'),
+      jsonb_build_object('key', 'value', 'label', 'Value', 'width', 'w-1/4'),
+      jsonb_build_object('key', 'standard', 'label', 'Standard', 'width', 'w-1/4'),
+      jsonb_build_object(
+        'key', 'flag', 
+        'label', 'Status', 
+        'width', 'w-1/4',
+        'render', 'status-badge'
+      )
+    ),
+    'rowClassName', 'flag-based',
+    'dataKey', 'extractedTerms'
+  )
 WHERE component_id = 'extracted-terms-table';
 
--- Update the display_template for the task action buttons
+-- Update task-action-buttons to use atomic ActionButtons configuration
 UPDATE ui_components 
-SET display_template = '<div class="flex space-x-3"></div>'
+SET 
+  display_template = NULL,
+  custom_props = jsonb_build_object(
+    'displayType', 'actions'
+  )
 WHERE component_id = 'task-action-buttons';
+
+-- Remove legacy display_template from task view
+UPDATE ui_components 
+SET display_template = NULL
+WHERE component_id = 'task-view-review-term-sheet';

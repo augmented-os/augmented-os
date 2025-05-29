@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { UIComponentSchema, FormField, ActionButton, LayoutConfig } from '../types/schemas';
+import { UIComponentSchema, FormField, ActionButton, LayoutConfig } from '@/features/dynamicUI/types/schemas';
 
 export interface DatabaseUISchema {
   id: string;
@@ -25,7 +25,7 @@ const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 /**
  * Get a UI component schema by component_id
  */
-export async function getSchema(componentId: string): Promise<UIComponentSchema | null> {
+export async function getUIComponentSchema(componentId: string): Promise<UIComponentSchema | null> {
   // Check cache first
   const cached = schemaCache.get(componentId);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -42,7 +42,7 @@ export async function getSchema(componentId: string): Promise<UIComponentSchema 
     if (error.code === 'PGRST116') {
       return null; // Schema not found
     }
-    throw new Error(`Failed to fetch schema: ${error.message}`);
+    throw new Error(`Failed to fetch UI component schema: ${error.message}`);
   }
 
   const schema = transformFromDatabase(data);
@@ -56,14 +56,14 @@ export async function getSchema(componentId: string): Promise<UIComponentSchema 
 /**
  * List all UI component schemas
  */
-export async function listSchemas(): Promise<UIComponentSchema[]> {
+export async function listUIComponentSchemas(): Promise<UIComponentSchema[]> {
   const { data, error } = await supabase
     .from('ui_components')
     .select('*')
     .order('created_at', { ascending: false });
 
   if (error) {
-    throw new Error(`Failed to list schemas: ${error.message}`);
+    throw new Error(`Failed to list UI component schemas: ${error.message}`);
   }
 
   return data.map(transformFromDatabase);
@@ -72,10 +72,10 @@ export async function listSchemas(): Promise<UIComponentSchema[]> {
 /**
  * Create a new UI component schema
  */
-export async function createSchema(schema: UIComponentSchema): Promise<UIComponentSchema> {
+export async function createUIComponentSchema(schema: UIComponentSchema): Promise<UIComponentSchema> {
   // Validate schema structure
   if (!validateSchemaStructure(schema)) {
-    throw new Error('Invalid schema structure');
+    throw new Error('Invalid UI component schema structure');
   }
 
   const dbRecord = transformToDatabase(schema);
@@ -87,7 +87,7 @@ export async function createSchema(schema: UIComponentSchema): Promise<UICompone
     .single();
 
   if (error) {
-    throw new Error(`Failed to create schema: ${error.message}`);
+    throw new Error(`Failed to create UI component schema: ${error.message}`);
   }
 
   const created = transformFromDatabase(data);
@@ -101,18 +101,18 @@ export async function createSchema(schema: UIComponentSchema): Promise<UICompone
 /**
  * Update an existing UI component schema
  */
-export async function updateSchema(componentId: string, updates: Partial<UIComponentSchema>): Promise<UIComponentSchema> {
+export async function updateUIComponentSchema(componentId: string, updates: Partial<UIComponentSchema>): Promise<UIComponentSchema> {
   // Get current schema to merge updates
-  const current = await getSchema(componentId);
+  const current = await getUIComponentSchema(componentId);
   if (!current) {
-    throw new Error(`Schema with component_id ${componentId} not found`);
+    throw new Error(`UI component schema with component_id ${componentId} not found`);
   }
 
   const updatedSchema = { ...current, ...updates };
   
   // Validate updated schema structure
   if (!validateSchemaStructure(updatedSchema)) {
-    throw new Error('Invalid schema structure');
+    throw new Error('Invalid UI component schema structure');
   }
 
   const dbRecord = transformToDatabase(updatedSchema);
@@ -126,7 +126,7 @@ export async function updateSchema(componentId: string, updates: Partial<UICompo
     .single();
 
   if (error) {
-    throw new Error(`Failed to update schema: ${error.message}`);
+    throw new Error(`Failed to update UI component schema: ${error.message}`);
   }
 
   const updated = transformFromDatabase(data);
@@ -140,14 +140,14 @@ export async function updateSchema(componentId: string, updates: Partial<UICompo
 /**
  * Delete a UI component schema
  */
-export async function deleteSchema(componentId: string): Promise<void> {
+export async function deleteUIComponentSchema(componentId: string): Promise<void> {
   const { error } = await supabase
     .from('ui_components')
     .delete()
     .eq('component_id', componentId);
 
   if (error) {
-    throw new Error(`Failed to delete schema: ${error.message}`);
+    throw new Error(`Failed to delete UI component schema: ${error.message}`);
   }
 
   // Remove from cache
@@ -155,9 +155,9 @@ export async function deleteSchema(componentId: string): Promise<void> {
 }
 
 /**
- * Clear the schema cache
+ * Clear the UI component schema cache
  */
-export function clearSchemaCache(): void {
+export function clearUIComponentSchemaCache(): void {
   schemaCache.clear();
 }
 
@@ -200,7 +200,7 @@ function transformToDatabase(schema: UIComponentSchema): Omit<DatabaseUISchema, 
 }
 
 /**
- * Validate schema structure
+ * Validate UI component schema structure
  */
 function validateSchemaStructure(schema: UIComponentSchema): boolean {
   // Basic validation

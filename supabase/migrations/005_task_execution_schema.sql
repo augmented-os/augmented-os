@@ -89,6 +89,7 @@ CREATE TABLE task_instances (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   task_definition_id UUID NOT NULL REFERENCES task_definitions(id),
   workflow_instance_id UUID REFERENCES workflow_instances(id),
+  workflow_definition_id UUID REFERENCES workflow_definitions(id),
   step_id VARCHAR(255) NOT NULL,
   status task_status NOT NULL,
   type task_type NOT NULL,
@@ -111,6 +112,7 @@ CREATE TABLE task_instances (
 -- Create indexes for task instances
 CREATE INDEX task_instances_task_definition_idx ON task_instances (task_definition_id);
 CREATE INDEX task_instances_workflow_idx ON task_instances (workflow_instance_id);
+CREATE INDEX task_instances_workflow_definition_idx ON task_instances (workflow_definition_id);
 CREATE INDEX task_instances_status_idx ON task_instances (status);
 CREATE INDEX task_instances_type_idx ON task_instances (type);
 CREATE INDEX task_instances_executor_idx ON task_instances (executor_id);
@@ -121,6 +123,7 @@ CREATE INDEX task_instances_created_at_idx ON task_instances (created_at);
 -- Create composite indexes for common query patterns
 CREATE INDEX task_instances_status_priority_idx ON task_instances (status, priority);
 CREATE INDEX task_instances_workflow_status_idx ON task_instances (workflow_instance_id, status);
+CREATE INDEX task_instances_workflow_def_status_idx ON task_instances (workflow_definition_id, status);
 CREATE INDEX task_instances_type_status_idx ON task_instances (type, status);
 
 -- Create JSONB indexes for nested data queries
@@ -143,6 +146,7 @@ COMMENT ON TABLE task_instances IS 'Task instances represent actual executions o
 COMMENT ON COLUMN task_instances.id IS 'Primary key UUID';
 COMMENT ON COLUMN task_instances.task_definition_id IS 'Reference to the task definition this instance is based on';
 COMMENT ON COLUMN task_instances.workflow_instance_id IS 'Reference to the workflow instance this task belongs to';
+COMMENT ON COLUMN task_instances.workflow_definition_id IS 'Reference to the workflow definition for efficient filtering (denormalized)';
 COMMENT ON COLUMN task_instances.step_id IS 'Identifier for the step within the workflow';
 COMMENT ON COLUMN task_instances.status IS 'Current execution status of the task';
 COMMENT ON COLUMN task_instances.type IS 'Task type inherited from definition';

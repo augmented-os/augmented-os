@@ -1,5 +1,5 @@
 import { UIComponentSchema } from '../types/schemas';
-import * as schemaService from '../api/schemaService';
+import * as uiComponentService from '@/data/uiComponentService';
 
 /**
  * Migration result interface
@@ -53,7 +53,7 @@ export async function migrateReviewRequestFormSchema(
 export async function rollbackMigration(componentId: string): Promise<MigrationResult> {
   try {
     // Verify schema exists before attempting rollback
-    const existingSchema = await schemaService.getSchema(componentId);
+    const existingSchema = await uiComponentService.getUIComponentSchema(componentId);
     
     if (!existingSchema) {
       return {
@@ -64,10 +64,10 @@ export async function rollbackMigration(componentId: string): Promise<MigrationR
     }
 
     // Delete the schema
-    await schemaService.deleteSchema(componentId);
+    await uiComponentService.deleteUIComponentSchema(componentId);
 
     // Verify deletion
-    const verifyDeleted = await schemaService.getSchema(componentId);
+    const verifyDeleted = await uiComponentService.getUIComponentSchema(componentId);
     if (verifyDeleted) {
       throw new Error('Schema was not successfully deleted');
     }
@@ -101,7 +101,7 @@ export async function batchMigrateSchemas(
       let migratedSchema: UIComponentSchema;
 
       // Check if schema exists
-      const existingSchema = await schemaService.getSchema(schema.componentId);
+      const existingSchema = await uiComponentService.getUIComponentSchema(schema.componentId);
       
       if (existingSchema && !options.overwrite) {
         results.push({
@@ -115,9 +115,9 @@ export async function batchMigrateSchemas(
 
       // Create or update
       if (existingSchema && options.overwrite) {
-        migratedSchema = await schemaService.updateSchema(schema.componentId, schema);
+        migratedSchema = await uiComponentService.updateUIComponentSchema(schema.componentId, schema);
       } else {
-        migratedSchema = await schemaService.createSchema(schema);
+        migratedSchema = await uiComponentService.createUIComponentSchema(schema);
       }
 
       results.push({

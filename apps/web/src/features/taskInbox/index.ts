@@ -10,8 +10,5 @@ export * from './hooks';
 // Export types
 export * from './types';
 
-// Export test data
-export * from './testdata';
-
 // Export utilities
 export * from './utils'; 
