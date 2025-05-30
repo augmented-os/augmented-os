@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Task, TaskDetail } from '../types';
+import { TableDataItem } from '../types';
 import { useSchema } from '../../dynamicUI/hooks/useSchema';
 import { TASK_ACTION_BUTTONS_ID } from '../constants/schemaIds';
 
@@ -10,8 +10,8 @@ interface TaskActionState {
 }
 
 export interface TaskActionContext {
-  task: Task;
-  taskDetails?: TaskDetail;
+  task: TableDataItem;
+  taskDetails?: TableDataItem;
 }
 
 export interface TaskActionHandler {
@@ -53,13 +53,13 @@ export function useTaskActions(
       // Check if action should be visible based on task state
       if (action.visibleIf) {
         try {
-          // Create a context with properly mapped variables for visibility evaluation
+          // Create a context with safely accessed properties from universal data
           const visibilityContext = {
             task: context.task,
             taskDetails: context.taskDetails,
-            taskStatus: context.task.status, // Map taskStatus to task.status
-            taskPriority: context.task.priority,
-            taskType: context.task.type,
+            taskStatus: typeof context.task.status === 'string' ? context.task.status : null,
+            taskPriority: typeof context.task.priority === 'string' ? context.task.priority : null,
+            taskType: typeof context.task.type === 'string' ? context.task.type : null,
           };
           
           // Simple visibility evaluation - can be enhanced later
@@ -90,7 +90,8 @@ export function useTaskActions(
   ): Promise<unknown> => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Task approved:', context.task.id, actionData);
+    const taskId = typeof context.task.id === 'number' ? context.task.id : 'unknown';
+    console.log('Task approved:', taskId, actionData);
     return { approved: true, timestamp: new Date().toISOString() };
   };
 
@@ -101,7 +102,8 @@ export function useTaskActions(
   ): Promise<unknown> => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Task rejected:', context.task.id, actionData);
+    const taskId = typeof context.task.id === 'number' ? context.task.id : 'unknown';
+    console.log('Task rejected:', taskId, actionData);
     return { rejected: true, reason: actionData, timestamp: new Date().toISOString() };
   };
 
@@ -112,7 +114,8 @@ export function useTaskActions(
   ): Promise<unknown> => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Review requested for task:', context.task.id, actionData);
+    const taskId = typeof context.task.id === 'number' ? context.task.id : 'unknown';
+    console.log('Review requested for task:', taskId, actionData);
     return { reviewRequested: true, reviewData: actionData, timestamp: new Date().toISOString() };
   };
 

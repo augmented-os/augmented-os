@@ -62,33 +62,13 @@ export function TaskDetailPanel({ task, taskDetails, onAction }: TaskDetailPanel
       description: task.description,
     };
     
-    // Debug logging to see data structure
-    console.log('prepareTaskData result:', {
-      taskId: task.id,
-      task_reference: taskData.task_reference,
-      company: taskDetails.company,
-      extractedTermsCount: taskDetails.extractedTerms?.length || 0,
-      extractedTermsPreview: taskDetails.extractedTerms?.slice(0, 2),
-      taskData
-    });
-    
     return taskData;
   };
 
   const componentId = getComponentId(task);
   const taskData = prepareTaskData(task, taskDetails);
 
-  // Debug logging
-  console.log('TaskDetailPanel Debug:', {
-    componentId,
-    taskType: task.type,
-    taskData,
-    taskDetails
-  });
-
   const handleAction = (actionKey: string, data?: unknown) => {
-    console.log(`Task ${task.id} action executed:`, { actionKey, data, taskType: task.type });
-    
     // Ensure data is an object before spreading, otherwise create a new object
     const actionData = typeof data === 'object' && data !== null ? 
       { ...data as Record<string, unknown>, taskId: task.id, originalTaskData: taskData } :

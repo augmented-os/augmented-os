@@ -1,10 +1,11 @@
 import React from 'react';
-import { Task, TaskDetail } from '../types';
+import { TableDataItem } from '../types';
+import { TaskListItem, TaskDetails } from '../../../data/taskInstancesService';
 import { TaskActionPanel } from './TaskActionPanel';
 
 interface TaskDetailHeaderProps {
-  task: Task;
-  taskDetails?: TaskDetail;
+  task: TaskListItem;
+  taskDetails?: TaskDetails;
   isLoading?: boolean;
   error?: string | null;
 }
@@ -22,11 +23,17 @@ export function TaskDetailHeader({ task, taskDetails, isLoading, error }: TaskDe
             <div className="mt-2 flex items-center space-x-4 text-sm text-gray-600">
               <span>Status: <span className="font-medium">{task.status}</span></span>
               <span>Terms: <span className="font-medium">{taskDetails.extractedTerms.length}</span></span>
-              {taskDetails.extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning').length > 0 && (
-                <span className="text-yellow-600">
-                  <span className="font-medium">{taskDetails.extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning').length}</span> flagged
-                </span>
-              )}
+              {(() => {
+                const problematicCount = taskDetails.extractedTerms.filter(term => 
+                  term.status === 'Non-standard' || term.status === 'Violation'
+                ).length;
+                
+                return problematicCount > 0 ? (
+                  <span className="text-yellow-600">
+                    <span className="font-medium">{problematicCount}</span> flagged
+                  </span>
+                ) : null;
+              })()}
             </div>
           )}
         </div>
@@ -45,8 +52,8 @@ export function TaskDetailHeader({ task, taskDetails, isLoading, error }: TaskDe
           
           {/* Action buttons */}
           <TaskActionPanel 
-            task={task}
-            taskDetails={taskDetails}
+            task={task as unknown as TableDataItem}
+            taskDetails={taskDetails as unknown as TableDataItem}
             variant="inline"
           />
         </div>

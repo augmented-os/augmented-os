@@ -1,0 +1,49 @@
+{
+  "name": "augmented-os",
+  "version": "1.0.0",
+  "description": "Augmented OS - AI-powered workflow automation platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run db:start\" \"npm run web:dev\"",
+    "dev:demo": "npm run demo && npm run dev",
+    "dev:fresh": "npm run db:stop && npm run demo && npm run dev",
+    "db:start": "cd supabase && supabase start",
+    "db:stop": "cd supabase && supabase stop",
+    "db:restart": "npm run db:stop && npm run db:start",
+    "db:status": "cd supabase && supabase status",
+    "db:studio": "cd supabase && supabase studio",
+    "web:dev": "wait-on tcp:54321 && cd apps/web && npm run dev",
+    "web:build": "cd apps/web && npm run build",
+    "web:preview": "cd apps/web && npm run preview",
+    "demo:yc": "./scripts/load-demo-data.sh yc",
+    "demo:ecommerce": "./scripts/load-demo-data.sh ecommerce",
+    "demo:finance": "./scripts/load-demo-data.sh finance",
+    "demo:coding": "./scripts/load-demo-data.sh coding",
+    "demo:all": "./scripts/load-demo-data.sh all",
+    "demo": "./scripts/load-demo-data.sh yc",
+    "typecheck": "cd apps/web && npm run typecheck",
+    "lint": "cd apps/web && npm run lint",
+    "gen:types": "cd apps/web && npm run gen:types",
+    "health": "./scripts/health-check.sh"
+  },
+  "workspaces": [
+    "apps/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "keywords": [
+    "ai",
+    "workflow",
+    "automation",
+    "supabase",
+    "nextjs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "wait-on": "^8.0.3"
+  }
+}

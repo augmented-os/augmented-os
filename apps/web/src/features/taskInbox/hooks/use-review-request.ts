@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Task } from '../types';
+import { TableDataItem } from '../types';
 
 export interface ReviewRequestFormData {
   taskId: number | null;
@@ -7,6 +7,7 @@ export interface ReviewRequestFormData {
   priority: 'High' | 'Medium' | 'Low';
   notes: string;
   dueDate: string | null;
+  taskTitle: string;
 }
 
 // Initial empty form data
@@ -16,8 +17,12 @@ const initialFormData: ReviewRequestFormData = {
   priority: 'Medium',
   notes: '',
   dueDate: null,
+  taskTitle: 'Unknown Task',
 };
 
+/**
+ * Hook for generating review request messages (universal function)
+ */
 export function useReviewRequest() {
   // Track if the form is visible
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -29,12 +34,11 @@ export function useReviewRequest() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Show the review request form for a specific task
-  const showReviewRequestForm = (task: Task) => {
+  const showReviewRequestForm = (task: TableDataItem) => {
     setFormData({
       ...initialFormData,
-      taskId: task.id,
-      // Default due date to task's due date if available
-      dueDate: task.dueDate || null,
+      taskId: typeof task.id === 'number' ? task.id : 0,
+      taskTitle: typeof task.title === 'string' ? task.title : 'Unknown Task',
     });
     setIsFormVisible(true);
   };
@@ -82,6 +86,30 @@ export function useReviewRequest() {
     }
   };
   
+  const generateReviewMessage = (data: TableDataItem): string => {
+    const title = typeof data.title === 'string' ? data.title : 'Task';
+    const company = typeof data.company === 'string' ? data.company : 'Unknown Company';
+    
+    // Count problematic items in nested data
+    let problematicCount = 0;
+    if (Array.isArray(data.extractedTerms)) {
+      const terms = data.extractedTerms as Array<Record<string, unknown>>;
+      problematicCount = terms.filter(term => {
+        const status = term.status;
+        return typeof status === 'string' && 
+               (status === 'Non-standard' || status === 'Problematic' || status === 'Violation');
+      }).length;
+    }
+    
+    const baseMessage = `Please review the ${title} for ${company}.`;
+    
+    if (problematicCount > 0) {
+      return `${baseMessage} There ${problematicCount === 1 ? 'is' : 'are'} ${problematicCount} item${problematicCount === 1 ? '' : 's'} that require${problematicCount === 1 ? 's' : ''} attention.`;
+    }
+    
+    return baseMessage;
+  };
+
   return {
     isFormVisible,
     formData,
@@ -91,5 +119,6 @@ export function useReviewRequest() {
     updateFormField,
     resetForm,
     submitReviewRequest,
+    generateReviewMessage
   };
 } 

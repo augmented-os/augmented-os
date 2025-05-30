@@ -28,7 +28,7 @@ export interface TaskDetails {
     term: string;
     value: string;
     standard: string;
-    flag: FlagType;
+    status: string; // Business-meaningful status value
   }[];
   task_reference: string;
 }
@@ -151,7 +151,7 @@ function extractFlags(extractedTerms: any[]): string[] {
   const flags: string[] = [];
   
   extractedTerms.forEach(term => {
-    if (term.flag && (term.flag === 'error' || term.flag === 'warning')) {
+    if (term.status === 'Non-standard' || term.status === 'Violation') {
       flags.push(`${term.term}: ${term.value}`);
     }
   });

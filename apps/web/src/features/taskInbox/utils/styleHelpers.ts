@@ -1,4 +1,27 @@
-import { Task, FlagType } from '../types';
+import { FlagType, TableDataItem } from '../types';
+
+/**
+ * Check if a flag represents a problematic state
+ */
+export function isFlagProblematic(flag: FlagType): boolean {
+  return flag === 'error' || flag === 'warning';
+}
+
+/**
+ * Gets the priority level of a flag for sorting/filtering
+ * @param flag The semantic flag type
+ * @returns Numeric priority (higher = more urgent)
+ */
+export function getFlagPriority(flag: FlagType): number {
+  switch (flag) {
+    case 'error': return 4;
+    case 'warning': return 3;
+    case 'pending': return 2;
+    case 'info': return 1;
+    case 'success': return 0;
+    default: return -1;
+  }
+}
 
 /**
  * Returns the CSS class for a task priority level
@@ -43,108 +66,11 @@ export function getStatusClass(status: string): string {
 }
 
 /**
- * Flag styling configurations for different business contexts
- */
-export const FLAG_STYLES = {
-  default: {
-    error: 'bg-red-50',
-    warning: 'bg-orange-50',
-    success: 'bg-green-50',
-    info: 'bg-blue-50',
-    pending: 'bg-gray-50'
-  },
-  compliance: {
-    error: 'bg-red-50',
-    warning: 'bg-amber-50',
-    success: 'bg-green-50',
-    info: 'bg-cyan-50',
-    pending: 'bg-neutral-50'
-  }
-} as const;
-
-export const FLAG_BADGE_CONFIGS = {
-  default: {
-    error: { class: 'bg-red-100 text-red-800', text: 'Critical' },
-    warning: { class: 'bg-orange-100 text-orange-800', text: 'Warning' },
-    success: { class: 'bg-green-100 text-green-800', text: 'Approved' },
-    info: { class: 'bg-blue-100 text-blue-800', text: 'Info' },
-    pending: { class: 'bg-gray-100 text-gray-800', text: 'Pending' }
-  },
-  compliance: {
-    error: { class: 'bg-red-100 text-red-900', text: 'Violation' },
-    warning: { class: 'bg-amber-100 text-amber-900', text: 'Non-standard' },
-    success: { class: 'bg-green-100 text-green-900', text: 'Compliant' },
-    info: { class: 'bg-cyan-100 text-cyan-900', text: 'Reference' },
-    pending: { class: 'bg-neutral-100 text-neutral-900', text: 'Under Review' }
-  }
-} as const;
-
-/**
- * Returns the CSS class for a term based on its flag type
- * @param flag The semantic flag type
- * @param configName The flag configuration to use
- * @returns CSS class string for the term
- */
-export function getTermFlagClass(flag: FlagType, configName: keyof typeof FLAG_STYLES = 'default'): string {
-  if (!flag) return '';
-  return FLAG_STYLES[configName][flag] || '';
-}
-
-/**
- * Returns the CSS class for a term status badge
- * @param flag The semantic flag type
- * @param configName The flag configuration to use
- * @returns CSS class string for the status badge
- */
-export function getTermStatusBadgeClass(flag: FlagType, configName: keyof typeof FLAG_BADGE_CONFIGS = 'default'): string {
-  if (!flag) return 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800';
-  const config = FLAG_BADGE_CONFIGS[configName][flag];
-  return `px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${config?.class || 'bg-gray-100 text-gray-800'}`;
-}
-
-/**
- * Returns the text for a term status badge
- * @param flag The semantic flag type
- * @param configName The flag configuration to use
- * @returns Text string for the status badge
- */
-export function getTermStatusBadgeText(flag: FlagType, configName: keyof typeof FLAG_BADGE_CONFIGS = 'default'): string {
-  if (!flag) return 'Standard';
-  const config = FLAG_BADGE_CONFIGS[configName][flag];
-  return config?.text || 'Unknown';
-}
-
-/**
- * Checks if a flag indicates a problematic state
- * @param flag The semantic flag type
- * @returns True if the flag indicates an issue that needs attention
- */
-export function isFlagProblematic(flag: FlagType): boolean {
-  return flag === 'error' || flag === 'warning';
-}
-
-/**
- * Gets the priority level of a flag for sorting/filtering
- * @param flag The semantic flag type
- * @returns Numeric priority (higher = more urgent)
- */
-export function getFlagPriority(flag: FlagType): number {
-  switch (flag) {
-    case 'error': return 4;
-    case 'warning': return 3;
-    case 'pending': return 2;
-    case 'info': return 1;
-    case 'success': return 0;
-    default: return -1;
-  }
-}
-
-/**
  * Returns CSS classes for a task row based on its properties
  * @param task The task object
  * @returns CSS class string for the task row
  */
-export function getTaskRowClass(task: Task, isSelected: boolean): string {
+export function getTaskRowClass(task: TableDataItem, isSelected: boolean): string {
   const baseClass = 'p-4 cursor-pointer hover:bg-gray-50';
   
   if (isSelected) {
@@ -152,4 +78,44 @@ export function getTaskRowClass(task: Task, isSelected: boolean): string {
   }
   
   return baseClass;
+}
+
+/**
+ * Get CSS classes for row styling based on flag type
+ */
+export function getRowClassName(flag: FlagType): string {
+  const baseClasses = 'border-b border-gray-200 last:border-b-0';
+  
+  switch (flag) {
+    case 'error':
+      return `${baseClasses} bg-red-50 border-red-200`;
+    case 'warning':
+      return `${baseClasses} bg-amber-50 border-amber-200`;
+    case 'success':
+      return `${baseClasses} bg-green-50 border-green-200`;
+    case 'info':
+      return `${baseClasses} bg-blue-50 border-blue-200`;
+    case 'pending':
+      return `${baseClasses} bg-gray-100 border-gray-300`;
+    default:
+      return baseClasses;
+  }
+}
+
+/**
+ * Get the most severe flag from task data (universal function)
+ * This only looks at explicit flag arrays, no business logic conversion
+ */
+export function getMostSevereFlag(data: TableDataItem): FlagType {
+  // Only check if data has explicit flags array
+  if (Array.isArray(data.flags) && data.flags.length > 0) {
+    const flags = data.flags as string[];
+    if (flags.includes('error')) return 'error';
+    if (flags.includes('warning')) return 'warning';
+    if (flags.includes('pending')) return 'pending';
+    if (flags.includes('info')) return 'info';
+    if (flags.includes('success')) return 'success';
+  }
+
+  return null;
 } 

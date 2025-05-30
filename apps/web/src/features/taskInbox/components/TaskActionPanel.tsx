@@ -1,16 +1,16 @@
 import React from 'react';
-import { Task, TaskDetail } from '../types';
+import { TableDataItem } from '../types';
 import { DynamicDisplay } from '../../dynamicUI/components/DynamicDisplay';
 import { useSchema } from '../../dynamicUI/hooks/useSchema';
 import { useTaskActions } from '../hooks/useTaskActions';
 import { TASK_ACTION_BUTTONS_ID } from '../constants/schemaIds';
 
 interface TaskActionPanelProps {
-  task: Task;
-  taskDetails?: TaskDetail;
+  task: TableDataItem;
+  taskDetails?: TableDataItem;
   onAction?: (actionKey: string, data?: unknown) => void;
   className?: string;
-  variant?: 'inline' | 'panel' | 'floating';
+  variant?: 'inline' | 'standalone';
 }
 
 export function TaskActionPanel({ 
@@ -22,25 +22,20 @@ export function TaskActionPanel({
 }: TaskActionPanelProps) {
   const { data: schema, isLoading: schemaLoading, error: schemaError } = useSchema(TASK_ACTION_BUTTONS_ID);
   
+  // Use the unified task actions hook
   const taskActionContext = { task, taskDetails };
-  const {
-    isLoading: actionLoading,
-    error: actionError,
+  const { 
+    isLoading: actionLoading, 
+    error: actionError, 
     availableActions,
-    isActionAvailable,
-    getActionConfig,
+    isActionAvailable
   } = useTaskActions(taskActionContext);
 
-  const isLoading = schemaLoading || actionLoading;
+  const isLoading = actionLoading || schemaLoading;
   const error = actionError || schemaError?.message;
 
   const handleAction = (actionKey: string, data?: unknown) => {
-    // Call external handler if provided, otherwise handle internally
-    if (onAction) {
-      onAction(actionKey, data);
-    } else {
-      console.warn(`No action handler provided for action: ${actionKey}`);
-    }
+    onAction?.(actionKey, data);
   };
 
   // Filter schema actions to only show available ones
@@ -57,16 +52,13 @@ export function TaskActionPanel({
     };
   };
 
-  // Get variant-specific styling
   const getVariantClasses = () => {
     switch (variant) {
-      case 'panel':
+      case 'standalone':
         return 'p-4 bg-white border border-gray-200 rounded-lg shadow-sm';
-      case 'floating':
-        return 'fixed bottom-4 right-4 p-3 bg-white border border-gray-200 rounded-lg shadow-lg z-50';
       case 'inline':
       default:
-        return 'flex items-center space-x-3';
+        return 'flex items-center space-x-2';
     }
   };
 
@@ -116,8 +108,14 @@ export function TaskActionPanel({
           taskStatus: task.status,
           taskId: task.id,
           company: task.company,
-          hasNonStandardTerms: taskDetails?.extractedTerms?.some(term => term.flag === 'error' || term.flag === 'warning') || false,
-          nonStandardTermsCount: taskDetails?.extractedTerms?.filter(term => term.flag === 'error' || term.flag === 'warning').length || 0
+          hasNonStandardTerms: Array.isArray(taskDetails?.extractedTerms) && 
+            (taskDetails.extractedTerms as Array<Record<string, unknown>>).some(term => 
+              typeof term.status === 'string' && (term.status === 'Non-standard' || term.status === 'Violation')
+            ),
+          nonStandardTermsCount: Array.isArray(taskDetails?.extractedTerms) ? 
+            (taskDetails.extractedTerms as Array<Record<string, unknown>>).filter(term => 
+              typeof term.status === 'string' && (term.status === 'Non-standard' || term.status === 'Violation')
+            ).length : 0
         } as Record<string, unknown>}
         onAction={handleAction}
       />
@@ -127,41 +125,36 @@ export function TaskActionPanel({
 
 // Fallback action buttons for when schema is not available
 interface FallbackActionButtonsProps {
-  task: Task;
+  task: TableDataItem;
   onAction: (actionKey: string, data?: unknown) => void;
-  variant: 'inline' | 'panel' | 'floating';
+  variant: 'inline' | 'standalone';
 }
 
 function FallbackActionButtons({ task, onAction, variant }: FallbackActionButtonsProps) {
-  const buttonClasses = variant === 'inline' 
-    ? "px-4 py-2 text-sm font-medium rounded-md border"
-    : "w-full px-4 py-2 text-sm font-medium rounded-md border mb-2 last:mb-0";
-
-  const primaryClasses = `${buttonClasses} bg-blue-600 text-white border-transparent hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500`;
-  const secondaryClasses = `${buttonClasses} bg-white text-gray-700 border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500`;
+  const buttonClass = variant === 'inline' 
+    ? 'px-3 py-1 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+    : 'px-4 py-2 text-sm font-medium rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50';
 
   return (
-    <div className={variant === 'inline' ? 'flex space-x-3' : 'flex flex-col'}>
-      <button 
-        className={secondaryClasses}
-        onClick={() => onAction('request_review')}
-      >
-        Request Review
-      </button>
-      <button 
-        className={primaryClasses}
+    <div className={variant === 'inline' ? 'flex space-x-2' : 'flex flex-col space-y-2'}>
+      <button
         onClick={() => onAction('approve')}
+        className={`${buttonClass} border-green-300 text-green-700 hover:bg-green-50`}
       >
         Approve
       </button>
-      {task.status === 'pending' && (
-        <button 
-          className={`${buttonClasses} bg-red-600 text-white border-transparent hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500`}
-          onClick={() => onAction('reject')}
-        >
-          Reject
-        </button>
-      )}
+      <button
+        onClick={() => onAction('reject')}
+        className={`${buttonClass} border-red-300 text-red-700 hover:bg-red-50`}
+      >
+        Reject
+      </button>
+      <button
+        onClick={() => onAction('request_review')}
+        className={buttonClass}
+      >
+        Request Review
+      </button>
     </div>
   );
 } 

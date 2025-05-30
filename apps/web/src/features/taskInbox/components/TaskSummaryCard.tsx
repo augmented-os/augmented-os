@@ -1,84 +1,86 @@
 import React from 'react';
-import { TaskDetail } from '../types';
+import { TableDataItem } from '../types';
 import { DynamicDisplay } from '../../dynamicUI/components/DynamicDisplay';
 import { useSchema } from '../../dynamicUI/hooks/useSchema';
 import { TERM_SHEET_SUMMARY_ID } from '../constants/schemaIds';
 
 interface TaskSummaryCardProps {
-  taskDetails: TaskDetail;
+  taskDetails: TableDataItem;
 }
 
 export function TaskSummaryCard({ taskDetails }: TaskSummaryCardProps) {
   const { data: schema, isLoading, error } = useSchema(TERM_SHEET_SUMMARY_ID);
-
-  // Handle loading state
+  
   if (isLoading) {
     return (
-      <div className="mb-6">
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-          <div className="text-center text-gray-500">Loading term sheet summary...</div>
+      <div className="bg-white shadow rounded-lg p-6">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-gray-200 rounded"></div>
+          </div>
         </div>
       </div>
     );
   }
-
-  // Handle error state
+  
   if (error) {
     return (
-      <div className="mb-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg shadow-sm p-4">
-          <div className="text-center text-red-600">Error loading term sheet summary: {error.message}</div>
-        </div>
+      <div className="bg-white shadow rounded-lg p-6">
+        <div className="text-red-600">Error loading summary: {error.message || 'Unknown error'}</div>
       </div>
     );
   }
-
-  // Fallback to hardcoded display if schema not found
+  
+  // Fallback if no schema available
   if (!schema) {
     return (
-      <div className="mb-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Term Sheet Summary</h3>
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-          <div className="grid grid-cols-2 gap-4 p-4 border-b border-gray-200">
-            <div>
-              <p className="text-sm font-medium text-gray-500">Company</p>
-              <p className="mt-1 text-sm text-gray-900">{taskDetails.company}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500">Valuation</p>
-              <p className="mt-1 text-sm text-gray-900">{taskDetails.valuation}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500">Investment Amount</p>
-              <p className="mt-1 text-sm text-gray-900">{taskDetails.investment}</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500">Equity</p>
-              <p className="mt-1 text-sm text-gray-900">{taskDetails.equity}</p>
-            </div>
+      <div className="bg-white shadow rounded-lg p-6">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Term Sheet Summary</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Company</h4>
+            <p className="mt-1 text-sm text-gray-900">{typeof taskDetails.company === 'string' ? taskDetails.company : 'Unknown'}</p>
           </div>
-          <div className="p-4">
-            <p className="text-sm font-medium text-gray-500 mb-2">Attached Documents</p>
-            {taskDetails.documents.map((doc, index) => (
-              <div key={index} className="flex items-center text-sm text-blue-600 hover:text-blue-800">
-                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
-                </svg>
-                {doc}
-              </div>
-            ))}
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Valuation</h4>
+            <p className="mt-1 text-sm text-gray-900">{typeof taskDetails.valuation === 'string' ? taskDetails.valuation : 'Unknown'}</p>
           </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Investment</h4>
+            <p className="mt-1 text-sm text-gray-900">{typeof taskDetails.investment === 'string' ? taskDetails.investment : 'Unknown'}</p>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-gray-500">Equity</h4>
+            <p className="mt-1 text-sm text-gray-900">{typeof taskDetails.equity === 'string' ? taskDetails.equity : 'Unknown'}</p>
+          </div>
+        </div>
+        
+        <div className="mt-4">
+          <h4 className="text-sm font-medium text-gray-500">Documents</h4>
+          {Array.isArray(taskDetails.documents) && taskDetails.documents.length > 0 ? (
+            <ul className="mt-1 text-sm text-gray-900">
+              {(taskDetails.documents as string[]).map((doc, index) => (
+                <li key={index} className="truncate">{doc}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mt-1 text-sm text-gray-500">No documents available</p>
+          )}
         </div>
       </div>
     );
   }
-
-  // Use DynamicDisplay with schema from database
+  
+  // Use dynamic component with schema
   return (
-    <DynamicDisplay
-      schema={schema}
-      data={taskDetails as unknown as Record<string, unknown>}
-      className="mb-6"
-    />
+    <div className="bg-white shadow rounded-lg p-6">
+      <DynamicDisplay
+        schema={schema}
+        data={taskDetails as Record<string, unknown>}
+      />
+    </div>
   );
 } 

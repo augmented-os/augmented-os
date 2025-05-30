@@ -62,4 +62,11 @@ export type {
 } from './store/schemaSlice';
 
 // Component props interfaces
-export type { DynamicUIRendererProps } from './components/DynamicUIRenderer'; 
+export type { DynamicUIRendererProps } from './components/DynamicUIRenderer';
+
+// Context providers and hooks
+export { DynamicUIStateProvider, useDynamicUIState, useUIStateData } from './contexts/DynamicUIStateContext';
+
+// Utility functions
+export { renderTemplate } from './utils/templates';
+export { evaluateCondition } from './utils/conditions'; 

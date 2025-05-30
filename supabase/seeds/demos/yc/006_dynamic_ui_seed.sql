@@ -10,27 +10,39 @@
 
 -- Main Task View: Review Term Sheet
 -- This is the top-level component that orchestrates the entire term sheet review UI
-INSERT INTO ui_components (component_id, name, description, component_type, title, layout, actions) VALUES
+INSERT INTO public.ui_components (component_id, name, description, component_type, title, layout, actions) VALUES
 ('task-view-review-term-sheet', 'Term Sheet Review Task View', 'Complete UI layout for term sheet review task', 'Display', 'Review Term Sheet', 
 '{
-  "type": "grid",
-  "areas": [
-    {"component": "term-sheet-summary", "grid": "span 12", "order": 1},
-    {"component": "extracted-terms-table", "grid": "span 12", "order": 2}
-  ],
-  "spacing": "lg",
-  "className": "task-review-layout"
+  "type": "conditional",
+  "defaultView": {
+    "type": "grid",
+    "areas": [
+      {"component": "term-sheet-summary", "grid": "span 12", "order": 1, "visibleIf": "!uiState.showReviewForm"},
+      {"component": "extracted-terms-table", "grid": "span 12", "order": 2, "visibleIf": "!uiState.showReviewForm"},
+      {"component": "review-request-form", "grid": "span 12", "order": 3, "visibleIf": "uiState.showReviewForm"}
+    ],
+    "spacing": "lg",
+    "className": "task-review-layout"
+  }
 }'::jsonb,
 '[
   {
     "actionKey": "request_review",
     "label": "Request Review", 
-    "style": "secondary"
+    "style": "secondary",
+    "visibleIf": "!uiState.showReviewForm"
   },
   {
     "actionKey": "approve",
     "label": "Approve",
-    "style": "primary"
+    "style": "primary",
+    "visibleIf": "!uiState.showReviewForm"
+  },
+  {
+    "actionKey": "cancel",
+    "label": "Cancel",
+    "style": "secondary",
+    "visibleIf": "uiState.showReviewForm"
   }
 ]'::jsonb),
 
@@ -50,7 +62,7 @@ NULL);
 -- =============================================================================
 
 -- Task Review Form - Replaces hardcoded TaskDetailPanel logic
-INSERT INTO ui_components (component_id, name, description, component_type, title, fields, actions) VALUES
+INSERT INTO public.ui_components (component_id, name, description, component_type, title, fields, actions) VALUES
 ('task-review-form', 'Task Review Form', 'Term sheet review form with decision workflow', 'Form', 'Review Decision', 
 '[
   {
@@ -181,7 +193,7 @@ NULL,
 -- =============================================================================
 
 -- Update term-sheet-summary to use atomic CardDisplay configuration  
-UPDATE ui_components 
+UPDATE public.ui_components 
 SET 
   display_template = NULL,
   custom_props = jsonb_build_object(
@@ -198,7 +210,7 @@ SET
 WHERE component_id = 'term-sheet-summary';
 
 -- Update extracted-terms-table to use atomic TableDisplay configuration
-UPDATE ui_components 
+UPDATE public.ui_components 
 SET 
   display_template = NULL,
   custom_props = jsonb_build_object(
@@ -209,26 +221,26 @@ SET
       jsonb_build_object('key', 'value', 'label', 'Value', 'width', 'w-1/4'),
       jsonb_build_object('key', 'standard', 'label', 'Standard', 'width', 'w-1/4'),
       jsonb_build_object(
-        'key', 'flag', 
+        'key', 'status', 
         'label', 'Status', 
         'width', 'w-1/4',
         'render', 'status-badge'
       )
     ),
     'flagConfig', jsonb_build_object(
-      'field', 'flag',
+      'field', 'status',
       'configName', 'compliance',
       'styles', jsonb_build_object(
-        'error', 'bg-red-50',
-        'warning', 'bg-amber-50',
-        'success', 'bg-green-50',
-        'info', 'bg-cyan-50',
-        'pending', 'bg-neutral-50'
+        'Compliant', 'bg-green-50',
+        'Non-standard', 'bg-amber-50',
+        'Violation', 'bg-red-50',
+        'Reference', 'bg-cyan-50',
+        'Under Review', 'bg-neutral-50'
       ),
       'badgeConfigs', jsonb_build_object(
-        'error', jsonb_build_object('class', 'bg-red-100 text-red-900', 'text', 'Violation'),
-        'warning', jsonb_build_object('class', 'bg-amber-100 text-amber-900', 'text', 'Non-standard'),
         'success', jsonb_build_object('class', 'bg-green-100 text-green-900', 'text', 'Compliant'),
+        'warning', jsonb_build_object('class', 'bg-amber-100 text-amber-900', 'text', 'Non-standard'),
+        'error', jsonb_build_object('class', 'bg-red-100 text-red-900', 'text', 'Violation'),
         'info', jsonb_build_object('class', 'bg-cyan-100 text-cyan-900', 'text', 'Reference'),
         'pending', jsonb_build_object('class', 'bg-neutral-100 text-neutral-900', 'text', 'Under Review')
       )
@@ -238,7 +250,7 @@ SET
 WHERE component_id = 'extracted-terms-table';
 
 -- Update task-action-buttons to use atomic ActionButtons configuration
-UPDATE ui_components 
+UPDATE public.ui_components 
 SET 
   display_template = NULL,
   custom_props = jsonb_build_object(
@@ -247,6 +259,6 @@ SET
 WHERE component_id = 'task-action-buttons';
 
 -- Remove legacy display_template from task view
-UPDATE ui_components 
+UPDATE public.ui_components 
 SET display_template = NULL
 WHERE component_id = 'task-view-review-term-sheet';
