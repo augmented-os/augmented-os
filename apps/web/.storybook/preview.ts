@@ -1,8 +1,20 @@
 import type { Preview } from '@storybook/react';
 import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '../src/index.css';
 import { DynamicUIStateProvider } from '../src/features/dynamicUI/contexts/DynamicUIStateContext';
 import { ThemeProvider } from 'next-themes';
+
+// Create a default QueryClient for Storybook
+const createQueryClient = () => new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false, // Disable retries in Storybook for faster development
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
+    },
+  },
+});
 
 const preview: Preview = {
   parameters: {
@@ -50,18 +62,27 @@ const preview: Preview = {
   },
   decorators: [
     (Story) => {
+      // Create a fresh QueryClient for each story to avoid cache pollution
+      const queryClient = createQueryClient();
+      
       return React.createElement(
-        ThemeProvider,
+        QueryClientProvider,
         {
-          attribute: 'class',
-          defaultTheme: 'light',
-          enableSystem: true,
-          themes: ['light', 'dark'],
+          client: queryClient,
           children: React.createElement(
-            DynamicUIStateProvider,
+            ThemeProvider,
             {
-              initialState: {},
-              children: React.createElement(Story)
+              attribute: 'class',
+              defaultTheme: 'light',
+              enableSystem: true,
+              themes: ['light', 'dark'],
+              children: React.createElement(
+                DynamicUIStateProvider,
+                {
+                  initialState: {},
+                  children: React.createElement(Story)
+                }
+              )
             }
           )
         }
