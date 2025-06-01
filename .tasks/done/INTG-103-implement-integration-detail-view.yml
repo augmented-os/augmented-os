@@ -1,0 +1,80 @@
+id: INTG-103
+title: Implement Integration Detail View
+status: todo
+priority: medium
+dependencies:
+  - INTG-102 # Integration List Components must be implemented first
+context:
+  code:
+    - src/features/integrationsHub/types/index.ts
+    - src/features/integrationsHub/hooks/use-integration-instance.ts
+    - src/components/ui/tabs.tsx
+    - src/components/ui/dialog.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/integrationsHub/components/detail/IntegrationDetailHeader.tsx
+    instructions: Create a header component for the integration detail view that displays the integration name, description, status, and key metadata.
+    constraints:
+      - Include a back button to return to the list view
+      - Display the integration icon if available
+      - Show last connection test time and result
+  
+  - step_id: 2
+    targets:
+      - src/features/integrationsHub/components/detail/ConfigurationSection.tsx
+    instructions: Implement a section to display the integration configuration details, showing all relevant configuration values in a readable format.
+    constraints:
+      - Mask sensitive information like API keys
+      - Use appropriate formatting for different data types
+      - Group related configuration items together
+  
+  - step_id: 3
+    targets:
+      - src/features/integrationsHub/components/detail/HealthMetricsSection.tsx
+    instructions: Create a component to display health metrics and monitoring information, including uptime percentage, response time, and error rate.
+    constraints:
+      - Use charts or gauges to visualize metrics where appropriate
+      - Include trend information if available
+      - Handle cases where metrics are not available
+  
+  - step_id: 4
+    targets:
+      - src/features/integrationsHub/components/detail/UsageStatisticsSection.tsx
+    instructions: Implement a component to show usage statistics, including total calls, active workflows, and historical usage patterns.
+    constraints:
+      - Use appropriate visualizations for usage data
+      - Include timeframe selector for historical data
+      - Handle cases where statistics are not available
+  
+  - step_id: 5
+    targets:
+      - src/features/integrationsHub/components/detail/IntegrationDetailView.tsx
+    instructions: Create the main detail view component that integrates all sections and provides navigation between them using tabs or a similar interface.
+    constraints:
+      - Use a responsive layout suitable for various screen sizes
+      - Implement proper loading and error states
+      - Ensure all sections are accessible via keyboard navigation
+
+acceptance:
+  automated:
+    - command: npm run lint
+      description: Pass ESLint rules
+    - command: npm run typecheck
+      description: Compile without TypeScript errors
+    - command: npm run build
+      description: Vite production build succeeds
+  manual:
+    - description: Verify that all sections render correctly and display appropriate data
+    - description: Check that navigation between sections works as expected
+    - description: Ensure sensitive information is properly masked
+    - description: Verify responsive behavior on different screen sizes
+    - description: Check keyboard navigation through all interactive elements
+
+self_checklist:
+  - All required integration details are displayed clearly
+  - Navigation between sections is intuitive
+  - Sensitive information is properly masked
+  - Charts and visualizations are accessible and informative
+  - Loading and error states are handled appropriately
+  - Layout is responsive and works on all screen sizes 

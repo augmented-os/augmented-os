@@ -1,0 +1,50 @@
+id: DYUI-103
+title: Create condition evaluation utility
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/utils/conditions.ts
+    instructions: |
+      Implement the evaluateCondition function for visibleIf logic. 
+      Must support simple comparisons (===, !==) and field path resolution as specified.
+      Include getFieldValue helper function for nested object access.
+    constraints:
+      - Follow exact implementation from developer guide
+      - Use split('===') and split('!==') for parsing
+      - Remove quotes with .replace(/['"]/g, '')
+      - Return false on evaluation errors with console.warn
+      - Support dot notation for nested field paths
+      - Return boolean for truthy field values as fallback
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/utils/index.ts
+    instructions: Add evaluateCondition export to barrel export file
+    constraints:
+      - Use named exports only
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+    - command: "npm test -- src/features/dynamicUI/utils/conditions"
+      description: "Pass all condition evaluation tests"
+  manual:
+    - description: "Verify evaluateCondition function matches exact signature from docs"
+    - description: "Verify === and !== comparisons work correctly"
+    - description: "Verify field path resolution with dot notation works"
+    - description: "Verify quotes are removed from string values correctly"
+    - description: "Verify graceful error handling with console.warn"
+self_checklist:
+  - "evaluateCondition function matches exact signature from docs"
+  - "Supports === and !== comparisons"
+  - "Handles field path resolution with dot notation"
+  - "Graceful error handling with fallback" 

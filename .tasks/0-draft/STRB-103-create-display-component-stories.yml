@@ -1,0 +1,70 @@
+id: STRB-103
+title: Create Storybook Stories for DynamicUI Display Components  
+status: todo
+priority: medium
+assignee: agent
+dependencies:
+  - STRB-101 # Prerequisite: Storybook infrastructure must be set up
+context:
+  code:
+    - apps/web/src/features/dynamicUI/components/displays/
+    - apps/web/src/features/dynamicUI/components/DynamicDisplay.tsx
+    - apps/web/src/features/dynamicUI/types/schemas.ts
+work_steps:
+  - step_id: 1
+    targets:
+      - apps/web/src/features/dynamicUI/components/displays/TextDisplay.stories.tsx
+      - apps/web/src/features/dynamicUI/components/displays/DisplayField.stories.tsx
+      - apps/web/src/features/dynamicUI/components/displays/ActionButtons.stories.tsx
+    instructions: Create stories for basic display components. Show different data types, formatting options, and interactive states. Demonstrate how DisplayField handles various data types and ActionButtons shows different button configurations.
+    constraints:
+      - Include examples with different data types (text, numbers, dates, URLs)
+      - Show loading and empty states where applicable
+      - Demonstrate responsive behavior across viewport sizes
+  - step_id: 2
+    targets:
+      - apps/web/src/features/dynamicUI/components/displays/CardDisplay.stories.tsx
+      - apps/web/src/features/dynamicUI/components/displays/TableDisplay.stories.tsx
+    instructions: Create comprehensive stories for complex display components. Show CardDisplay with different layouts and content types. Demonstrate TableDisplay with various data sets, sorting, pagination, and responsive behavior.
+    constraints:
+      - Use realistic data sets that showcase component capabilities
+      - Include examples with different column configurations for tables
+      - Show responsive breakpoints and mobile adaptations
+      - Demonstrate interactive features like sorting and filtering
+  - step_id: 3
+    targets:
+      - apps/web/src/features/dynamicUI/components/DynamicDisplay.stories.tsx
+    instructions: Create stories for the main DynamicDisplay component showing how it orchestrates different display types based on schema configuration. Include examples of complex nested displays and real-world use cases.
+    constraints:
+      - Use complete schema examples that represent realistic scenarios
+      - Show different display modes and configurations
+      - Include error handling and fallback scenarios
+      - Demonstrate the component's flexibility with various data structures
+  - step_id: 4
+    targets:
+      - apps/web/src/features/dynamicUI/components/displays/__stories__/DisplayStories.utils.ts
+      - apps/web/src/features/dynamicUI/components/displays/__stories__/mockData.ts
+    instructions: Create utilities and mock data for display component stories. Include realistic datasets for tables, cards, and complex nested displays. Create schema builders for easy story configuration.
+    constraints:
+      - Generate realistic mock data that represents actual use cases
+      - Include data with various edge cases (long text, special characters, etc.)
+      - Create TypeScript utilities for schema generation
+      - Ensure mock data is consistent across all display stories
+acceptance:
+  automated:
+    - command: "cd apps/web && npm run build-storybook"
+      description: "All display stories build successfully without errors"
+    - command: "npm run typecheck"  
+      description: "No TypeScript errors in story files"
+  manual:
+    - description: "Display components render correctly with various data configurations"
+    - description: "Responsive behavior works properly across different viewport sizes"
+    - description: "Interactive features (sorting, pagination, buttons) function as expected"
+    - description: "Error states and edge cases are properly handled and displayed"
+    - description: "Stories demonstrate the full range of display component capabilities"
+self_checklist:
+  - "All display components have thorough story coverage"
+  - "Mock data represents realistic use cases and edge scenarios"
+  - "Responsive design is properly tested across viewport sizes"
+  - "Complex components like DynamicDisplay show schema-driven behavior"
+  - "Utilities and mock data are well-organized and reusable" 

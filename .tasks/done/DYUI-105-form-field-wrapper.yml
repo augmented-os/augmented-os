@@ -1,0 +1,56 @@
+id: DYUI-105
+title: Implement FormField wrapper component
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+  - DYUI-103
+  - DYUI-104
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+  code:
+    - src/features/dynamicUI/types/schemas.ts
+    - src/features/dynamicUI/utils/conditions.ts
+    - src/features/dynamicUI/components/fields/
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/components/FormField.tsx
+    instructions: |
+      Create the FormField component that renders appropriate field types based on schema.
+      Must support all field types and conditional visibility (visibleIf).
+      Follow exact implementation from developer guide.
+    constraints:
+      - Use switch statement for field type mapping
+      - Import evaluateCondition from utils/conditions
+      - Apply CSS class: form-field form-field--{type}
+      - Add form-field--error class when error present
+      - Return null when visibleIf condition is false
+      - Handle default values correctly
+      - Warn for unsupported field types
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/components/index.ts
+    instructions: Create barrel export file that exports FormField component
+    constraints:
+      - Use named exports only
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify FormField component matches exact implementation from docs"
+    - description: "Verify supports all field types: text, email, number, select, textarea, boolean, date, file, multi-select"
+    - description: "Verify handles visibleIf conditions using evaluateCondition utility"
+    - description: "Verify passes correct props to individual field components"
+    - description: "Verify returns null when visibleIf condition is false"
+    - description: "Verify handles default values correctly"
+self_checklist:
+  - "FormField component matches exact implementation from docs"
+  - "Supports all required field types"
+  - "Handles visibleIf conditions correctly"
+  - "Proper CSS classes applied" 

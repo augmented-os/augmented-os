@@ -1,0 +1,45 @@
+id: TINB-102
+title: "Implement Task Inbox Test Data"
+status: todo
+priority: medium
+assignee: "@AI"
+dependencies:
+  - TINB-101
+context:
+  code:
+    - .cursor/.temp/TaskInboxPrototype.tsx # Source prototype
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/taskInbox/types/index.ts
+    instructions: "Define appropriate TypeScript types for test data, including Task, TaskDetail, and ExtractedTerm."
+    
+  - step_id: 2
+    targets:
+      - src/features/taskInbox/testdata/tasks.ts
+    instructions: "Extract the `tasks` array from `TaskInboxPrototype.tsx` and place it in `tasks.ts`. Export it as `sampleTasks` with proper typing."
+    
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/testdata/taskDetails.ts
+    instructions: "Extract the `selectedTaskDetails` object from `TaskInboxPrototype.tsx` and place it in `taskDetails.ts`. Export it as `sampleTaskDetails` with proper typing."
+    
+  - step_id: 4
+    targets:
+      - src/features/taskInbox/testdata/index.ts
+    instructions: "Update testdata barrel file to export `sampleTasks` from `./tasks` and `sampleTaskDetails` from `./taskDetails`."
+    
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript accepts the test data types and implementations."
+  manual:
+    - description: "`sampleTasks` data is created, typed correctly, and exported."
+    - description: "`sampleTaskDetails` data is created, typed correctly, and exported."
+    - description: "All test data is properly exported through the barrel file."
+self_checklist:
+  - "All data is properly typed with interfaces defined in the types module"
+  - "Data structure matches what was in the prototype"
+  - "Exports use named exports consistent with project conventions" 

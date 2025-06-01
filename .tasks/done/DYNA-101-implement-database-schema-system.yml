@@ -1,0 +1,108 @@
+id: DYNA-101
+title: Implement Dynamic UI Database Schema System
+status: todo
+priority: high
+assignee: agent
+dependencies: []
+context:
+  code:
+    - src/features/dynamicUI/schemas/reviewRequestFormSchema.ts
+    - src/features/dynamicUI/components/DynamicForm.tsx
+    - src/features/dynamicUI/components/DynamicDisplay.tsx
+    - src/features/dynamicUI/types/schemas.ts
+  docs:
+    - docs/dynamic_ui/ui_components.md
+    - docs/dynamic_ui/dynamic_ui_system.md
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+    - docs/dynamic_ui/006_dynamic_ui_schema.sql
+  related_tasks:
+    - DYNA-102 # Create schemas in database
+    - DYNA-103 # Convert components to use database
+    - DYNA-104 # Unify interaction paradigm
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/api/schemaService.ts
+    instructions: Create a new API service for managing UI component schemas in the database. Implement methods for getSchema (by component_id), listSchemas, createSchema, updateSchema, and deleteSchema. Follow existing API patterns in the project.
+    constraints:
+      - Use existing HTTP client patterns
+      - Handle loading and error states appropriately
+      - Include proper TypeScript types for all methods
+      - Support caching for frequently accessed schemas
+      - Include validation for schema structure
+      - Use component_id as the primary lookup key for schemas
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/store/schemaSlice.ts
+    instructions: Create a Redux slice for managing dynamic UI schema state. Include actions for fetching schemas by component_id, caching them, and managing loading/error states. Use createAsyncThunk for async operations.
+    constraints:
+      - Follow existing Redux patterns in the project
+      - Include proper TypeScript types for state and actions
+      - Implement schema caching with component_id as cache key
+      - Handle concurrent requests to the same schema
+      - Support offline/fallback scenarios
+  - step_id: 3
+    targets:
+      - src/features/dynamicUI/hooks/useSchema.ts
+    instructions: Create a custom hook that abstracts schema fetching logic. The hook should accept a component_id and handle loading states, caching, and provide a clean interface for components to access schemas.
+    constraints:
+      - Use React Query or existing async patterns in the project
+      - Provide loading, error, and data states
+      - Implement automatic retries for failed requests
+      - Support prefetching for known schemas
+      - Handle schema not found scenarios gracefully
+      - Accept component_id as primary parameter
+  - step_id: 4
+    targets:
+      - src/features/dynamicUI/utils/schemaMigration.ts
+    instructions: Create a migration utility that moves the existing reviewRequestFormSchema from code to database. This serves as both a migration tool and validation that the database system works correctly.
+    constraints:
+      - Read the existing reviewRequestFormSchema from code
+      - Transform it to the database format with proper validation
+      - Include proper error handling and rollback capability
+      - Generate appropriate component_id and metadata
+      - Verify the migrated schema can be fetched and used
+      - Use component_id for schema identification
+  - step_id: 5
+    targets:
+      - src/features/dynamicUI/components/DynamicForm.tsx
+      - src/features/dynamicUI/components/DynamicDisplay.tsx
+      - src/features/dynamicUI/components/DynamicUIRenderer.tsx
+    instructions: Update dynamic UI components to optionally use database schemas via the new useSchema hook. Accept either schema objects or component_id strings as props. Maintain backward compatibility with hardcoded schemas during the transition.
+    constraints:
+      - Accept either schema objects or component_id strings as props
+      - Use useSchema hook when component_id is provided
+      - Add proper loading and error states for schema fetching
+      - Implement fallback behavior for missing schemas
+      - Maintain existing component APIs for compatibility
+  - step_id: 6
+    targets:
+      - src/features/dynamicUI/store/index.ts
+      - src/features/dynamicUI/index.ts
+    instructions: Export all new schema management functionality and integrate the schema slice into the main Redux store. Update the dynamicUI feature exports.
+    constraints:
+      - Follow existing export patterns
+      - Ensure proper TypeScript types are exported
+      - Integrate schemaSlice into root reducer
+      - Export hooks and utilities for external use
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in database schema system"
+    - command: "npm run lint -- src/features/dynamicUI/"
+      description: "Ensure all new schema code passes linting"
+    - command: "npm run test -- src/features/dynamicUI/"
+      description: "Verify schema management functionality works correctly"
+  manual:
+    - description: "Verify API service can perform CRUD operations on schemas using component_id"
+    - description: "Verify useSchema hook correctly fetches and caches schemas by component_id"
+    - description: "Verify migration utility successfully moves reviewRequestFormSchema to database"
+    - description: "Verify dynamic components can render with database-fetched schemas"
+    - description: "Verify loading and error states work appropriately"
+self_checklist:
+  - "Database schema system follows documented architecture"
+  - "API service implements all required CRUD operations with component_id lookup"
+  - "Redux state management follows project patterns"
+  - "Custom hook provides clean interface for schema access by component_id"
+  - "Migration utility validates the end-to-end flow"
+  - "Components maintain backward compatibility during transition" 

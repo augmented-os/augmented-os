@@ -1,0 +1,111 @@
+id: SCHM-104
+title: Implement Schema Editor Components
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - SCHM-101 # Feature Setup must be completed first
+  - SCHM-103 # Data Management must be implemented first
+  - SCHM-105 # Utilities (incl. Icon component) must be implemented first
+context:
+  code:
+    - .cursor/.temp/SchemaEditor.tsx
+    - src/features/schemaEditor/types/index.ts
+    - src/features/schemaEditor/hooks/use-schema-tables.ts
+    - src/features/schemaEditor/hooks/use-table-fields.ts
+    - src/features/schemaEditor/hooks/use-field-types.ts
+    - src/features/schemaEditor/components/icons/FieldTypeIcon.tsx
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/schemaEditor/components/SchemaHeader.tsx
+    instructions: Create a header component for the schema editor with title and action buttons (save, cancel).
+    constraints:
+      - Extract from the prototype
+      - Ensure proper typing of props
+      - Follow project component patterns
+      - Use appropriate UI components
+
+  - step_id: 2
+    targets:
+      - src/features/schemaEditor/components/TablesList.tsx
+    instructions: Create a component that displays the list of database tables in the sidebar.
+    constraints:
+      - Extract from the prototype
+      - Implement proper event handlers for table selection
+      - Use appropriate UI components
+      - Ensure responsive design
+
+  - step_id: 3
+    targets:
+      - src/features/schemaEditor/components/TableDetails.tsx
+    instructions: Create a component that displays the details of the selected table.
+    constraints:
+      - Extract from the prototype
+      - Separate the table details and field management into logical components
+      - Use hooks for data management
+      - Implement proper error and loading states
+
+  - step_id: 4
+    targets:
+      - src/features/schemaEditor/components/fields/FieldsList.tsx
+    instructions: Create a component that displays the list of fields for a table.
+    constraints:
+      - Extract from the prototype
+      - Ensure proper typing of props
+      - Use the `FieldTypeIcon` component (from SCHM-105) to display icons based on `iconName` from `useFieldTypes` hook.
+      - Implement proper event handlers for field selection
+
+  - step_id: 5
+    targets:
+      - src/features/schemaEditor/components/fields/FieldForm.tsx
+    instructions: Create a component for adding or editing a field.
+    constraints:
+      - Extract from the prototype
+      - Implement form validation
+      - Support different field types with appropriate input controls
+      - Handle the special case of reference fields
+      - If displaying field type icons, use the `FieldTypeIcon` component.
+
+  - step_id: 6
+    targets:
+      - src/features/schemaEditor/components/relationships/RelationshipsList.tsx
+    instructions: Create a component for displaying table relationships.
+    constraints:
+      - Extract from the prototype
+      - Display relationships between tables based on reference fields
+      - Ensure proper typing of props
+
+  - step_id: 7
+    targets:
+      - src/features/schemaEditor/components/SchemaEditor.tsx
+    instructions: Create the main component that composes all sub-components into the complete schema editor.
+    constraints:
+      - Use all the components created in previous steps
+      - Implement proper layout and responsive design
+      - Use hooks for data management
+      - Handle application state (loading, error, success)
+
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in the component implementations"
+    - command: "npm run lint"
+      description: "Ensure code follows project linting rules"
+    - command: "npm run build"
+      description: "Verify the build process completes without errors"
+  manual:
+    - description: "Verify components render correctly"
+    - description: "Check that components properly interact with hooks"
+    - description: "Ensure responsive design works appropriately"
+    - description: "Test form validation and user interactions"
+    - description: "Verify field type icons are displayed correctly using FieldTypeIcon component"
+self_checklist:
+  - "Components follow project naming conventions"
+  - "Props are properly typed with TypeScript interfaces"
+  - "Components are broken down into appropriate sizes and responsibilities"
+  - "UI follows the project design patterns"
+  - "Event handlers are properly implemented"
+  - "Loading and error states are handled properly" 

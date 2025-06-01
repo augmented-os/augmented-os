@@ -1,0 +1,52 @@
+id: SCHM-101
+title: Set Up Schema Editor Feature Structure
+status: todo
+priority: high
+assignee: agent
+dependencies: []
+context:
+  code:
+    - .cursor/.temp/SchemaEditor.tsx
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/schemaEditor/
+    instructions: Create the feature directory structure for the schema editor feature according to the project conventions.
+    constraints:
+      - Follow the naming pattern in the features guide
+      - Create all required directories in one step
+  
+  - step_id: 2
+    targets:
+      - src/features/schemaEditor/index.tsx
+    instructions: Create the public API file for the schemaEditor feature that will export all public-facing elements.
+    constraints:
+      - Follow the established pattern for feature index files
+      - Do not export implementation details that should remain private to the feature
+
+  - step_id: 3
+    targets:
+      - src/features/schemaEditor/types/index.ts
+    instructions: Create the types file with the initial type definitions for the schema editor feature.
+    constraints:
+      - Define all necessary types for tables, columns, and related entities
+      - Ensure type names follow project conventions
+      - Include proper JSDoc comments for complex types
+
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in the created structure"
+    - command: "npm run lint"
+      description: "Ensure code follows project linting rules"
+  manual:
+    - description: "Verify all directories are created according to the features guide"
+    - description: "Check that export/import patterns match project conventions"
+    - description: "Ensure directory and file naming follows project conventions"
+self_checklist:
+  - "Directory structure follows the features guide exactly"
+  - "File naming follows camelCase/PascalCase conventions as appropriate"
+  - "All necessary subdirectories are created"
+  - "Types are properly defined with appropriate documentation" 

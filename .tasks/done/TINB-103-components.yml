@@ -1,0 +1,75 @@
+id: TINB-103
+title: "Implement Task Inbox UI Components"
+status: todo
+priority: medium
+assignee: "@AI"
+dependencies:
+  - TINB-101
+  - TINB-102
+context:
+  code:
+    - .cursor/.temp/TaskInboxPrototype.tsx # Source prototype
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/taskInbox/components/TaskListPanel.tsx
+    instructions: "Create TaskListPanel component that displays task list, search, and filters from the left panel of the prototype."
+    
+  - step_id: 2
+    targets:
+      - src/features/taskInbox/components/TaskListItem.tsx
+    instructions: "Create TaskListItem component that displays an individual task in the list with all properties (title, company, priority, flags, etc)."
+    
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/components/TaskDetailPanel.tsx
+    instructions: "Create TaskDetailPanel component that displays detailed information about the selected task."
+    
+  - step_id: 4
+    targets:
+      - src/features/taskInbox/components/TaskDetailHeader.tsx
+    instructions: "Create TaskDetailHeader component with the task title, company, due date, and action buttons (Request Review, Approve)."
+
+  - step_id: 5
+    targets:
+      - src/features/taskInbox/components/TaskSummaryCard.tsx
+    instructions: "Create TaskSummaryCard component to display task summary information (company, valuation, investment, equity, documents)."
+    
+  - step_id: 6
+    targets:
+      - src/features/taskInbox/components/ExtractedTermsTable.tsx
+    instructions: "Create ExtractedTermsTable component to display the table of extracted terms with their values, standards, and status flags."
+    
+  - step_id: 7
+    targets:
+      - src/features/taskInbox/components/ReviewRequestForm.tsx
+    instructions: "Create ReviewRequestForm component with fields for recipient, subject, message, and attachment option."
+    
+  - step_id: 8
+    targets:
+      - src/features/taskInbox/components/TaskInbox.tsx 
+    instructions: "Create main TaskInbox component that composes all the above components and handles state management."
+    
+  - step_id: 9
+    targets:
+      - src/features/taskInbox/components/index.ts
+    instructions: "Update barrel file to export all components."
+    
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript accepts all component implementations."
+    - command: "npm run lint"
+      description: "Verify all components meet linting standards."
+  manual:
+    - description: "All UI components from the prototype are properly extracted and implemented."
+    - description: "Components use data from test data module, not hardcoded values."
+    - description: "Components follow project style and design patterns."
+self_checklist:
+  - "Components use TypeScript props interfaces"
+  - "No hardcoded data in components (use data from testdata)"
+  - "Components follow functional component pattern"
+  - "Components properly handle selection state"
+  - "All interactive elements are properly typed and functional" 

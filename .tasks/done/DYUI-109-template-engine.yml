@@ -1,0 +1,49 @@
+id: DYUI-109
+title: Create template interpolation utility
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/utils/templates.ts
+    instructions: |
+      Implement the template engine for {{variable}} replacement as specified
+      in the developer guide. Must support nested object access and error handling.
+    constraints:
+      - Follow exact implementation from developer guide
+      - Use regex: /\{\{([^}]+)\}\}/g for template matching
+      - Split on dots for nested property access
+      - Return match on evaluation failure
+      - Use console.warn for template errors
+      - Support nested object structures
+      - Return empty string for undefined values
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/utils/index.ts
+    instructions: Add renderTemplate export to barrel export file
+    constraints:
+      - Use named exports only
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify renderTemplate function matches exact signature from docs"
+    - description: "Verify supports {{variable}} syntax with nested properties"
+    - description: "Verify evaluateExpression handles dot notation (user.name)"
+    - description: "Verify graceful error handling with original text fallback"
+    - description: "Verify returns empty string for undefined values"
+    - description: "Verify handles complex nested object structures"
+self_checklist:
+  - "renderTemplate function matches exact signature from docs"
+  - "Supports nested object access with dot notation"
+  - "Graceful error handling with fallback"
+  - "Template matching uses correct regex pattern" 

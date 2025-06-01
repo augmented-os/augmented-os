@@ -1,0 +1,78 @@
+id: INTG-109
+title: Implement Bulk Action Capabilities
+status: todo
+priority: low
+dependencies:
+  - INTG-102 # Integration list components must be implemented first
+context:
+  code:
+    - src/features/integrationsHub/components/IntegrationsList.tsx
+    - src/features/integrationsHub/types/index.ts
+    - src/components/ui/button.tsx
+    - src/components/ui/dialog.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/integrationsHub/types/index.ts
+    instructions: Update the types to include selection state and bulk action definitions.
+    constraints:
+      - Define types for selection state (none, some, all)
+      - Define available bulk actions with type safety
+      - Include types for action results and errors
+  
+  - step_id: 2
+    targets:
+      - src/features/integrationsHub/hooks/use-selection.ts
+    instructions: Create a hook to manage selection state for integration instances, supporting individual and bulk selection.
+    constraints:
+      - Support selecting all, none, and individual items
+      - Track partial selection state
+      - Include helper methods for common selection operations
+  
+  - step_id: 3
+    targets:
+      - src/features/integrationsHub/components/SelectionControls.tsx
+    instructions: Implement selection controls including checkboxes, select all, and bulk action buttons.
+    constraints:
+      - Follow accessibility guidelines for selection controls
+      - Show appropriate state for partial selection
+      - Include clear visual indication of selected items
+  
+  - step_id: 4
+    targets:
+      - src/features/integrationsHub/components/BulkActionBar.tsx
+    instructions: Create a component that appears when items are selected, showing available bulk actions and selection count.
+    constraints:
+      - Display actions contextually based on selection
+      - Include confirmation for destructive actions
+      - Show progress during action execution
+  
+  - step_id: 5
+    targets:
+      - src/features/integrationsHub/utils/bulk-action-utils.ts
+    instructions: Implement utility functions to execute bulk actions on selected integration instances.
+    constraints:
+      - Support parallel execution where appropriate
+      - Include proper error handling for partial failures
+      - Provide progress updates during execution
+
+acceptance:
+  automated:
+    - command: npm run lint
+      description: Pass ESLint rules
+    - command: npm run typecheck
+      description: Compile without TypeScript errors
+    - command: npm run build
+      description: Vite production build succeeds
+  manual:
+    - description: Verify that selection controls work for individual and all items
+    - description: Check that bulk action bar appears correctly when items are selected
+    - description: Ensure bulk actions execute properly with visual feedback
+    - description: Verify that error handling works for failed bulk actions
+
+self_checklist:
+  - Selection state is clearly indicated visually
+  - Bulk action controls are intuitive and accessible
+  - Confirmations are provided for destructive actions
+  - Progress indicators show status during bulk operations
+  - Error handling gracefully manages partial failures 

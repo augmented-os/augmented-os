@@ -1,0 +1,157 @@
+id: SCHM-110
+title: Implement Tabbed Interface in Schema Editor
+status: todo
+priority: medium
+assignee: agent
+dependencies:
+  - SCHM-107 # Refactor Data Handling
+context:
+  code:
+    - src/features/schemaEditor/components/SchemaEditor.tsx
+    - src/features/schemaEditor/components/TablesList.tsx
+    - src/features/schemaEditor/components/TableDetails.tsx
+    - .cursor/.temp/SchemaEditorPrototype.tsx
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/schemaEditor/hooks/use-table-tabs-view.ts
+    instructions: |
+      Create a custom hook for managing the active tab state in the schema editor. Implement the following:
+      - Define a TabType type with values 'fields', 'relationships', and 'data'
+      - Create a useState hook for the active tab with 'fields' as the default
+      - Implement a switchTab function that accepts a TabType parameter
+      - Return an object with activeTab and switchTab properties
+    constraints:
+      - Follow project hook naming conventions with kebab-case
+      - Use TypeScript for proper type safety
+      - Implement as a standalone hook for reusability
+
+  - step_id: 2
+    targets:
+      - src/features/schemaEditor/components/tabs/TabNavigator.tsx
+    instructions: |
+      Create a TabNavigator component that renders the pill-style tab navigation interface. Implement:
+      - A component that accepts activeTab and onTabChange props
+      - The pill UI with three buttons: Fields, Relationships, and Data
+      - Visual styling for the active vs inactive tabs as specified in the requirements
+      - Import necessary icons from lucide-react (Filter, Link2, FileSpreadsheet)
+    constraints:
+      - Use PascalCase for component file name as per project conventions
+      - Follow existing styling patterns (tailwind classes)
+      - Ensure the component is fully accessible with proper ARIA attributes
+      - Make the component responsive for different screen sizes
+
+  - step_id: 3
+    targets:
+      - src/features/schemaEditor/components/tabs/FieldsTab.tsx
+    instructions: |
+      Create a FieldsTab component that displays the fields view. This should:
+      - Extract the existing fields display logic from TableDetails component
+      - Accept the same props that TableDetails currently uses for field operations
+      - Maintain all current field-related functionality
+    constraints:
+      - Ensure no functionality is lost during the extraction
+      - Maintain existing styling and UI patterns
+      - Keep the same error handling and loading states
+
+  - step_id: 4
+    targets:
+      - src/features/schemaEditor/components/tabs/RelationshipsTab.tsx
+    instructions: |
+      Create a RelationshipsTab component based on the relationship visualization from the prototype. This should:
+      - Display all foreign key relationships for the current table
+      - Use the relationship visualization pattern from SchemaEditorPrototype.tsx
+      - Show relationships as directional connections between tables
+      - Accept tables and currentTable as props
+    constraints:
+      - Implement a placeholder message when no relationships exist
+      - Format relationship display similar to the prototype but following current styling patterns
+      - Show both outgoing and incoming relationships
+
+  - step_id: 5
+    targets:
+      - src/features/schemaEditor/components/tabs/DataTab.tsx
+    instructions: |
+      Create a DataTab component that will display actual data from the selected table. This should:
+      - Implement a placeholder UI for now with a message indicating "Data view coming soon"
+      - Structure the component to eventually accept table data and pagination controls
+      - Include a basic table skeleton UI as a preview
+    constraints:
+      - Keep the implementation simple as a placeholder for now
+      - Follow the same styling patterns as other components
+      - Ensure the component structure can be easily extended for actual data viewing later
+
+  - step_id: 6
+    targets:
+      - src/features/schemaEditor/components/tabs/index.ts
+    instructions: |
+      Create an index file that exports all tab-related components following the barrel pattern.
+      Export TabNavigator, FieldsTab, RelationshipsTab, and DataTab components.
+    constraints:
+      - Use named exports for all components
+      - Follow the established barrel export pattern
+
+  - step_id: 7
+    targets:
+      - src/features/schemaEditor/hooks/index.ts
+    instructions: |
+      Update the hooks index file to export the new use-table-tabs-view hook.
+    constraints:
+      - Maintain the existing export pattern
+      - Use the established named export approach
+
+  - step_id: 8
+    targets:
+      - src/features/schemaEditor/components/TableDetails.tsx
+    instructions: |
+      Refactor the TableDetails component to use the new tabbed interface:
+      - Import the TabNavigator and tab content components
+      - Use the useTableTabsView hook to manage tab state
+      - Add the TabNavigator component at the top of the content area
+      - Conditionally render the appropriate tab content based on activeTab
+      - Pass the necessary props to each tab component
+    constraints:
+      - Maintain existing functionality and error handling
+      - Ensure the UI is responsive and follows existing patterns
+      - Preserve all current user interactions and capabilities
+
+  - step_id: 9
+    targets:
+      - src/features/schemaEditor/components/SchemaEditor.tsx
+    instructions: |
+      Update any necessary imports or references in the SchemaEditor component:
+      - Ensure any state or props related to tabs are properly passed down
+      - Update error handling or loading states if needed for tab content
+    constraints:
+      - Minimize changes to SchemaEditor.tsx to only what's necessary
+      - Maintain existing functionality and state management
+      - Ensure proper data flow to child components
+
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compiles without errors with the new components"
+    - command: "npm run lint"
+      description: "Ensure code follows project linting rules"
+    - command: "npm run build"
+      description: "Verify the application builds successfully with the changes"
+  manual:
+    - description: "Verify the tab navigation displays properly with the active tab highlighted"
+    - description: "Confirm switching between tabs shows the appropriate content"
+    - description: "Check that all fields functionality continues to work in the Fields tab"
+    - description: "Verify the Relationships tab shows relationship visualizations correctly"
+    - description: "Confirm the Data tab shows the placeholder content"
+
+self_checklist:
+  - "All components follow project naming conventions"
+  - "Tab state management is properly encapsulated in a custom hook"
+  - "No duplicated code exists between tab components"
+  - "All components are properly typed with TypeScript"
+  - "UI matches the specified pill design"
+  - "Existing functionality is preserved when extracted to tab components"
+  - "Component folder structure follows project conventions"
+  - "Icons are properly imported from lucide-react"
+  - "All components use consistent styling patterns"
+  - "The implementation is accessible with proper keyboard navigation" 

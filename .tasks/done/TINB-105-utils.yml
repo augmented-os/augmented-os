@@ -1,0 +1,50 @@
+id: TINB-105
+title: "Implement Task Inbox Utility Functions"
+status: todo
+priority: medium
+assignee: "@AI"
+dependencies:
+  - TINB-101
+context:
+  code:
+    - .cursor/.temp/TaskInboxPrototype.tsx # Source prototype
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/taskInbox/utils/styleHelpers.ts
+    instructions: "Create utility for handling style variations based on task properties (e.g., the getPriorityClass function from the prototype). Should include functions for priority classes, status classes, etc."
+    
+  - step_id: 2
+    targets:
+      - src/features/taskInbox/utils/taskFormatters.ts
+    instructions: "Create utility for formatting task data for display (e.g., formatting dates, pluralizing flags count, etc.)."
+    
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/utils/filterHelpers.ts
+    instructions: "Create utility with functions for filtering tasks by various criteria (search text, priority, flags, etc.)."
+    
+  - step_id: 4
+    targets:
+      - src/features/taskInbox/utils/index.ts
+    instructions: "Update utils barrel file to export all utility functions."
+    
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript accepts all utility implementations."
+    - command: "npm run lint"
+      description: "Verify all utilities meet linting standards."
+    - command: "npm test -- src/features/taskInbox/utils"
+      description: "Pass all utility function tests."
+  manual:
+    - description: "All utility functions from the prototype are extracted and properly implemented."
+    - description: "Utility functions are pure functions with no side effects."
+self_checklist:
+  - "Functions are properly typed with TypeScript"
+  - "Functions are pure with no side effects"
+  - "Functions have appropriate error handling"
+  - "Utility names follow camelCase naming convention"
+  - "JSDoc comments for complex functions" 

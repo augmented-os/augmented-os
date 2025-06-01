@@ -1,0 +1,56 @@
+id: TINB-104
+title: "Implement Task Inbox Data Management Hooks"
+status: todo
+priority: medium
+assignee: "@AI"
+dependencies:
+  - TINB-101
+  - TINB-102
+context:
+  code:
+    - .cursor/.temp/TaskInboxPrototype.tsx # Source prototype
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/taskInbox/hooks/use-task-list.ts
+    instructions: "Create hook for managing the task list, including filtering and searching functionality. This hook should return the filtered list of tasks and methods to update filters/search."
+    
+  - step_id: 2
+    targets:
+      - src/features/taskInbox/hooks/use-task-selection.ts
+    instructions: "Create hook to manage the task selection state. Should return the currently selected task ID, task details, and methods to update the selection."
+    
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/hooks/use-review-request.ts
+    instructions: "Create hook to manage the review request form state and actions, including showing/hiding, form data, and submission."
+    
+  - step_id: 4
+    targets:
+      - src/features/taskInbox/hooks/use-task-actions.ts
+    instructions: "Create hook for task actions like approve, request review, etc. This hook should return action methods that can be called from components."
+    
+  - step_id: 5
+    targets:
+      - src/features/taskInbox/hooks/index.ts
+    instructions: "Update hooks barrel file to export all hooks."
+    
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript accepts all hook implementations."
+    - command: "npm run lint"
+      description: "Verify all hooks meet linting standards."
+  manual:
+    - description: "All hooks handle state management properly."
+    - description: "Hooks use data from the test data module."
+    - description: "Hook functions follow the React hooks pattern."
+self_checklist:
+  - "Hooks follow the use-kebab-case naming convention"
+  - "Hooks use TypeScript for type safety"
+  - "Hooks maintain proper separation of concerns"
+  - "All hooks have clear inputs and outputs defined"
+  - "Hooks avoid side effects where possible"
+  - "State management follows React best practices" 

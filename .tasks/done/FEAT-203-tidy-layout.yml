@@ -1,0 +1,28 @@
+# Task 3 ­– “Tidy layout” command
+id: FEAT-203
+title: “Add ‘Tidy layout’ toolbar button / ⌘-Shift-L”
+status: todo
+priority: low
+assignee: agent
+dependencies: [FEAT-801]
+context:
+  code:
+    - src/features/workflowDesigner/components/WorkflowHeader.tsx
+    - src/features/workflowDesigner/hooks/use-flow-viewport.ts
+work_steps:
+  - step_id: a
+    targets: [src/features/workflowDesigner/components/WorkflowHeader.tsx]
+    instructions: >-
+      Add a toolbar button and a global keyboard shortcut that trigger the
+      `useAutoLayout` hook exposed in FEAT-801.
+    constraints: [“Button disabled while auto-layout is running”]
+acceptance:
+  manual:
+    - description: >-
+        After messy edits, user presses button or shortcut and the graph
+        snaps back to the ELK layout.
+self_checklist:
+  - Button tooltip follows design system
+  - Shortcut registered only once (use effect cleanup)
+creation_date: 2025-04-29T00:00:00Z
+last_updated: 2025-04-29T00:00:00Z

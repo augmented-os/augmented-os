@@ -1,0 +1,57 @@
+id: TINB-101
+title: "Setup taskInbox Feature Structure"
+status: todo
+priority: medium
+assignee: "@AI"
+context:
+  code: []
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/taskInbox/
+    instructions: "Create base feature directory: `src/features/taskInbox/` with all subdirectories (components/, hooks/, types/, testdata/, utils/)."
+    
+  - step_id: 2
+    targets:
+      - src/features/taskInbox/index.tsx
+    instructions: "Create main feature export file with initial export statements for each planned submodule (components, hooks, types, testdata, utils)."
+    
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/components/index.ts
+    instructions: "Create barrel export file for components."
+    
+  - step_id: 4
+    targets:
+      - src/features/taskInbox/hooks/index.ts
+    instructions: "Create barrel export file for hooks."
+    
+  - step_id: 5
+    targets:
+      - src/features/taskInbox/types/index.ts
+    instructions: "Create main types file."
+    
+  - step_id: 6
+    targets:
+      - src/features/taskInbox/testdata/index.ts
+    instructions: "Create barrel export file for test data."
+    
+  - step_id: 7
+    targets:
+      - src/features/taskInbox/utils/index.ts
+    instructions: "Create barrel export file for utils."
+    
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript recognizes the new files and directory structure."
+  manual:
+    - description: "Directory structure for `taskInbox` is created as specified."
+    - description: "All initial barrel export files (`index.ts`/`tsx`) are created with placeholder exports."
+    - description: "File and folder naming conventions are followed according to the features guide."
+self_checklist:
+  - "Folder naming follows camelCase convention (taskInbox)"
+  - "Barrel exports use correct file type (index.ts or index.tsx)"
+  - "All required subdirectories are created" 

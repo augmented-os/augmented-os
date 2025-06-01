@@ -1,0 +1,67 @@
+id: DYUI-108
+title: Implement Tailwind-based styling for dynamic UI components
+status: todo
+priority: high
+assignee: agent
+dependencies: []
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/components/DynamicForm.tsx
+      - src/features/dynamicUI/components/FormField.tsx
+      - src/features/dynamicUI/components/FormActions.tsx
+    instructions: |
+      Implement dynamic UI components using Tailwind CSS utilities and existing design system.
+      Use shadcn/ui components where applicable and leverage existing CSS custom properties.
+      Focus on utility-first approach with conditional classes using cn() utility.
+    constraints:
+      - Use Tailwind utility classes instead of custom CSS classes
+      - Leverage existing CSS custom properties from src/index.css
+      - Use shadcn/ui components (Button, Input, Label, etc.) where applicable
+      - Use cn() utility from tailwind-merge for conditional styling
+      - Support responsive design with Tailwind breakpoints
+      - Use existing color system: bg-primary, text-foreground, border-border, etc.
+      - Implement form layouts using Tailwind grid and flexbox utilities
+      - Use existing spacing scale: p-4, m-6, gap-4, etc.
+      - Support focus states with focus:ring-2 focus:ring-primary
+      - Error states using text-destructive, border-destructive
+      - Form sections using existing border and background utilities
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/utils/styling.ts
+    instructions: |
+      Create utility functions for component styling variants using class-variance-authority.
+      Define reusable styling patterns for form components.
+    constraints:
+      - Use class-variance-authority (cva) for component variants
+      - Create variants for spacing: compact, normal, spacious
+      - Create variants for form field states: default, error, disabled
+      - Create variants for button styles using existing design tokens
+      - Export styling utilities for consistent component styling
+acceptance:
+  automated:
+    - command: "npm run lint"
+      description: "Verify linting passes"
+    - command: "npm run build"
+      description: "Verify builds without errors"
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation"
+  manual:
+    - description: "Verify components use Tailwind utilities consistently"
+    - description: "Verify responsive design works on mobile and desktop"
+    - description: "Verify components integrate with existing design system"
+    - description: "Verify focus states and error states work properly"
+    - description: "Verify accessibility features (focus indicators, ARIA attributes)"
+    - description: "Verify components match design intent from developer guide"
+    - description: "Verify dark/light theme support works correctly"
+self_checklist:
+  - "Components use Tailwind utilities instead of custom CSS"
+  - "Leverages existing shadcn/ui design system"
+  - "Responsive design implemented with Tailwind breakpoints"
+  - "Accessibility features included (focus rings, ARIA labels)"
+  - "Dark/light theme support works via existing CSS custom properties"
+  - "Error and validation states styled consistently"
+  - "Form layouts use Tailwind grid/flex utilities" 

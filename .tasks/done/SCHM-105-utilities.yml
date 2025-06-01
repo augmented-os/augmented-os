@@ -1,0 +1,71 @@
+id: SCHM-105
+title: Implement Schema Editor Utilities
+status: todo
+priority: medium
+assignee: agent
+dependencies:
+  - SCHM-101 # Feature Setup must be completed first
+context:
+  code:
+    - .cursor/.temp/SchemaEditor.tsx
+    - src/features/schemaEditor/types/index.ts
+    - src/features/schemaEditor/hooks/use-field-types.ts # Now returns iconName
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/schemaEditor/utils/fieldValidation.ts
+    instructions: Create utility functions for validating field properties (name, type, constraints).
+    constraints:
+      - Extract validation logic from the prototype
+      - Create pure functions with appropriate typing
+      - Include JSDoc comments explaining validation rules
+      - Handle all field types appropriately
+
+  - step_id: 2
+    targets:
+      - src/features/schemaEditor/utils/schemaOperations.ts
+    instructions: Create utility functions for schema operations like extracting relationships, finding field types, etc.
+    constraints:
+      - Create pure functions that don't modify input data
+      - Implement comprehensive error handling
+      - Use TypeScript generics where appropriate
+      - Include proper JSDoc comments
+
+  - step_id: 3
+    targets:
+      - src/features/schemaEditor/components/icons/FieldTypeIcon.tsx # Utility Component
+      - src/features/schemaEditor/components/icons/index.ts # Barrel file
+    instructions: Create a utility component that maps field type icon names (from useFieldTypes) to actual Lucide icon components.
+    constraints:
+      - Component should accept `iconName: string` and optional `className` as props.
+      - Include imports for all required `lucide-react` icons.
+      - Implement a mapping from string names to icon components.
+      - Provide a fallback icon (e.g., AlertCircle) for unknown names.
+      - Follow project component naming and structure conventions.
+      - Export the component from an index file.
+
+  - step_id: 4 # Renumbered from 3
+    targets:
+      - src/features/schemaEditor/utils/index.ts
+    instructions: Create an index file that exports all utilities for use within the feature.
+    constraints:
+      - Follow the established pattern for utility exports
+      - Only export utilities that should be publicly available
+
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in the utility implementations"
+    - command: "npm run lint"
+      description: "Ensure code follows project linting rules"
+  manual:
+    - description: "Review utility functions/components for completeness and correctness"
+    - description: "Verify utilities handle edge cases appropriately"
+self_checklist:
+  - "Utility functions are pure with no side effects"
+  - "All utilities/components are properly typed with TypeScript"
+  - "JSDoc comments explain function purpose, parameters and return values"
+  - "Utility functions handle error cases gracefully"
+  - "Functions/components follow single responsibility principle" 

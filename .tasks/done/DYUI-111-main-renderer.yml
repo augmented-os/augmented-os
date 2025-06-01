@@ -1,0 +1,75 @@
+id: DYUI-111
+title: Create main DynamicUIRenderer component
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+  - DYUI-107
+  - DYUI-110
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+  code:
+    - src/features/dynamicUI/types/schemas.ts
+    - src/features/dynamicUI/components/DynamicForm.tsx
+    - src/features/dynamicUI/components/DynamicDisplay.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/components/DynamicUIRenderer.tsx
+    instructions: |
+      Implement the main entry point component that routes to appropriate
+      renderers based on componentType as specified in the developer guide.
+    constraints:
+      - Use switch statement for componentType routing
+      - Wrap in error boundary component
+      - Support all props from DynamicUIRendererProps interface
+      - Log warnings for unsupported component types
+      - Support Form, Display, Modal, Custom component types
+      - Pass props correctly to child components
+      - Handle unknown component types gracefully
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/components/DynamicUIErrorBoundary.tsx
+    instructions: |
+      Implement comprehensive error handling including error boundaries,
+      schema validation, and graceful degradation as specified.
+    constraints:
+      - Follow exact implementation from developer guide
+      - Use componentDidCatch for error logging
+      - Provide fallback prop for custom error components
+      - Include error details in development mode
+      - Provide user-friendly error messages
+  - step_id: 3
+    targets:
+      - src/features/dynamicUI/components/index.ts
+    instructions: Add DynamicUIRenderer and DynamicUIErrorBoundary exports to barrel export file
+    constraints:
+      - Use named exports only
+  - step_id: 4
+    targets:
+      - src/features/dynamicUI/index.ts
+    instructions: Create main barrel export file that exports all public components
+    constraints:
+      - Export main components: DynamicUIRenderer, DynamicForm, DynamicDisplay
+      - Export types from types/schemas
+      - Use named exports only
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify DynamicUIRenderer routes based on componentType"
+    - description: "Verify supports Form, Display, Modal, Custom component types"
+    - description: "Verify passes props correctly to child components"
+    - description: "Verify handles unknown component types gracefully"
+    - description: "Verify supports error boundary for component errors"
+    - description: "Verify matches DynamicUIRendererProps interface"
+self_checklist:
+  - "DynamicUIRenderer routes correctly based on componentType"
+  - "Error boundary provides graceful error handling"
+  - "All props passed correctly to child components"
+  - "Main barrel exports follow project conventions" 

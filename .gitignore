@@ -1,7 +1,6 @@
 # Ignore hidden directories
 .archive/
 .cursor/
-.tasks/
 
 # Ignore cursor rules
 .cursorrules

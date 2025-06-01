@@ -1,0 +1,106 @@
+id: SCHE-101
+title: "Integrate schema metadata service/hooks into DataStoreConfig"
+status: todo
+priority: high
+assignee: agent
+dependencies: []
+context:
+  code:
+    - src/features/workflowDesigner/components/configPanel/DataStoreConfig.tsx
+    - src/data/schemaService.ts
+    - src/hooks/useSchemas.ts
+    - src/hooks/useTables.ts
+    - src/hooks/useColumns.ts
+    - src/types/workflow.ts
+  docs:
+    - .cursor/rules/actions/EXECUTE_TASK.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/data/schemaService.ts
+    instructions: |
+      Review the existing `src/data/schemaService.ts`. If necessary, adapt or add helper functions 
+      (e.g., `getSchemaList`, `getTablesForSchema`, `getColumnsForTable`) to provide the required 
+      schema, table, and column data needed for the workflow designer UI dropdowns. 
+      These functions should leverage the existing Supabase client and data transformation logic.
+    constraints:
+      - Use the established Supabase client (`@/integrations/supabase/client`) and conventions within the file.
+      - Do not add new, separate API endpoint fetchers; integrate with existing service methods.
+      - Ensure error handling is consistent with the existing service.
+  - step_id: 2
+    targets:
+      - src/types/workflow.ts
+    instructions: |
+      Extend the `DataStoreNodeConfig` type to include an optional `schema: string` property.
+      Define or reuse TypeScript interfaces for `Schema`, `Table`, and `Column` under `src/types/workflow.ts` 
+      that match the structure returned by the *service methods*.
+    constraints:
+      - Follow PascalCase naming for type definitions.
+      - Types should align with the data structure provided by `schemaService.ts`.
+  - step_id: 3
+    targets:
+      - src/hooks/useSchemas.ts
+    instructions: |
+      Implement a `useSchemas` hook using React Query (or equivalent) that calls the appropriate 
+      *service method* from `schemaService.ts` (e.g., `fetchSchemas` or a new `getSchemaList`) 
+      to get the list of available schemas, returning `{ data, isLoading, error }`.
+    constraints:
+      - Use `['schemas']` as the query key and place the hook in `src/hooks/useSchemas.ts`.
+  - step_id: 4
+    targets:
+      - src/hooks/useTables.ts
+    instructions: |
+      Implement a `useTables(schemaName: string)` hook that fetches tables for the given 
+      schema by calling the relevant *service method* from `schemaService.ts`, returning `{ data, isLoading, error }`.
+    constraints:
+      - Use `['tables', schemaName]` as the query key and place the hook in `src/hooks/useTables.ts`.
+  - step_id: 5
+    targets:
+      - src/hooks/useColumns.ts
+    instructions: |
+      Implement a `useColumns(schemaName: string, tableName: string)` hook that fetches column 
+      metadata by calling the relevant *service method* from `schemaService.ts`, returning `{ data, isLoading, error }`.
+    constraints:
+      - Use `['columns', schemaName, tableName]` as the query key and place the hook in 
+        `src/hooks/useColumns.ts`.
+  - step_id: 6
+    targets:
+      - src/features/workflowDesigner/components/configPanel/DataStoreConfig.tsx
+    instructions: |
+      Refactor `DataStoreConfig.tsx` to:
+      1. Remove the `demoSchema.json` import.
+      2. Use the new `useSchemas`, `useTables`, and `useColumns` hooks.
+      3. Add a "Schema" dropdown above the Table dropdown wired to a new `selectedSchema` state.
+      4. Reset table, action, mappings, filters, sort, and limit state when the schema changes.
+      5. Display loading and error states for each dropdown based on hook outputs.
+      6. Ensure all data is sourced via the hooks calling the `schemaService`.
+  - step_id: 7
+    targets: []
+    instructions: |
+      Write integration-style tests to cover:
+      - Any new/adapted service methods in `schemaService.ts` (consider mocking Supabase client interactions if necessary, or use a test DB).
+      - Hooks behavior during loading, success, and error scenarios, ensuring they correctly call the service methods.
+      - `DataStoreConfig` component updates when hooks emit new data or errors.
+    constraints:
+      - Place test files under `src/__tests__` or alongside the relevant files.
+      - Tests should verify the interaction with the *service layer*, not necessarily hit the absolute live production backend unless intended for E2E testing.
+acceptance:
+  automated:
+    - command: "npm run lint"
+      description: "Verify no lint errors were introduced."
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors were introduced."
+    - command: "npm test --silent"
+      description: "Verify all tests pass successfully."
+  manual:
+    - description: "Verify the schema dropdown appears above the Table dropdown."
+    - description: "Verify selecting a different schema updates the Table list and resets dependent fields."
+    - description: "Verify loading and error states show correctly in each dropdown."
+    - description: "Verify the selected schema is correctly included in the config passed to the parent component."
+    - description: "Verify all data is loaded via the `schemaService`."
+self_checklist:
+  - "New files and hooks adhere to naming and folder conventions."
+  - "No leftover console.log or stub code remains."
+  - "Hooks utilize React Query with proper query keys and call the service layer."
+  - "Type definitions are updated and typechecked."
+  - "Tests cover relevant service, hook, and component behaviors."

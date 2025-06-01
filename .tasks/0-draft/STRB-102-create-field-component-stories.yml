@@ -1,0 +1,69 @@
+id: STRB-102
+title: Create Storybook Stories for DynamicUI Field Components
+status: todo
+priority: medium
+assignee: agent
+dependencies:
+  - STRB-101 # Prerequisite: Storybook infrastructure must be set up
+context:
+  code:
+    - apps/web/src/features/dynamicUI/components/fields/
+    - apps/web/src/features/dynamicUI/types/schemas.ts
+    - apps/web/src/features/dynamicUI/contexts/DynamicUIStateContext.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - apps/web/src/features/dynamicUI/components/fields/TextInput.stories.tsx
+      - apps/web/src/features/dynamicUI/components/fields/NumberInput.stories.tsx
+      - apps/web/src/features/dynamicUI/components/fields/EmailInput.stories.tsx
+      - apps/web/src/features/dynamicUI/components/fields/TextareaInput.stories.tsx
+    instructions: Create comprehensive Storybook stories for basic input field components. Include Default, WithValue, WithError, Disabled, and Required variants. Use proper controls for props like placeholder, label, and validation rules.
+    constraints:
+      - Follow CSF 3.0 (Component Story Format) with default exports
+      - Include proper TypeScript typing for story definitions
+      - Use realistic sample data and validation scenarios
+  - step_id: 2
+    targets:
+      - apps/web/src/features/dynamicUI/components/fields/SelectInput.stories.tsx
+      - apps/web/src/features/dynamicUI/components/fields/MultiSelectInput.stories.tsx
+      - apps/web/src/features/dynamicUI/components/fields/BooleanInput.stories.tsx
+    instructions: Create stories for selection-based field components. Include comprehensive option sets, pre-selected values, and different display modes. Show validation states and interactive behavior.
+    constraints:
+      - Use realistic option data sets (countries, categories, etc.)
+      - Demonstrate all selection states and interactions
+      - Include accessibility considerations in documentation
+  - step_id: 3
+    targets:
+      - apps/web/src/features/dynamicUI/components/fields/DateInput.stories.tsx
+      - apps/web/src/features/dynamicUI/components/fields/FileInput.stories.tsx
+    instructions: Create stories for specialized input components. For DateInput, show different date formats and constraints. For FileInput, demonstrate file type restrictions, multiple file selection, and upload progress states.
+    constraints:
+      - Mock file upload functionality appropriately for Storybook
+      - Show realistic validation scenarios for date inputs
+      - Include proper error handling demonstrations
+  - step_id: 4
+    targets:
+      - apps/web/src/features/dynamicUI/components/fields/__stories__/FieldStories.utils.ts
+    instructions: Create shared utilities for field stories including common props, validation rules, and mock data generators. This will ensure consistency across all field component stories.
+    constraints:
+      - Export reusable story configurations and mock data
+      - Include TypeScript types for story utilities
+      - Follow DRY principles to avoid duplication
+acceptance:
+  automated:
+    - command: "cd apps/web && npm run build-storybook"
+      description: "All field stories build successfully without errors"
+    - command: "npm run typecheck"
+      description: "No TypeScript errors in story files"
+  manual:
+    - description: "All field components render correctly in Storybook with proper controls"
+    - description: "Interactive behavior (typing, selecting, etc.) works as expected in stories"
+    - description: "Error states and validation scenarios are clearly demonstrated"
+    - description: "Stories include helpful documentation and use cases"
+    - description: "Accessibility addon shows no violations for field components"
+self_checklist:
+  - "All field components have comprehensive story coverage"
+  - "Stories demonstrate both positive and error scenarios"
+  - "Interactive controls allow for easy testing of different props"
+  - "Documentation includes proper TypeScript examples"
+  - "Shared utilities are properly typed and reusable" 

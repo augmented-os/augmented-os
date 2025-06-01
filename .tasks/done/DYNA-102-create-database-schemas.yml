@@ -1,0 +1,92 @@
+id: DYNA-102
+title: Create Task Inbox Dynamic UI Schemas in Database
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYNA-101 # Database schema system must be implemented first
+context:
+  code:
+    - src/features/taskInbox/components/TaskDetailPanel.tsx
+    - src/features/taskInbox/components/TaskSummaryCard.tsx
+    - src/features/taskInbox/components/ExtractedTermsTable.tsx
+    - src/features/taskInbox/components/TaskDetailHeader.tsx
+    - src/features/dynamicUI/api/schemaService.ts
+    - src/features/dynamicUI/utils/schemaMigration.ts
+  docs:
+    - docs/dynamic_ui/ui_components.md
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+    - docs/dynamic_ui/006_dynamic_ui_schema.sql
+    - docs/dynamic_ui/006_dynamic_ui_seed.sql
+  related_tasks:
+    - DYNA-101 # Database system foundation
+    - DYNA-103 # Convert components to use database schemas
+    - DYNA-104 # Unify interaction paradigm
+work_steps:
+  - step_id: 1
+    targets:
+      - docs/dynamic_ui/006_dynamic_ui_seed.sql
+    instructions: Replace the existing seed data with task inbox schemas. Create SQL INSERT statements for the term sheet review form schema with component_id 'task-review-form'. Analyze the current hardcoded TaskDetailPanel logic and create a comprehensive form schema that includes decision fields (approve/reject/request_more_info), conditional comments, and review notes.
+    constraints:
+      - Use component_id 'task-review-form' for this schema
+      - Follow the UIComponentSchema interface exactly in the JSONB fields
+      - Include proper validation rules for required fields
+      - Use conditional logic (visibleIf) for comments field based on decision
+      - Include both submit and cancel actions with appropriate styling
+      - Match current user workflow and field requirements
+      - Remove existing example data first, then add new INSERT statements
+  - step_id: 2
+    targets:
+      - docs/dynamic_ui/006_dynamic_ui_seed.sql
+    instructions: Add SQL INSERT statement for the term sheet summary display schema with component_id 'term-sheet-summary'. Analyze TaskSummaryCard component and create a dynamic display schema using displayTemplate with {{variable}} interpolation for company, valuation, investment, equity, and documents.
+    constraints:
+      - Use component_id 'term-sheet-summary' for this schema
+      - Use componentType: "Display"
+      - Include displayTemplate with proper HTML structure matching current design
+      - Use placeholder variables that match the TaskDetail data structure
+      - Include proper styling classes for consistency
+      - Add any necessary actions (like view details)
+  - step_id: 3
+    targets:
+      - docs/dynamic_ui/006_dynamic_ui_seed.sql
+    instructions: Add SQL INSERT statement for the extracted terms table display schema with component_id 'extracted-terms-table'. Analyze ExtractedTermsTable component and create a display schema that handles the terms array with proper table structure and conditional highlighting for flagged terms.
+    constraints:
+      - Use component_id 'extracted-terms-table' for this schema
+      - Handle both standard and non-standard terms with conditional styling
+      - Include proper table structure in displayTemplate with accessibility
+      - Support flagged terms highlighting with appropriate CSS classes
+      - Use iteration logic in template for terms array
+      - Maintain current table design and functionality
+  - step_id: 4
+    targets:
+      - docs/dynamic_ui/006_dynamic_ui_seed.sql
+    instructions: Add SQL INSERT statement for task action buttons schema with component_id 'task-action-buttons'. Analyze TaskDetailHeader and create an actions-only display schema that renders the available task actions dynamically based on context.
+    constraints:
+      - Use component_id 'task-action-buttons' for this schema
+      - Create action-focused schema with minimal display content
+      - Include approve and request_review actions with proper styling
+      - Support conditional action availability based on task state
+      - Match current button styling and layout
+      - Include proper action confirmation where needed
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in any related files"
+    - command: "npm run lint -- src/features/dynamicUI/"
+      description: "Ensure no linting issues in dynamic UI code"
+  manual:
+    - description: "Verify task review form schema includes all necessary fields and validation in SQL format"
+    - description: "Verify term sheet display schema template matches current TaskSummaryCard layout in SQL format"
+    - description: "Verify extracted terms display schema handles table structure and flagged terms correctly in SQL format"
+    - description: "Verify task actions schema provides appropriate action buttons in SQL format"
+    - description: "Verify all schemas use correct component_id values for task inbox components"
+    - description: "Verify all schemas follow UIComponentSchema interface in JSONB format"
+    - description: "Verify SQL syntax is correct and can be executed against the database"
+self_checklist:
+  - "All schemas created as SQL INSERT statements in 006_dynamic_ui_seed.sql"
+  - "Schema data accurately reflects current component functionality"
+  - "Display templates use proper HTML structure with placeholders"
+  - "Form validation rules match current business requirements"
+  - "All schemas use meaningful component_id values"
+  - "JSONB fields follow UIComponentSchema interface exactly"
+  - "SQL syntax is correct and executable" 

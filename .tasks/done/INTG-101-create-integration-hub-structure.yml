@@ -1,0 +1,69 @@
+id: INTG-101
+title: Create Integration Hub Feature Structure
+status: todo
+priority: high
+context:
+  code:
+    - src/types/supabaseTypes.ts
+    - src/features/workflowDesigner/index.tsx
+    - src/routes.config.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/integrationsHub/types/index.ts
+    instructions: Create the types directory and index.ts file to define the IntegrationInstance and IntegrationDefinition types based on the database schema. Define additional types for UI state like ConnectionStatus, IntegrationInstanceWithDetails, and IntegrationFilterOptions.
+    constraints:
+      - Reuse existing types from supabaseTypes.ts where possible
+      - Follow TypeScript best practices with proper typing
+  
+  - step_id: 2
+    targets:
+      - src/features/integrationsHub/hooks/use-integration-instances.ts
+      - src/features/integrationsHub/hooks/use-integration-instance.ts
+      - src/features/integrationsHub/hooks/use-integration-filters.ts
+    instructions: Create hooks directory with data fetching hooks for integration instances. Implement basic filtering and pagination logic.
+    constraints:
+      - Follow React hooks best practices
+      - Ensure proper error handling and loading states
+  
+  - step_id: 3
+    targets:
+      - src/features/integrationsHub/utils/status-utils.ts
+      - src/features/integrationsHub/utils/integration-helpers.ts
+    instructions: Create utility functions for processing integration data, determining status, and generating metrics.
+    constraints:
+      - Ensure code is well-typed and has appropriate error handling
+  
+  - step_id: 4
+    targets:
+      - src/features/integrationsHub/index.tsx
+    instructions: Create the main feature export file that will serve as the entry point for the Integration Hub feature.
+    constraints:
+      - Keep the file lightweight, primarily for exporting components and hooks
+  
+  - step_id: 5
+    targets:
+      - src/pages/IntegrationsHubPage.tsx
+    instructions: Create a new page component for the Integration Hub that will be the main container for the feature's UI.
+    constraints:
+      - Follow the existing page structure pattern
+      - Ensure responsive design
+
+acceptance:
+  automated:
+    - command: npm run lint
+      description: Pass ESLint rules
+    - command: npm run typecheck
+      description: Compile without TypeScript errors
+    - command: npm run build
+      description: Vite production build succeeds
+  manual:
+    - description: Verify that the directory structure follows project conventions
+    - description: Ensure types properly reflect the database schema
+    - description: Verify export pattern matches other features
+
+self_checklist:
+  - Directory structure matches project conventions
+  - Types are correctly derived from supabaseTypes.ts
+  - Hooks follow React best practices
+  - Export patterns are consistent with other features 

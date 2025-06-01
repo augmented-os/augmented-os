@@ -1,0 +1,69 @@
+id: INTG-102
+title: Implement Integration List Components
+status: todo
+priority: high
+dependencies:
+  - INTG-101 # Basic structure must be implemented first
+context:
+  code:
+    - src/features/integrationsHub/types/index.ts
+    - src/components/ui/card.tsx
+    - src/components/ui/badge.tsx
+    - src/features/workflowDesigner/components/WorkflowHeader.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/integrationsHub/components/StatusIndicator.tsx
+    instructions: Create a reusable status indicator component that displays the connection status (connected, error, pending) with appropriate colors and icons.
+    constraints:
+      - Use consistent styling with existing UI components
+      - Ensure accessibility with proper aria attributes
+      - Include hover states with tooltips for status details
+  
+  - step_id: 2
+    targets:
+      - src/features/integrationsHub/components/IntegrationCard.tsx
+    instructions: Implement a card component to display a single integration instance with its name, description, status, and basic metadata.
+    constraints:
+      - Follow existing card pattern in the codebase
+      - Include click handler for viewing details
+      - Display status using the StatusIndicator component
+  
+  - step_id: 3
+    targets:
+      - src/features/integrationsHub/components/IntegrationsList.tsx
+    instructions: Create the main list component that renders multiple IntegrationCard components with proper layout and spacing.
+    constraints:
+      - Implement responsive grid layout
+      - Handle empty state and loading state
+      - Support pagination if needed
+  
+  - step_id: 4
+    targets:
+      - src/features/integrationsHub/components/SearchAndFilter.tsx
+    instructions: Implement search and filter controls for the integration list, including text search, status filter, and sorting options.
+    constraints:
+      - Use existing UI components for inputs and dropdowns
+      - Ensure mobile-friendly layout
+      - Implement debounced search input
+
+acceptance:
+  automated:
+    - command: npm run lint
+      description: Pass ESLint rules
+    - command: npm run typecheck
+      description: Compile without TypeScript errors
+    - command: npm run build
+      description: Vite production build succeeds
+  manual:
+    - description: Verify that components render correctly in various screen sizes
+    - description: Check that status indicators show appropriate colors for each status
+    - description: Ensure search and filter controls affect the displayed integrations
+    - description: Verify keyboard accessibility for all interactive elements
+
+self_checklist:
+  - Components use consistent styling with the rest of the application
+  - Status indicators have appropriate colors and are accessible
+  - List layout is responsive and handles various screen sizes
+  - Empty and loading states are properly handled
+  - Search and filter controls are intuitive and functional 

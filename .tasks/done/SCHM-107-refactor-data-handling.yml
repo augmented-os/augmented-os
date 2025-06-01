@@ -1,0 +1,123 @@
+id: SCHM-107
+title: Refactor Schema Editor Data Handling (Phase 1)
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - SCHM-106 # Integration revealed data structure mismatch
+
+context:
+  code:
+    - src/data/schemaService.ts
+    - src/features/schemaEditor/types/index.ts
+    - src/features/schemaEditor/hooks/use-schema-tables.ts
+    - src/features/schemaEditor/hooks/use-table-fields.ts
+    - src/features/schemaEditor/components/SchemaEditor.tsx
+    - src/features/schemaEditor/components/TablesList.tsx
+    - src/features/schemaEditor/components/TableDetails.tsx
+    - src/features/schemaEditor/components/fields/FieldDetail.tsx
+  docs:
+    - Description of 'Tenant Schema Format Specification' in `.cursor/rules/guides/features/schemaEditor/schema-format.md`
+    - SQL INSERT example stored in `.cursor/rules/guides/features/schemaEditor/tenant_schemas_example.sql`
+
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/schemaEditor/types/index.ts
+    instructions: |
+      Revise internal types (`SchemaColumn`, `SchemaTable`) to better match the Tenant Schema Format Specification.
+      - Replace `SchemaColumnType` enum with `type: string` (e.g., "varchar", "timestamp with time zone", "numeric").
+      - Add core properties to `SchemaColumn`: `nullable` (boolean, replaces `required`), `default` (string, optional), `comment` (string, optional).
+      - Add type-specific properties to `SchemaColumn` as needed for basic display/edit (Phase 1): `length` (number, optional), `precision` (number, optional), `scale` (number, optional), `array` (boolean, optional), `withTimeZone` (boolean, optional).
+      - Keep `columns` in `SchemaTable` as an array (`SchemaColumn[]`).
+      - Add basic properties to `SchemaTable` for primary key: `primaryKey` (string[] | object, definition based on spec).
+      - Define basic types for other constraints/indexes (e.g., `uniqueConstraints`, `foreignKeys`, `indexes`) but focus implementation on core fields for Phase 1.
+    constraints:
+      - Internal representation MUST use an array for `SchemaTable.columns`.
+      - Types should be sufficient for Phase 1 UI goals.
+
+  - step_id: 2
+    targets:
+      - src/data/schemaService.ts
+    instructions: |
+      Update transformation logic in `fetchSchemas` and `fetchSchemaById` based on ACTUAL `schema_json` structure from SQL example.
+      - Access the tables array via `schema_json.schemas[0].tables` (assuming the first schema in the array is the target).
+      - Add robust checks for `schema_json`, `schemas` array, and its elements.
+      - For each table, transform the `columns` *object* from the spec into the `SchemaColumn[]` *array* required internally.
+      - Map core column properties (name, type string, nullable, default, comment, length, etc.) correctly.
+      - Extract and map the `primaryKey` information to the `SchemaTable` type.
+      - Map other basic constraint/index info if feasible for Phase 1 display.
+    constraints:
+      - Transformation MUST correctly handle the object-to-array conversion for columns.
+      - Transformation MUST correctly parse the structure observed in the database (`schema_json.schemas[0]...`).
+      - Transformation logic needs careful implementation and testing due to complexity.
+
+  - step_id: 3
+    targets:
+      - src/data/schemaService.ts
+    instructions: |
+      Update reverse transformation logic in `createSchema` and `updateSchema`.
+      - Take the internal `SchemaTable[]` structure (with `columns` as an array).
+      - Construct the `schema_json` object with the correct nested structure (`schemas` array -> schema object -> `tables` array -> table object -> `columns` *object*).
+      - Format columns object keys as column names and values as column definitions matching the spec.
+      - Correctly format `primaryKey` and other basic constraints/indexes being handled in Phase 1.
+    constraints:
+      - The generated `schema_json` structure MUST match the Tenant Schema Format Specification.
+      - Transformation MUST correctly handle the array-to-object conversion for columns.
+      - Transformation logic needs careful implementation and testing due to complexity.
+
+  - step_id: 4
+    targets:
+      - src/features/schemaEditor/hooks/use-schema-tables.ts
+      - src/features/schemaEditor/hooks/use-table-fields.ts
+    instructions: |
+      Refactor hooks to use the revised types.
+      - Ensure `useSchemaTablesData` correctly returns the new `Schema` type with populated `SchemaTable` fields.
+      - Update `useTableFields` internal logic (esp. validation) for new core column properties (string type, nullable, default, etc.).
+      - Optional optimization: Consider passing `tables` data from `useSchemaTablesData` to `useTableFields` instead of refetching.
+    constraints:
+      - Hooks must correctly handle and propagate the revised data types for Phase 1.
+
+  - step_id: 5
+    targets:
+      - src/features/schemaEditor/components/SchemaEditor.tsx
+      - src/features/schemaEditor/components/TablesList.tsx
+      - src/features/schemaEditor/components/TableDetails.tsx
+      - src/features/schemaEditor/components/fields/FieldDetail.tsx
+      - Other relevant UI components...
+    instructions: |
+      Update UI components for Phase 1: Display and basic editing of core schema information.
+      - Update `TablesList` to display tables correctly based on transformed data.
+      - Update `TableDetails` to show columns (from array) and basic primary key info.
+      - Modify `FieldDetail` to show and allow editing of core `SchemaColumn` properties handled in Phase 1 (string type, nullable, default, comment, length, etc.).
+      - Ensure components correctly handle the `SchemaTable.columns` array.
+    constraints:
+      - UI must accurately reflect the core schema information mapped in Phase 1.
+      - Advanced constraint/index/type feature display/editing is deferred to Phase 2.
+
+acceptance:
+  automated:
+    - command: "npm run lint"
+      description: "Verify no *new* lint errors introduced by this refactor."
+    - command: "npm run build"
+      description: "Verify the build process completes without errors."
+  manual:
+    - description: "Verify schema editor correctly displays tables from `schema_json` (via `schema_json.schemas[0].tables`)."
+    - description: "Verify schema editor correctly displays columns (transformed from object to array) for the selected table."
+    - description: "Verify core column properties (string type, nullable, default, etc.) are displayed correctly in FieldDetail."
+    - description: "Verify basic primary key info is displayed in TableDetails."
+    - description: "Verify creating a new table/column correctly persists the data in the `schema_json` object format (within `schemas[0]`)."
+    - description: "Verify updating core table/column details correctly persists the data in the `schema_json` object format."
+
+self_checklist:
+  - "Internal types (`SchemaColumn`, `SchemaTable`) defined for Phase 1 requirements."
+  - "Service `fetch` transformations correctly handle `schema_json.schemas[0].tables` and column object-to-array conversion."
+  - "Service `create/update` transformations correctly construct `schema_json` with column array-to-object conversion within `schemas[0]`."
+  - "Hooks correctly use and manage the revised Phase 1 types."
+  - "UI components display core column/table information correctly."
+  - "UI components allow editing of core column/table information for Phase 1."
+  - "Lint check passes without new errors."
+  - "Build completes successfully."
+  - "Manual acceptance tests for Phase 1 pass."
+  - "Acknowledged limitation: Only processing first schema in `schema_json.schemas` array."
+  - "Acknowledged limitation: Advanced constraints/indexes UI deferred." 

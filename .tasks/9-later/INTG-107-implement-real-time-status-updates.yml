@@ -1,0 +1,69 @@
+id: INTG-107
+title: Implement Real-Time Status Updates
+status: todo
+priority: low
+dependencies:
+  - INTG-102 # Integration list components must be implemented first
+  - INTG-103 # Integration detail view must be implemented first
+context:
+  code:
+    - src/features/integrationsHub/types/index.ts
+    - src/features/integrationsHub/components/StatusIndicator.tsx
+    - src/integrations/supabase/index.ts
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/integrationsHub/hooks/use-real-time-status.ts
+    instructions: Create a hook that subscribes to real-time updates for integration instance statuses using WebSockets or a similar technology.
+    constraints:
+      - Include connection management for WebSocket
+      - Handle reconnection on failures
+      - Optimize for minimal data transfer
+  
+  - step_id: 2
+    targets:
+      - src/features/integrationsHub/components/StatusIndicator.tsx
+    instructions: Update the StatusIndicator component to support real-time status transitions with appropriate animations.
+    constraints:
+      - Add smooth transition animations between states
+      - Include pulsing or other visual cues for active updating
+      - Maintain accessibility during animations
+  
+  - step_id: 3
+    targets:
+      - src/features/integrationsHub/components/IntegrationsList.tsx
+    instructions: Enhance the IntegrationsList component to refresh data and update status indicators in real-time.
+    constraints:
+      - Minimize full re-renders during updates
+      - Maintain sort order and filter settings during updates
+      - Include visual indication of recently updated items
+  
+  - step_id: 4
+    targets:
+      - src/features/integrationsHub/components/detail/IntegrationDetailView.tsx
+    instructions: Update the detail view to show real-time updates for the current integration instance.
+    constraints:
+      - Display timestamp of last status update
+      - Show visual indication when data is being refreshed
+      - Allow manual refresh option
+
+acceptance:
+  automated:
+    - command: npm run lint
+      description: Pass ESLint rules
+    - command: npm run typecheck
+      description: Compile without TypeScript errors
+    - command: npm run build
+      description: Vite production build succeeds
+  manual:
+    - description: Verify that status updates appear in real-time without page refresh
+    - description: Check that animations are smooth and not distracting
+    - description: Ensure the system recovers from connection interruptions
+    - description: Verify performance remains good with many integrations
+
+self_checklist:
+  - WebSocket or similar connection is properly managed
+  - Status transitions are visually smooth
+  - List maintains proper sorting/filtering during updates
+  - Real-time updates don't cause performance issues
+  - User is aware of when data was last updated 

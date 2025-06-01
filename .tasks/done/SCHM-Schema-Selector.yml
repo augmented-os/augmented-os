@@ -1,0 +1,208 @@
+id: SCHM-111 # TODO: Assign appropriate ID
+title: "Implement Schema Selection Dropdown in Schema Editor"
+description: >
+  Modify the Schema Editor feature to automatically load the first schema if none is selected via URL, 
+  and add a dropdown menu to the header allowing users to switch between available schemas, 
+  similar to the Workflow Editor header.
+status: TODO
+priority: Medium
+assignee: # Optional: Assign to a developer
+dependencies: [] # Optional: List any dependent task IDs
+
+context:
+  files:
+    - src/pages/SchemaEditorPage.tsx
+    - src/features/schemaEditor/components/SchemaEditor.tsx
+    - src/features/schemaEditor/components/SchemaHeader.tsx
+    - src/features/workflowDesigner/components/WorkflowHeader.tsx # Reference for dropdown implementation
+    - src/data/schemaService.ts
+    - src/features/schemaEditor/context/SchemaContext.tsx
+    - src/features/schemaEditor/types/index.ts
+  docs: # Optional: Links to documentation, design files
+    - # Example: https://www.figma.com/design/link
+  tasks: [] # Optional: Links to related tasks/issues
+
+work_steps:
+  - step: 1
+    description: "Define SchemaSummary type in types/index.ts"
+    target_files:
+      - src/features/schemaEditor/types/index.ts
+    instructions:
+      - Add a new `SchemaSummary` interface to represent schema list items returned by `schemaService.fetchSchemas()`
+      - Include properties: `id: string`, `name: string`, `description?: string`, `created_at?: string`, `updated_at?: string`
+      - Update any barrel exports in index.ts to include the new type
+      - Ensure all naming follows the project conventions (PascalCase for types)
+
+  - step: 2
+    description: "Modify SchemaEditorPage to always fetch schema list and handle auto-navigation"
+    target_files:
+      - src/pages/SchemaEditorPage.tsx
+    instructions:
+      - Import the `SchemaSummary` type from `@/features/schemaEditor/types`
+      - Update the schemas state to use proper typing: `const [schemas, setSchemas] = useState<SchemaSummary[]>([])`
+      - Update the `useEffect` hook that calls `schemaService.fetchSchemas` to run unconditionally on mount, not just when `!id`.
+      - Store the fetched schemas in the `schemas` state.
+      - Implement a *new* `useEffect` hook that watches `[schemas, id, loadingSchemas, navigate]`.
+      - Inside this new hook, add logic: if `!loadingSchemas && !id && schemas.length > 0`, call `navigate(`/build/data/${schemas[0].id}`, { replace: true })`.
+      - Include appropriate error handling for navigation failures.
+      - If an `id` *is* present (or becomes present after navigation), ensure the `<SchemaEditor>` component is rendered.
+      - Pass the full `schemas` list as `allSchemas` prop to `<SchemaEditor>`.
+      - Pass the current `id` as `schemaId` prop to `<SchemaEditor>`.
+      - Remove the `debugInfo` state and related `console.log` calls from `SchemaEditorPage.tsx`.
+      - Keep the existing loading state and error handling.
+      - Keep the display logic for when `!id` and `schemas.length === 0` (the "No schemas found" message and "Create Test Schema" button).
+
+  - step: 3
+    description: "Update SchemaEditor component to handle and pass down schema list props"
+    target_files:
+      - src/features/schemaEditor/components/SchemaEditor.tsx
+    instructions:
+      - Import the `SchemaSummary` type from `@/features/schemaEditor/types`
+      - Update `SchemaEditorProps` interface to accept `allSchemas: SchemaSummary[]`
+      - Accept `allSchemas` in the `SchemaEditor` component props.
+      - Import and use `useNavigate` hook from `react-router-dom`
+      - Define a `handleSchemaSelect` function within `SchemaEditor`: `const handleSchemaSelect = (newSchemaId: string) => { navigate(`/build/data/${newSchemaId}`); };`.
+      - Update the props interface for `SchemaEditorContent` to include `allSchemas: SchemaSummary[]` and `handleSchemaSelect: (schemaId: string) => void`
+      - Pass `allSchemas`, `schemaId` and `handleSchemaSelect` down to the `SchemaEditorContent` component.
+
+  - step: 4
+    description: "Update SchemaEditorContent to manage schema name and pass props to header"
+    target_files:
+      - src/features/schemaEditor/components/SchemaEditor.tsx # Still in the same file
+    instructions:
+      - Update the props interface for `SchemaEditorContent` to accept `allSchemas: SchemaSummary[]`, `schemaId: string`, and `handleSchemaSelect: (schemaId: string) => void`.
+      - Accept these props in `SchemaEditorContent`.
+      - Import `useMemo` from React if not already imported
+      - Derive the `currentSchemaName`: `const currentSchemaName = useMemo(() => allSchemas.find(s => s.id === schemaId)?.name || 'Loading...', [allSchemas, schemaId]);`.
+      - Replace the static title passing to SchemaHeader with the dynamic schema name
+      - Pass `allSchemas`, `schemaId` (as `currentSchemaId`), `currentSchemaName`, `handleSchemaSelect`, and `isDirty` down to the `<SchemaHeader>` component.
+
+  - step: 5
+    description: "Implement schema selection dropdown in SchemaHeader"
+    target_files:
+      - src/features/schemaEditor/components/SchemaHeader.tsx
+    instructions:
+      - Import the `SchemaSummary` type from `@/features/schemaEditor/types`
+      - Update `SchemaHeaderProps` to accept `allSchemas: SchemaSummary[]`, `currentSchemaId: string`, `currentSchemaName: string`, `handleSchemaSelect: (schemaId: string) => void`, and `isDirty: boolean`.
+      - Import necessary components from UI library: 
+          ```typescript
+          import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+          import { Button } from '@/components/ui/button';
+          import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
+          import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+          ```
+      - Import necessary icons: `import { ChevronDown, Database } from 'lucide-react';`
+      - Add state for the popover open state: `const [popoverOpen, setPopoverOpen] = useState(false);`
+      - Add state for search query: `const [searchQuery, setSearchQuery] = useState('');`
+      - Implement filtering logic for schemas:
+          ```typescript
+          const filteredSchemas = useMemo(() => {
+            if (!searchQuery) return allSchemas;
+            return allSchemas.filter(schema => 
+              schema.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+          }, [allSchemas, searchQuery]);
+          ```
+      - Replace the static title section with a dropdown structure similar to WorkflowHeader:
+          ```tsx
+          {isDirty ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    className="font-medium text-white flex items-center gap-1"
+                    disabled={true}
+                  >
+                    <Database className="h-4 w-4 mr-1" />
+                    {currentSchemaName}
+                    <ChevronDown className="h-4 w-4 ml-1 opacity-50" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p className="text-xs">Save changes before switching schemas</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="font-medium text-white flex items-center gap-1"
+                >
+                  <Database className="h-4 w-4 mr-1" />
+                  {currentSchemaName}
+                  <ChevronDown className="h-4 w-4 ml-1" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-0" align="start">
+                <Command>
+                  <CommandInput 
+                    placeholder="Search schemas..." 
+                    value={searchQuery}
+                    onValueChange={setSearchQuery}
+                  />
+                  <CommandList className="max-h-80">
+                    <CommandEmpty>No schemas found.</CommandEmpty>
+                    <CommandGroup>
+                      {filteredSchemas.map((schema) => (
+                        <CommandItem
+                          key={schema.id}
+                          onSelect={() => {
+                            handleSchemaSelect(schema.id);
+                            setPopoverOpen(false);
+                          }}
+                          className={`flex items-center gap-2 ${schema.id === currentSchemaId ? 'bg-purple-50 text-purple-900' : ''}`}
+                        >
+                          <div className={`w-2 h-2 rounded-full ${schema.id === currentSchemaId ? 'bg-purple-600' : 'bg-gray-300'}`} />
+                          <span className={schema.id === currentSchemaId ? 'font-medium' : ''}>
+                            {schema.name}
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          )}
+          ```
+      - Ensure the existing Save/Discard buttons still receive their correct props (`onSave`, `onDiscard`, `isSaving`, `isDirty`).
+      - Maintain the overall styling of the header while implementing the new dropdown.
+
+acceptance_criteria:
+  manual:
+    - Verify that when navigating to `/build/data` without an ID, if schemas exist, the page automatically redirects to the first schema's URL (e.g., `/build/data/some-schema-id`).
+    - Verify that the `SchemaHeader` now displays the current schema name with a dropdown arrow.
+    - Verify that clicking the schema name opens a dropdown list of all available schemas.
+    - Verify that the dropdown includes a search input that filters the schema list.
+    - Verify that selecting a different schema from the dropdown navigates the user to the corresponding URL (`/build/data/other-schema-id`) and loads the new schema.
+    - Verify that the currently selected schema is highlighted or indicated in the dropdown list.
+    - Verify that if there are unsaved changes (`isDirty` is true), the schema dropdown button is disabled.
+    - Verify that hovering over the disabled dropdown button shows a tooltip explaining why it's disabled.
+    - Verify that the Save and Discard buttons continue to function correctly based on the `isDirty` and `isSaving` states.
+    - Verify that if no schemas exist, the `/build/data` page shows the "No schemas found" message and the "Create Test Schema" button.
+    - Verify that the implementation follows the design patterns from the WorkflowHeader component.
+    - Verify that the UI is responsive and works on different screen sizes.
+
+self_checklist:
+  - [ ] Have I defined the SchemaSummary type with appropriate properties?
+  - [ ] Have I updated typing in SchemaEditorPage from `any[]` to `SchemaSummary[]`?
+  - [ ] Have I updated `SchemaEditorPage.tsx` to fetch schemas unconditionally?
+  - [ ] Have I implemented auto-navigation to the first schema?
+  - [ ] Have I removed `debugInfo` state and related console logs?
+  - [ ] Have I updated `SchemaEditor.tsx` props and passed them correctly?
+  - [ ] Have I defined and used the navigation handler for schema selection?
+  - [ ] Have I updated `SchemaHeader.tsx` props and implemented the dropdown UI?
+  - [ ] Does the dropdown have search functionality?
+  - [ ] Does the dropdown indicate the current schema correctly?
+  - [ ] Is the dropdown disabled when there are unsaved changes?
+  - [ ] Have I added appropriate tooltips for the disabled state?
+  - [ ] Do the Save/Discard buttons still work?
+  - [ ] Have I considered edge cases (no schemas, only one schema)?
+  - [ ] Have I followed the project's styling conventions?
+  - [ ] Have I used correct import paths for UI components?
+  - [ ] Have I followed the project naming conventions?
+  - [ ] Have I updated any necessary barrel exports in index.ts files?
+  - [ ] Is error handling implemented for navigation failures? 

@@ -1,0 +1,14 @@
+id: FEAT-102
+title: Modularise Sidebar component
+context_refs:
+  - .cursor/guides/ui/sidebar-refactor.mdc
+  - src/components/ui/sidebar.tsx
+work_steps:
+  - code: src/components/ui/sidebar/
+    description: Split sidebar into context, hooks, variants, and components folders, preserving API.
+acceptance:
+  - "npm run typecheck"
+  - "npm test --silent"
+self_checklist:
+  - "Public exports in `src/components/ui/sidebar/index.ts` unchanged"
+  - "Mobile responsiveness verified manually"

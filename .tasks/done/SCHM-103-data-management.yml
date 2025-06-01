@@ -1,0 +1,69 @@
+id: SCHM-103
+title: Implement Schema Editor Data Management
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - SCHM-101 # Feature Setup must be completed first
+  - SCHM-102 # Service Layer must be implemented first
+context:
+  code:
+    - .cursor/.temp/SchemaEditor.tsx
+    - src/features/schemaEditor/types/index.ts
+    - src/data/schemaService.ts
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/schemaEditor/hooks/use-schema-tables.ts
+    instructions: Create a hook for managing schema tables state, fetching from the service layer and providing CRUD operations.
+    constraints:
+      - Must call service functions, not access data sources directly
+      - Include loading, error, and success states
+      - Provide typed return values and parameters
+      - Follow project hook naming and implementation patterns
+
+  - step_id: 2
+    targets:
+      - src/features/schemaEditor/hooks/use-table-fields.ts
+    instructions: Create a hook for managing table fields/columns, with operations for adding, editing, and removing fields.
+    constraints:
+      - Ensure this hook works with the use-schema-tables hook
+      - Include proper validation for field operations
+      - Provide proper typing for all operations
+      - Handle reference type fields appropriately
+
+  - step_id: 3
+    targets:
+      - src/features/schemaEditor/hooks/use-field-types.ts
+    instructions: Create a hook for managing the available field types with their associated icons and properties.
+    constraints:
+      - Extract logic from the prototype related to field types and icons
+      - Ensure proper typing for field types
+      - Include validation functions for field type constraints
+
+  - step_id: 4
+    targets:
+      - src/features/schemaEditor/hooks/index.ts
+    instructions: Create an index file that exports all hooks for use within the feature.
+    constraints:
+      - Follow the established pattern for hook exports
+      - Only export hooks that should be publicly available
+
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in the hook implementations"
+    - command: "npm run lint"
+      description: "Ensure code follows project linting rules"
+  manual:
+    - description: "Verify hooks properly interact with the service layer"
+    - description: "Check that state management follows project patterns"
+    - description: "Ensure hooks provide proper loading, error, and success states"
+self_checklist:
+  - "Hooks call service functions, not data sources directly"
+  - "All hooks are properly typed with TypeScript"
+  - "Hooks follow the project's naming and implementation conventions"
+  - "State management is consistent with React best practices"
+  - "Hooks provide appropriate error handling" 

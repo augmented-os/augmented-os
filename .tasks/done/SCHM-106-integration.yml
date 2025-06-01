@@ -1,0 +1,54 @@
+id: SCHM-106
+title: Integrate Schema Editor into Application
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - SCHM-104 # Components must be implemented first
+  - SCHM-103 # Data Management must be implemented first
+context:
+  code:
+    - src/features/schemaEditor/components/SchemaEditor.tsx
+    - src/features/schemaEditor/hooks/use-schema-tables.ts
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/pages/SchemaEditorPage.tsx
+    instructions: Create a page component that hosts the SchemaEditor feature.
+    constraints:
+      - Follow the established page component pattern
+      - Include proper error boundaries and loading states
+      - Handle navigation and route parameters if needed
+      - Include appropriate page title and metadata
+
+  - step_id: 2
+    targets:
+      - src/routes.config.tsx
+    instructions: Add the schema editor page to the application routes configuration.
+    constraints:
+      - Follow the established routing pattern
+      - Include proper route path and parameters
+      - Set up appropriate access control if needed
+      - Configure any route-specific behavior
+
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in the integration"
+    - command: "npm run lint"
+      description: "Ensure code follows project linting rules"
+    - command: "npm run build"
+      description: "Verify the build process completes without errors"
+  manual:
+    - description: "Verify the schema editor is accessible from the navigation"
+    - description: "Check that the route works correctly"
+    - description: "Ensure the page layout is consistent with the rest of the application"
+    - description: "Test navigation between the schema editor and other parts of the application"
+self_checklist:
+  - "Page component follows project conventions"
+  - "Route is properly configured"
+  - "Navigation item appears correctly"
+  - "Page has appropriate error handling and loading states"
+  - "User can navigate to and from the schema editor" 

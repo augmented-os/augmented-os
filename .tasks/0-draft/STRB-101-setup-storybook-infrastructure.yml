@@ -1,0 +1,64 @@
+id: STRB-101
+title: Setup Storybook Infrastructure for DynamicUI Components
+status: todo
+priority: high
+assignee: agent
+dependencies: []
+context:
+  code:
+    - apps/web/package.json
+    - apps/web/src/features/dynamicUI/
+    - package.json # Root package.json for workspace configuration
+  docs:
+    - docs/architecture/components/web_application_service/technical_architecture/frontend_stack.md
+    - docs/architecture/components/web_application_service/design_system/overview.md
+work_steps:
+  - step_id: 1
+    targets:
+      - apps/web/.storybook/main.ts
+      - apps/web/.storybook/preview.ts
+      - apps/web/.storybook/manager.ts
+    instructions: Initialize Storybook configuration in the web app with TypeScript support. Configure addons for controls, docs, actions, and accessibility. Set up proper path resolution to match the existing @/ alias configuration.
+    constraints:
+      - Use Storybook 8.x for latest features and performance
+      - Ensure compatibility with existing Vite configuration
+      - Configure to work with the monorepo structure
+  - step_id: 2
+    targets:
+      - apps/web/package.json
+    instructions: Add Storybook dependencies and scripts to the web app package.json. Include @storybook/react-vite, @storybook/addon-essentials, @storybook/addon-interactions, and @storybook/addon-a11y.
+    constraints:
+      - Use exact versions that are compatible with React 18 and Vite
+      - Add build-storybook and storybook scripts
+  - step_id: 3
+    targets:
+      - apps/web/.storybook/preview.ts
+    instructions: Configure Storybook preview to use the existing Tailwind CSS styles and theme configuration. Set up global decorators for the DynamicUIStateProvider context and any other necessary providers.
+    constraints:
+      - Import and apply the same CSS that the main app uses
+      - Ensure proper theme switching capabilities
+      - Configure viewport sizes for responsive testing
+  - step_id: 4
+    targets:
+      - apps/web/vite.config.ts
+    instructions: Update Vite configuration if needed to ensure compatibility with Storybook. Verify that path aliases and other configurations work correctly in both development and Storybook environments.
+    constraints:
+      - Don't break existing development setup
+      - Ensure @/ alias works in stories
+acceptance:
+  automated:
+    - command: "cd apps/web && npm run storybook"
+      description: "Storybook development server starts without errors"
+    - command: "cd apps/web && npm run build-storybook"
+      description: "Storybook builds successfully for production"
+    - command: "npm run typecheck"
+      description: "No TypeScript errors introduced"
+  manual:
+    - description: "Storybook opens in browser at localhost:6006 with welcome page"
+    - description: "Storybook interface shows proper branding and theme"
+    - description: "Essential addons (Controls, Actions, Docs, A11y) are available and functional"
+self_checklist:
+  - "Storybook configuration follows official best practices"
+  - "All necessary addons are properly configured"
+  - "Path aliases work correctly in Storybook environment"
+  - "CSS and theme integration matches main application" 

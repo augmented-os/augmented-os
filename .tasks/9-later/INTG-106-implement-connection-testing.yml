@@ -1,0 +1,67 @@
+id: INTG-106
+title: Implement Connection Testing Functionality
+status: todo
+priority: medium
+dependencies:
+  - INTG-103 # Integration detail view must be implemented first
+context:
+  code:
+    - src/features/integrationsHub/types/index.ts
+    - src/features/integrationsHub/components/detail/IntegrationDetailView.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/integrationsHub/utils/testing-utils.ts
+    instructions: Create utility functions to handle integration connection testing, including test execution, result parsing, and error handling.
+    constraints:
+      - Implement proper error handling for various failure scenarios
+      - Include timeout handling for long-running tests
+      - Support different integration types with varying test protocols
+  
+  - step_id: 2
+    targets:
+      - src/features/integrationsHub/hooks/use-connection-test.ts
+    instructions: Implement a React hook to manage connection test state, execution, and results.
+    constraints:
+      - Handle loading, success, and error states
+      - Include retry functionality
+      - Support test history tracking
+  
+  - step_id: 3
+    targets:
+      - src/features/integrationsHub/components/detail/TestConnectionButton.tsx
+    instructions: Create a button component for initiating connection tests with appropriate loading states and result feedback.
+    constraints:
+      - Show clear loading indicator during test
+      - Display test results in a user-friendly way
+      - Include retry option for failed tests
+  
+  - step_id: 4
+    targets:
+      - src/features/integrationsHub/components/detail/TestResultsDisplay.tsx
+    instructions: Implement a component to display connection test results, including details for both successful and failed tests.
+    constraints:
+      - Show detailed error information for failed tests
+      - Display connection metrics for successful tests
+      - Include timestamp of last test
+
+acceptance:
+  automated:
+    - command: npm run lint
+      description: Pass ESLint rules
+    - command: npm run typecheck
+      description: Compile without TypeScript errors
+    - command: npm run build
+      description: Vite production build succeeds
+  manual:
+    - description: Verify that test button initiates connection test correctly
+    - description: Check that loading states are displayed during tests
+    - description: Ensure test results are displayed clearly for both success and failure cases
+    - description: Verify retry functionality works for failed tests
+
+self_checklist:
+  - Test button is easily accessible in the UI
+  - Loading indicators are clear and informative
+  - Error messages are helpful and actionable
+  - Success states provide useful connection information
+  - Test functionality works across different integration types 

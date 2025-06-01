@@ -1,0 +1,64 @@
+id: DYUI-110
+title: Implement DynamicDisplay component
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+  - DYUI-109
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+  code:
+    - src/features/dynamicUI/types/schemas.ts
+    - src/features/dynamicUI/utils/templates.ts
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/components/DynamicDisplay.tsx
+    instructions: |
+      Create the DynamicDisplay component for rendering data using templates
+      as specified in the developer guide. Follow exact implementation.
+    constraints:
+      - Follow exact implementation from developer guide
+      - Use CSS classes: dynamic-display, display-header, display-title, display-content, display-footer
+      - Call renderTemplate for both title and displayTemplate
+      - Use useCallback for handleAction
+      - Use dangerouslySetInnerHTML for template content
+      - Support DisplayActions for action buttons
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/components/DisplayActions.tsx
+    instructions: |
+      Implement DisplayActions component for action buttons in display components.
+      Similar to FormActions but for display contexts.
+    constraints:
+      - Reuse button styling from FormActions
+      - Support same action types: primary, secondary, danger
+      - Handle confirmation prompts
+      - Filter actions based on visibleIf and data context
+      - Support same ActionButton interface as FormActions
+  - step_id: 3
+    targets:
+      - src/features/dynamicUI/components/index.ts
+    instructions: Add DynamicDisplay and DisplayActions exports to barrel export file
+    constraints:
+      - Use named exports only
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify DynamicDisplay component matches exact implementation from docs"
+    - description: "Verify renders title using renderTemplate function"
+    - description: "Verify displays content using displayTemplate with dangerouslySetInnerHTML"
+    - description: "Verify supports DisplayActions for action buttons"
+    - description: "Verify handles onAction callback with actionKey and data"
+    - description: "Verify applies correct CSS classes for styling"
+self_checklist:
+  - "DynamicDisplay matches exact implementation from docs"
+  - "Template rendering works correctly"
+  - "Action handling functions properly"
+  - "CSS classes applied correctly" 

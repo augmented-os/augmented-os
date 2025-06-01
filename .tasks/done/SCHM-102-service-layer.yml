@@ -1,0 +1,60 @@
+id: SCHM-102
+title: Implement Schema Editor Service Layer
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - SCHM-101 # Feature Setup must be completed first
+context:
+  code:
+    - .cursor/.temp/SchemaEditor.tsx
+    - src/features/schemaEditor/types/index.ts
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/data/schemaService.ts
+    instructions: Create the service layer for schema operations including loading, saving, and modifying database schemas.
+    constraints:
+      - Follow the established pattern for service files in the project
+      - Include proper error handling and response processing
+      - Ensure all operations return properly typed responses
+      - Use appropriate async/await pattern
+
+  - step_id: 2
+    targets:
+      - src/data/schemaService.ts
+    instructions: Implement functions for fetching table schemas, adding/modifying/removing tables, and modifying columns.
+    constraints:
+      - Create separate functions for each logical operation
+      - Include proper TypeScript typing for parameters and return values
+      - Add JSDoc comments explaining each function's purpose and parameters
+      - Follow any existing service layer patterns
+
+  - step_id: 3
+    targets:
+      - src/data/schemaService.test.ts
+    instructions: Create tests for the schema service functions to ensure proper operation.
+    constraints:
+      - Provide test coverage for all service methods
+      - Mock API responses appropriately
+      - Test error handling and edge cases
+
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in the service layer"
+    - command: "npm run lint"
+      description: "Ensure code follows project linting rules"
+    - command: "npm test -- src/data/schemaService.test.ts"
+      description: "Pass all service layer tests"
+  manual:
+    - description: "Review service functions to ensure they match the schema editor's needs"
+    - description: "Verify error handling is consistent with project patterns"
+self_checklist:
+  - "All service functions are properly typed"
+  - "Error handling is consistent and robust"
+  - "Service layer does not contain UI logic"
+  - "Functions have descriptive names that reflect their purpose"
+  - "Service follows the project's established patterns for API calls" 

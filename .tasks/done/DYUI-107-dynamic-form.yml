@@ -1,0 +1,72 @@
+id: DYUI-107
+title: Create DynamicForm component
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+  - DYUI-102
+  - DYUI-105
+  - DYUI-106
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+  code:
+    - src/features/dynamicUI/types/schemas.ts
+    - src/features/dynamicUI/utils/validation.ts
+    - src/features/dynamicUI/components/FormField.tsx
+    - src/features/dynamicUI/components/FormActions.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/components/DynamicForm.tsx
+    instructions: |
+      Implement the main DynamicForm component as specified in the developer guide.
+      Must handle form state, validation, submission, and field organization.
+      Follow exact implementation from docs.
+    constraints:
+      - Follow exact component implementation from developer guide
+      - Use CSS classes: dynamic-form, form-header, form-title, form-body, form-footer
+      - Support layout.columns with CSS grid
+      - Handle layout.sections and layout.order correctly
+      - Call validateForm before submission
+      - Use useState for formData and errors state
+      - Implement handleFieldChange with error clearing
+      - Implement handleSubmit with validation
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/components/FormSection.tsx
+    instructions: |
+      Create the FormSection component for grouped fields with collapsible sections
+      as specified in the developer guide.
+    constraints:
+      - Use CSS classes: form-section, section-header, section-title, section-toggle, section-content
+      - Toggle shows + for collapsed, − for expanded
+      - Only handle clicks when section.collapsible is true
+      - Use useState for isExpanded state
+      - Support defaultExpanded property
+  - step_id: 3
+    targets:
+      - src/features/dynamicUI/components/index.ts
+    instructions: Add DynamicForm and FormSection exports to barrel export file
+    constraints:
+      - Use named exports only
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify DynamicForm component matches exact implementation from docs"
+    - description: "Verify uses useState for formData and errors state"
+    - description: "Verify implements handleFieldChange with error clearing"
+    - description: "Verify implements handleSubmit with validation"
+    - description: "Verify supports organizeFields for layout configuration"
+    - description: "Verify renders form header with title and description"
+    - description: "Verify handles isSubmitting state correctly"
+self_checklist:
+  - "DynamicForm matches exact implementation from docs"
+  - "Form state management works correctly"
+  - "Validation integration functions properly"
+  - "Layout system supports sections and columns" 

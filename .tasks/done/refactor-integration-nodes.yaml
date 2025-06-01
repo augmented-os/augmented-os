@@ -1,0 +1,169 @@
+title: "Refactor Integration Nodes to Use New Table Structure"
+description: "Update IntegrationNodes to work with the hierarchical integration_definitions and integration_instances tables instead of poc_integrations"
+priority: "high"
+effort: "medium"
+tags:
+  - "refactor"
+  - "bug-fix"
+  - "integration"
+
+context: |
+  Current integration nodes use the poc_integrations table which is causing an error: 
+  "column poc_integrations.description does not exist"
+  
+  We need to refactor this to use the new hierarchical data structure with:
+  - integration_definitions table (integration types with methods array)
+  - integration_instances table (configured connections)
+  
+  This requires embracing the new structure rather than transforming it to match the old one.
+
+tasks:
+  - id: update-integration-service
+    title: "Update integrationService.ts to use new tables"
+    description: |
+      Update the service to work with the new hierarchical structure:
+      
+      ```typescript
+      // Get all integration definitions
+      export async function fetchIntegrationDefinitions() {
+        const { data, error } = await supabase
+          .from('integration_definitions')
+          .select('id, name, integration_id, config_schema, auth_type, icon_url, description, methods')
+          .order('name', { ascending: true });
+        if (error) throw error;
+        return data;
+      }
+      
+      // Get a specific integration definition
+      export async function fetchIntegrationDefinition(id: string) {
+        const { data, error } = await supabase
+          .from('integration_definitions')
+          .select('id, name, integration_id, config_schema, auth_type, icon_url, description, methods')
+          .eq('id', id)
+          .single();
+        if (error) throw error;
+        return data;
+      }
+      
+      // Get instances for a specific integration definition
+      export async function fetchIntegrationInstances(definitionId: string) {
+        const { data, error } = await supabase
+          .from('integration_instances')
+          .select('id, name, description, status')
+          .eq('integration_definition_id', definitionId)
+          .order('name', { ascending: true });
+        if (error) throw error;
+        return data;
+      }
+      ```
+
+  - id: update-integration-config
+    title: "Update IntegrationConfig.tsx component"
+    description: |
+      Refactor the component to work with the hierarchical data structure:
+      
+      1. Modify state management:
+      ```typescript
+      // New state variables
+      const [definitions, setDefinitions] = useState<IntegrationDefinition[]>([]);
+      const [selectedDefinitionId, setSelectedDefinitionId] = useState<string | undefined>(
+        nodeData.data.config?.integration_definition_id
+      );
+      const [selectedMethodId, setSelectedMethodId] = useState<string | undefined>(
+        nodeData.data.config?.method_id
+      );
+      const [selectedInstanceId, setSelectedInstanceId] = useState<string | undefined>(
+        nodeData.data.config?.integration_instance_id
+      );
+      ```
+      
+      2. Update UI to reflect new selection flow:
+      - First tier: Select integration definition
+      - Second tier: Select specific method from the definition
+      - Third tier: Select instance (connection) for the definition
+      
+      3. Update the data saving logic:
+      ```typescript
+      const updatedConfig = {
+        integration_definition_id: selectedDefinitionId,
+        method_id: selectedMethodId,
+        integration_instance_id: selectedInstanceId,
+        ...dynamicConfigValues
+      };
+      ```
+
+  - id: update-node-interfaces
+    title: "Update IntegrationNodeConfig interface"
+    description: |
+      Update the interface to reflect the hierarchical structure:
+      
+      ```typescript
+      export interface IntegrationNodeConfig {
+        name: string;
+        description?: string;
+        integrationType: 'restApi' | 'database' | 'storage' | 'messaging';
+        connection: {
+          type: 'oauth2' | 'apiKey' | 'basic' | 'connectionString';
+          integration_definition_id: string;  // ID of the integration definition
+          method_id: string;                  // ID of the specific method in the definition
+          integration_instance_id?: string;   // Optional ID of a configured instance
+          credentials: Record<string, string>;
+          endpoint?: string;
+          headers?: Record<string, string>;
+        };
+        // ... rest of the interface remains the same
+      }
+      ```
+
+  - id: update-workflow-types
+    title: "Update types in workflow.ts"
+    description: |
+      Update IntegrationNodeData in src/types/workflow.ts to support the new structure:
+      
+      ```typescript
+      export interface BaseIntegrationConfig {
+        integration_definition_id: string;  // ID of the integration definition
+        method_id: string;                  // ID of the specific method
+        integration_instance_id?: string;   // Optional ID of a configured instance
+        [key: string]: any;
+      }
+      
+      // And in IntegrationNodeData:
+      export interface IntegrationNodeData extends BaseNodeData {
+        type: typeof NODE_TYPES.INTEGRATION;
+        config: BaseIntegrationConfig;
+        icon_url?: string;
+      }
+      ```
+
+  - id: testing
+    title: "Test the implementation"
+    description: |
+      Verify that the refactored code works correctly:
+      - Confirm that the integration node configuration panel loads without errors
+      - Test the new selection flow: definition → method → instance
+      - Verify that methods are properly loaded for each selected definition
+      - Check that instances are correctly filtered by the selected definition
+      - Test saving and loading integration node configurations
+
+dependencies:
+  - task: update-integration-service
+    dependents:
+      - update-integration-config
+  - task: update-node-interfaces
+    dependents:
+      - update-workflow-types
+  - task: update-workflow-types
+    dependents:
+      - testing
+  - task: update-integration-config
+    dependents:
+      - testing
+
+acceptance_criteria:
+  - "No more errors related to 'poc_integrations.description does not exist'"
+  - "UI properly supports hierarchical selection: definition → method → instance"
+  - "Integration nodes correctly store references to definition_id, method_id, and instance_id"
+  - "Available methods are properly displayed based on the selected definition"
+  - "Available instances are correctly filtered by the selected definition"
+  - "Workflows using integration nodes can be saved and loaded" 

@@ -1,0 +1,129 @@
+id: DYNA-103
+title: Convert Task Inbox Components to Use Database Schemas
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYNA-102 # Database schemas must be created first
+context:
+  code:
+    - src/features/taskInbox/components/TaskDetailPanel.tsx
+    - src/features/taskInbox/components/TaskSummaryCard.tsx
+    - src/features/taskInbox/components/ExtractedTermsTable.tsx
+    - src/features/taskInbox/components/TaskDetailHeader.tsx
+    - src/features/dynamicUI/components/DynamicForm.tsx
+    - src/features/dynamicUI/components/DynamicDisplay.tsx
+    - src/features/dynamicUI/hooks/useSchema.ts
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+    - docs/dynamic_ui/006_dynamic_ui_seed.sql
+  related_tasks:
+    - DYNA-101 # Database system foundation
+    - DYNA-102 # Database schemas created
+    - DYNA-104 # Unify interaction paradigm
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/taskInbox/components/TaskSummaryCard.tsx
+    instructions: Replace the hardcoded TaskSummaryCard component with DynamicDisplay using the database-stored term sheet display schema. Update the component to fetch the schema by component_id 'term-sheet-summary' and render using the dynamic display system.
+    constraints:
+      - Maintain existing prop interface for backward compatibility
+      - Use DynamicDisplay with component_id 'term-sheet-summary'
+      - Use useSchema hook to fetch the schema by component_id
+      - Handle loading and error states appropriately
+      - Ensure data mapping matches the display template variables
+      - Preserve existing styling and layout
+  - step_id: 2
+    targets:
+      - src/features/taskInbox/components/ExtractedTermsTable.tsx
+    instructions: Replace the hardcoded ExtractedTermsTable component with DynamicDisplay using the database-stored extracted terms display schema. Handle the terms array data properly for template interpolation using component_id 'extracted-terms-table'.
+    constraints:
+      - Maintain existing ExtractedTerm[] prop interface
+      - Use DynamicDisplay with component_id 'extracted-terms-table'
+      - Use useSchema hook to fetch the schema by component_id
+      - Handle loading and error states during schema fetch
+      - Ensure proper data structure for template iteration
+      - Preserve table styling and flagged term highlighting
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/components/TaskDetailHeader.tsx
+    instructions: Replace hardcoded action buttons in TaskDetailHeader with DynamicDisplay using the database-stored task actions schema. Integrate with the dynamic action system using component_id 'task-action-buttons'.
+    constraints:
+      - Maintain existing callback prop interface (onRequestReview, onApprove)
+      - Use DynamicDisplay with component_id 'task-action-buttons'
+      - Use useSchema hook to fetch the schema by component_id
+      - Handle loading states during schema fetch
+      - Preserve existing button styling and layout
+      - Ensure proper action handling and event delegation
+  - step_id: 4
+    targets:
+      - src/features/taskInbox/components/TaskDetailPanel.tsx
+    instructions: Update TaskDetailPanel to use the database-stored review form schema and integrate all the converted dynamic components. Replace the hardcoded reviewRequestFormSchema import with component_id 'task-review-form'.
+    constraints:
+      - Replace hardcoded schema import with component_id 'task-review-form'
+      - Use useSchema hook to fetch the review form schema by component_id
+      - Integrate all new dynamic components (summary, terms, header)
+      - Handle loading states while schemas are being fetched
+      - Maintain existing state management patterns where needed
+      - Ensure proper data flow between components
+      - Preserve the conditional rendering logic
+  - step_id: 5
+    targets:
+      - src/features/taskInbox/constants/schemaIds.ts
+    instructions: Create a constants file that defines all the component_id values used by the task inbox components. This centralizes schema ID management and makes it easy to update if schemas are recreated.
+    constraints:
+      - Export const objects with descriptive names for each component_id
+      - Include TypeScript types for the component_id constants
+      - Add JSDoc comments explaining what each schema is for
+      - Follow existing constants file patterns in the project
+      - Use the component_id values from the seed file: 'task-review-form', 'term-sheet-summary', 'extracted-terms-table', 'task-action-buttons'
+  - step_id: 6
+    targets:
+      - src/features/taskInbox/components/__tests__/TaskDetailPanel.test.tsx
+      - src/features/taskInbox/components/__tests__/TaskSummaryCard.test.tsx
+      - src/features/taskInbox/components/__tests__/ExtractedTermsTable.test.tsx
+      - src/features/taskInbox/components/__tests__/TaskDetailHeader.test.tsx
+    instructions: Update all test files to work with the database-driven dynamic UI components. Mock the useSchema hook and schema service appropriately and update test assertions to work with component_id lookups.
+    constraints:
+      - Maintain test coverage level
+      - Mock useSchema hook to return test schemas for known component_ids
+      - Mock DynamicDisplay and DynamicForm components
+      - Update test data to match new component interfaces
+      - Test loading and error states for schema fetching
+      - Ensure all existing test scenarios still pass
+      - Use the component_id values in test mocks
+  - step_id: 7
+    targets:
+      - src/features/dynamicUI/schemas/reviewRequestFormSchema.ts
+    instructions: Remove the hardcoded reviewRequestFormSchema file since it has been migrated to the database. Update any remaining imports to use the database version with component_id 'task-review-form'.
+    constraints:
+      - Verify no components are still importing the hardcoded schema
+      - Remove the file completely
+      - Update any related imports or references
+      - Ensure the database version with component_id is being used everywhere
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors after component conversion"
+    - command: "npm run test -- src/features/taskInbox/"
+      description: "Ensure all task inbox tests pass with database schemas"
+    - command: "npm run lint -- src/features/taskInbox/"
+      description: "Verify converted components pass linting"
+    - command: "npm run build"
+      description: "Ensure the application builds successfully without hardcoded schemas"
+  manual:
+    - description: "Verify TaskSummaryCard displays the same information using database schema with component_id"
+    - description: "Verify ExtractedTermsTable maintains the same table structure and styling"
+    - description: "Verify TaskDetailHeader actions work the same as before"
+    - description: "Verify TaskDetailPanel workflow still functions correctly"
+    - description: "Verify loading states display appropriately during schema fetch"
+    - description: "Verify error handling works when schemas cannot be loaded"
+    - description: "Verify all components use correct component_id values for schema lookup"
+self_checklist:
+  - "All hardcoded components replaced with database-driven dynamic equivalents"
+  - "useSchema hook used correctly for all schema fetching with component_id"
+  - "Loading and error states handled appropriately"
+  - "Existing prop interfaces maintained for backward compatibility"
+  - "Component IDs centralized in constants file with correct values"
+  - "No hardcoded schema files remain in the codebase"
+  - "Test coverage maintained with proper mocking of component_id lookups" 

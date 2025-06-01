@@ -1,0 +1,77 @@
+id: DYNA-105
+title: Implement Integration Testing for Dynamic UI Field Components
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYNA-104 # Prerequisite: Field components must be implemented and aligned
+context:
+  code:
+    - apps/web/src/features/dynamicUI/components/fields/
+    - apps/web/src/features/dynamicUI/components/FormField.tsx
+    - apps/web/src/data/uiComponentService.ts
+    - apps/web/src/features/dynamicUI/state/schemaSlice.ts
+    - apps/web/src/features/dynamicUI/__tests__/
+  docs:
+    - docs/architecture/dynamic-ui.md
+    - docs/testing/component-testing.md
+  related_tasks:
+    - DYNA-106 # Form validation testing
+    - DYNA-107 # End-to-end UI component testing
+work_steps:
+  - step_id: 1
+    targets:
+      - apps/web/src/features/dynamicUI/__tests__/components/FormField.integration.test.tsx
+    instructions: Create comprehensive integration tests for FormField component that test all field types (text, email, date, file, multi-select) with real form scenarios, validation, and state management.
+    constraints:
+      - Use React Testing Library and vitest
+      - Test with actual UI component schemas from database
+      - Include accessibility testing with jest-axe
+      - Test conditional visibility and validation rules
+  - step_id: 2
+    targets:
+      - apps/web/src/features/dynamicUI/__tests__/components/fields/FieldComponents.integration.test.tsx
+    instructions: Create integration tests that verify all field components work correctly with the FormField wrapper, including proper prop passing, error handling, and onChange callbacks.
+    constraints:
+      - Test each field component in isolation and as part of FormField
+      - Verify design token usage and shadcn/ui component integration
+      - Test file upload functionality with mock FileList objects
+      - Test multi-select behavior with complex option arrays
+  - step_id: 3
+    targets:
+      - apps/web/src/features/dynamicUI/__tests__/state/schemaSlice.integration.test.tsx
+    instructions: Create integration tests for the schema slice that verify UI component schema loading, caching, and error handling with the uiComponentService.
+    constraints:
+      - Mock uiComponentService responses
+      - Test React Query integration
+      - Verify 5-minute cache TTL behavior
+      - Test error states and retry logic
+  - step_id: 4
+    targets:
+      - apps/web/src/features/dynamicUI/__tests__/utils/
+    instructions: Create integration tests for utility functions (conditions evaluation, validation) that test real-world scenarios with complex form data and conditional rules.
+    constraints:
+      - Test edge cases and boundary conditions
+      - Include performance testing for large forms
+      - Test with various data types (strings, numbers, arrays, files)
+acceptance:
+  automated:
+    - command: "npm test -- apps/web/src/features/dynamicUI/__tests__/ --coverage"
+      description: "All integration tests pass with minimum 90% code coverage"
+    - command: "npm run typecheck"
+      description: "No TypeScript errors in test files"
+    - command: "npm run lint -- apps/web/src/features/dynamicUI/__tests__/"
+      description: "All test files pass linting rules"
+  manual:
+    - description: "Review test output to ensure all field types are covered"
+    - description: "Verify accessibility tests are passing for all components"
+    - description: "Confirm file upload testing works with various file types"
+    - description: "Validate conditional visibility testing covers complex scenarios"
+self_checklist:
+  - "Tests follow established patterns from other feature test suites"
+  - "Mock implementations match real service behavior"
+  - "All field components have comprehensive integration coverage"
+  - "Error scenarios and edge cases are thoroughly tested"
+  - "Tests are deterministic and don't rely on external dependencies"
+creation_date: 2024-12-19T10:00:00Z
+last_updated: 2024-12-19T10:00:00Z 

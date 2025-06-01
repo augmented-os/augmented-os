@@ -1,0 +1,72 @@
+id: STRB-104
+title: Create Storybook Stories for DynamicUI Form and Orchestration Components
+status: todo
+priority: medium
+assignee: agent
+dependencies:
+  - STRB-101 # Prerequisite: Storybook infrastructure must be set up
+  - STRB-102 # Field component stories provide foundation
+context:
+  code:
+    - apps/web/src/features/dynamicUI/components/DynamicForm.tsx
+    - apps/web/src/features/dynamicUI/components/DynamicUIRenderer.tsx
+    - apps/web/src/features/dynamicUI/components/FormSection.tsx
+    - apps/web/src/features/dynamicUI/components/FormActions.tsx
+    - apps/web/src/features/dynamicUI/components/DynamicUIErrorBoundary.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - apps/web/src/features/dynamicUI/components/FormSection.stories.tsx
+      - apps/web/src/features/dynamicUI/components/FormActions.stories.tsx
+    instructions: Create stories for form structural components. Show FormSection with different field arrangements, validation states, and conditional visibility. Demonstrate FormActions with various button configurations and submission states.
+    constraints:
+      - Include examples of sections with different field types and layouts
+      - Show conditional rendering based on form state
+      - Demonstrate validation at section level
+      - Include loading and disabled states for actions
+  - step_id: 2
+    targets:
+      - apps/web/src/features/dynamicUI/components/DynamicForm.stories.tsx
+    instructions: Create comprehensive stories for the main DynamicForm component. Include examples of simple forms, complex multi-section forms, forms with conditional logic, and forms with various validation scenarios.
+    constraints:
+      - Use realistic form schemas representing real-world use cases
+      - Show complete form lifecycle from empty to submitted states
+      - Include examples with async validation and submission
+      - Demonstrate error handling and recovery scenarios
+  - step_id: 3
+    targets:
+      - apps/web/src/features/dynamicUI/components/DynamicUIRenderer.stories.tsx
+    instructions: Create stories for the top-level orchestration component. Show how it handles both form and display modes, switches between different UI types, and manages complex nested schemas.
+    constraints:
+      - Include examples that showcase the full range of UI capabilities
+      - Show seamless switching between form and display modes
+      - Demonstrate error boundary integration
+      - Include performance scenarios with large/complex schemas
+  - step_id: 4
+    targets:
+      - apps/web/src/features/dynamicUI/components/DynamicUIErrorBoundary.stories.tsx
+      - apps/web/src/features/dynamicUI/components/__stories__/FormStories.utils.ts
+    instructions: Create stories for error boundary component showing various error scenarios. Also create shared utilities for form component stories including complex schema builders and form state management helpers.
+    constraints:
+      - Demonstrate different types of rendering errors and recovery
+      - Show error boundary with fallback UI
+      - Create reusable schema builders for different form patterns
+      - Include utilities for simulating async operations and errors
+acceptance:
+  automated:
+    - command: "cd apps/web && npm run build-storybook"
+      description: "All form and orchestration stories build successfully"
+    - command: "npm run typecheck"
+      description: "No TypeScript errors in story files"
+  manual:
+    - description: "Form components demonstrate complete form lifecycle workflows"
+    - description: "DynamicUIRenderer shows seamless transitions between modes"
+    - description: "Error scenarios are properly handled and displayed"
+    - description: "Complex schemas render and function correctly"
+    - description: "Form validation and submission workflows work as expected"
+self_checklist:
+  - "All major form components have comprehensive story coverage"
+  - "Stories demonstrate realistic form patterns and use cases"
+  - "Error handling and edge cases are properly covered"
+  - "Complex schemas are tested and working correctly"
+  - "Shared utilities support consistent story development" 

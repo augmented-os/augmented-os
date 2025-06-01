@@ -1,0 +1,52 @@
+id: DYUI-106
+title: Implement FormActions component
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+  - DYUI-103
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+  code:
+    - src/features/dynamicUI/types/schemas.ts
+    - src/features/dynamicUI/utils/conditions.ts
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/components/FormActions.tsx
+    instructions: |
+      Create the FormActions component for rendering action buttons with proper styling 
+      and confirmation dialogs as specified in the developer guide.
+    constraints:
+      - Use CSS classes: btn, btn--primary, btn--secondary, btn--danger
+      - Show confirmation dialog before calling onAction if confirmation text exists
+      - Filter actions based on visibleIf conditions
+      - Handle isSubmitting prop for submit button state
+      - Support style types: primary, secondary, danger
+      - Handle disabled state correctly
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/components/index.ts
+    instructions: Add FormActions export to barrel export file
+    constraints:
+      - Use named exports only
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify FormActions component renders ActionButton[] array"
+    - description: "Verify supports style types: primary, secondary, danger"
+    - description: "Verify handles confirmation prompts with window.confirm"
+    - description: "Verify supports visibleIf conditions for actions"
+    - description: "Verify handles disabled state correctly"
+    - description: "Verify calls onAction with actionKey parameter"
+self_checklist:
+  - "FormActions component follows exact implementation"
+  - "Proper button styling with CSS classes"
+  - "Confirmation dialogs work correctly"
+  - "VisibleIf conditions handled properly" 

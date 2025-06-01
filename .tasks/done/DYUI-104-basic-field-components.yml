@@ -1,0 +1,86 @@
+id: DYUI-104
+title: Create basic form field components
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/components/fields/TextInput.tsx
+    instructions: |
+      Implement TextInput component matching exact implementation from developer guide.
+      Support both text and email input types with proper validation and accessibility.
+    constraints:
+      - Use className patterns: input-group, input-label, input, input-error, input-help
+      - Required fields show asterisk with ::after pseudo-element
+      - Error IDs follow pattern: {id}-error, help IDs: {id}-help
+      - Include proper ARIA attributes
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/components/fields/NumberInput.tsx
+    instructions: |
+      Implement NumberInput component for numeric input with validation.
+      Follow same props pattern as TextInput but handle numeric values.
+    constraints:
+      - Use input type="number"
+      - Handle numeric validation properly
+      - Follow same accessibility patterns as TextInput
+  - step_id: 3
+    targets:
+      - src/features/dynamicUI/components/fields/SelectInput.tsx
+    instructions: |
+      Implement SelectInput component supporting SelectOption[] with value/label/disabled.
+      Include placeholder option support and proper accessibility.
+    constraints:
+      - Support SelectOption interface with value, label, disabled properties
+      - Handle placeholder option when provided
+      - Include proper ARIA attributes
+  - step_id: 4
+    targets:
+      - src/features/dynamicUI/components/fields/TextareaInput.tsx
+    instructions: |
+      Implement TextareaInput component for multiline text input.
+      Follow same props pattern as TextInput but use textarea element.
+    constraints:
+      - Use textarea element instead of input
+      - Support same props as TextInput
+      - Follow accessibility patterns
+  - step_id: 5
+    targets:
+      - src/features/dynamicUI/components/fields/BooleanInput.tsx
+    instructions: |
+      Implement BooleanInput component rendering checkbox with proper labeling.
+      Handle boolean values and provide accessible checkbox interface.
+    constraints:
+      - Use checkbox input type
+      - Handle boolean values correctly
+      - Provide proper labeling and accessibility
+  - step_id: 6
+    targets:
+      - src/features/dynamicUI/components/fields/index.ts
+    instructions: Create barrel export file that exports all field components
+    constraints:
+      - Use named exports only
+      - Export all field components
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify TextInput component matches exact implementation from docs"
+    - description: "Verify all components support required, error, helpText props"
+    - description: "Verify all components have proper ARIA attributes"
+    - description: "Verify error display uses exact HTML structure from docs"
+    - description: "Verify SelectInput supports SelectOption[] with value/label/disabled"
+self_checklist:
+  - "All components follow exact implementations from developer guide"
+  - "Proper ARIA attributes included for accessibility"
+  - "Error display follows exact HTML structure"
+  - "All components exported from index.ts" 

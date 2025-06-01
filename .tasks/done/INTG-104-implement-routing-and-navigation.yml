@@ -1,0 +1,52 @@
+id: INTG-104
+title: Implement Integration Hub Routing and Navigation
+status: todo
+priority: medium
+dependencies:
+  - INTG-101 # Basic structure must be implemented first
+  - INTG-102 # Integration list components must be implemented
+context:
+  code:
+    - src/routes.config.tsx
+    - src/pages/WorkflowsPage.tsx
+    - src/components/layout/Layout.tsx
+    - src/components/navigation/Sidebar.tsx
+work_steps:
+  - step_id: 1
+    targets:
+      - src/routes.config.tsx
+    instructions: Update the routes configuration to include routes for the Integration Hub, including the main list view and the detail view for individual integrations.
+    constraints:
+      - Follow existing route pattern
+      - Ensure routes are nested under the main layout
+      - Include proper route parameters for integration ID in detail view
+  
+  - step_id: 2
+    targets:
+      - src/pages/IntegrationsHubPage.tsx
+    instructions: Implement the main page component that handles routing between list and detail views based on URL parameters.
+    constraints:
+      - Use React Router hooks for navigation and params
+      - Handle URL parameters cleanly
+      - Ensure proper loading states during navigation
+
+acceptance:
+  automated:
+    - command: npm run lint
+      description: Pass ESLint rules
+    - command: npm run typecheck
+      description: Compile without TypeScript errors
+    - command: npm run build
+      description: Vite production build succeeds
+  manual:
+    - description: Verify navigation to Integration Hub from sidebar works correctly
+    - description: Check that URL parameters for integration detail view work as expected
+    - description: Ensure browser back/forward navigation works properly between views
+    - description: Verify direct URL access to specific integration details works
+
+self_checklist:
+  - Routes follow existing pattern in the application
+  - URL parameters are handled correctly
+  - Navigation state is preserved correctly during page transitions
+  - Sidebar highlights the correct item when in Integration Hub pages
+  - Browser navigation controls (back/forward) work as expected 

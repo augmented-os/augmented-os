@@ -1,0 +1,31 @@
+# Task 2 ­– smarter routing for non-success edges
+id: FEAT-202
+title: “Switch Retry / Fail edges to SmartEdge”
+status: todo
+priority: medium
+assignee: agent
+dependencies: [FEAT-801]
+context:
+  code:
+    - src/features/workflowDesigner/components/CustomEdge.tsx
+    - src/features/workflowDesigner/components/configPanel/EdgeConfig.tsx
+work_steps:
+  - step_id: 1
+    targets: []
+    instructions: >-
+      Install `@tisoap/react-flow-smart-edge`, register
+      `edgeTypes={{ smart: SmartBezierEdge }}` in the React-Flow wrapper.
+    constraints: []
+  - step_id: 2
+    targets: [src/features/workflowDesigner/components/CustomEdge.tsx]
+    instructions: >-
+      Detect branch type (Retry, Fail) and emit `type: 'smart'` on the edge
+      object; keep existing colour logic.
+    constraints: []
+acceptance:
+  manual:
+    - description: Drag Retry and Fail edges around – path bends around nodes and no longer overlaps the main spine.
+self_checklist:
+  - Edge deletion & hover still work
+creation_date: 2025-04-29T00:00:00Z
+last_updated: 2025-04-29T00:00:00Z

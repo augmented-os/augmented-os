@@ -1,0 +1,48 @@
+id: DYUI-101
+title: Create TypeScript interfaces for UI component schemas
+status: todo
+priority: high
+assignee: agent
+dependencies: []
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+    - docs/dynamic_ui/ui_components.md
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/types/schemas.ts
+    instructions: |
+      Implement the complete TypeScript interface definitions as specified in the developer guide.
+      Create all interfaces: UIComponentSchema, FormField, ActionButton, SelectOption, 
+      ValidationRule, ValidationRuleReference, LayoutConfig, FormSection.
+      Follow the exact specifications from dynamic_ui_developer_guide.md.
+    constraints:
+      - Use TypeScript strict mode
+      - Include JSDoc comments for all interfaces
+      - FormField must support all field types: text, number, boolean, select, multi-select, textarea, date, file, email
+      - ActionButton must support style types: primary, secondary, danger
+      - ValidationRule must support types: required, minLength, maxLength, pattern, min, max, email
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/types/index.ts
+    instructions: Create barrel export file that exports all interfaces from schemas.ts
+    constraints:
+      - Use named exports only
+      - Follow project naming conventions
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes with strict mode"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+  manual:
+    - description: "Verify UIComponentSchema interface matches exact specification from docs"
+    - description: "Verify all field types are supported in FormField interface"
+    - description: "Verify all validation rule types are included"
+    - description: "Verify JSDoc comments are present for all interfaces"
+self_checklist:
+  - "All interfaces exported from types/schemas.ts"
+  - "TypeScript compilation passes with strict mode"
+  - "JSDoc comments included for all interfaces"
+  - "Follows exact interface specifications from developer guide" 

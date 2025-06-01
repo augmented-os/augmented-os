@@ -1,0 +1,49 @@
+# Task 1 ­– integrate ELK layout
+id: FEAT-201
+title: “Add ELK layered auto-layout”
+status: todo
+priority: high
+assignee: agent
+context:
+  code:
+    - src/features/workflowDesigner/components/FlowCanvas.tsx
+    - src/features/workflowDesigner/hooks/use-flow-viewport.ts
+    - src/features/workflowDesigner/components/NodeTypesOverlay.tsx
+  docs: []
+  designs: []
+work_steps:
+  - step_id: 1
+    targets: []
+    instructions: >-
+      Install `elkjs` and add a small util that converts React-Flow nodes /
+      edges to ELK JSON and back.
+    constraints: [“Do NOT mutate node width/height (layout must respect user sizing)”]
+  - step_id: 2
+    targets:
+      - src/features/workflowDesigner/hooks/use-flow-viewport.ts
+    instructions: >-
+      In a new `useAutoLayout` hook, call
+      `elk.layout({ 'elk.algorithm': 'layered', 'elk.direction': 'DOWN',
+      'elk.layered.feedbackEdges': 'true' })` whenever nodes/edges change and
+      push the returned `x/y` back with `setNodes` inside a batch update.
+    constraints: []
+  - step_id: 3
+    targets:
+      - src/features/workflowDesigner/components/FlowCanvas.tsx
+    instructions: >-
+      Expose the hook, invoke it in the canvas component, and finish by calling
+      `fitView()`.
+    constraints: []
+acceptance:
+  automated:
+    - command: npm run typecheck
+      description: TypeScript passes after new code.
+  manual:
+    - description: >-
+        Open the demo workflow; nodes are positioned top-to-bottom with no edge
+        collisions and the canvas auto-zooms to fit.
+self_checklist:
+  - No console.logs committed
+  - New hook covered by unit test
+creation_date: 2025-04-29T00:00:00Z
+last_updated: 2025-04-29T00:00:00Z

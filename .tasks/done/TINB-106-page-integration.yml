@@ -1,0 +1,49 @@
+id: TINB-106
+title: "Integrate Task Inbox Feature with Application"
+status: todo
+priority: medium
+assignee: "@AI"
+dependencies:
+  - TINB-103
+  - TINB-104
+  - TINB-105
+context:
+  code:
+    - .cursor/.temp/TaskInboxPrototype.tsx # Source prototype
+    - src/pages/ # Directory with existing pages to reference
+    - src/routes.config.tsx # Assumed location of route configuration
+  docs:
+    - .cursor/rules/guides/features.mdc
+work_steps:
+  - step_id: 1
+    targets:
+      - src/pages/TaskInboxPage.tsx
+    instructions: "Create the TaskInboxPage that imports and uses the TaskInbox component from the feature."
+    
+  - step_id: 2
+    targets:
+      - src/routes.config.tsx
+    instructions: "Update the routes configuration to include the TaskInboxPage at an appropriate route path (e.g., '/tasks' or '/inbox')."
+    
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/index.tsx
+    instructions: "Ensure the main feature index file exports all necessary components, hooks, and utilities for use by the application."
+    
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript accepts the page and route configuration."
+    - command: "npm run lint"
+      description: "Verify all new files meet linting standards."
+    - command: "npm run build"
+      description: "Ensure the application builds successfully with the new feature."
+  manual:
+    - description: "TaskInboxPage is accessible via navigation and renders correctly."
+    - description: "The routes configuration directs to the TaskInboxPage correctly."
+    - description: "The feature exports all necessary components and functions."
+self_checklist:
+  - "Page component follows project's page component patterns"
+  - "Route configuration uses consistent format with other routes"
+  - "Feature exports follow the established pattern"
+  - "Page layout is consistent with application design" 

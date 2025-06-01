@@ -1,0 +1,51 @@
+id: DYUI-102
+title: Implement validation utilities
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - DYUI-101
+context:
+  docs:
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+  code:
+    - src/features/dynamicUI/types/schemas.ts
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/dynamicUI/utils/validation.ts
+    instructions: |
+      Create the validation engine as specified in the developer guide. 
+      Implement validateForm, validateField, and validateRule functions with exact signatures.
+      Support both inline ValidationRule and string references to ValidationRuleReference.
+    constraints:
+      - Follow exact function signatures from developer guide
+      - Email validation uses regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      - Pattern validation uses new RegExp(rule.value)
+      - Error messages follow exact format specified in docs
+      - Returns Record<string, string> for form errors as specified
+  - step_id: 2
+    targets:
+      - src/features/dynamicUI/utils/index.ts
+    instructions: Create barrel export file that exports validation functions
+    constraints:
+      - Use named exports only
+      - Follow project naming conventions
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify TypeScript compilation passes"
+    - command: "npm run lint"
+      description: "Verify all linting rules pass"
+    - command: "npm test -- src/features/dynamicUI/utils/validation"
+      description: "Pass all validation utility tests"
+  manual:
+    - description: "Verify validateForm function matches exact signature from docs"
+    - description: "Verify validateField handles both inline and referenced validation rules"
+    - description: "Verify all validation types work: required, minLength, maxLength, email, pattern, min, max"
+    - description: "Verify error messages follow exact format specified in docs"
+self_checklist:
+  - "validateForm function matches exact signature from docs"
+  - "Supports both inline ValidationRule and string references"
+  - "All validation types implemented correctly"
+  - "Error messages follow specified format" 

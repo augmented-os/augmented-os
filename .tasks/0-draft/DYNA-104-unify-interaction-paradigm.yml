@@ -1,0 +1,122 @@
+id: DYNA-104
+title: Unify Task Inbox Interaction Paradigm with Dynamic UI Actions
+status: todo
+priority: medium
+assignee: agent
+dependencies:
+  - DYNA-103 # Components must be converted to database schemas first
+context:
+  code:
+    - src/features/taskInbox/components/TaskDetailPanel.tsx
+    - src/features/taskInbox/components/TaskDetailHeader.tsx
+    - src/features/dynamicUI/components/DynamicDisplay.tsx
+    - src/features/dynamicUI/components/DynamicForm.tsx
+    - src/features/taskInbox/hooks/
+    - src/features/taskInbox/utils/
+    - src/features/taskInbox/constants/schemaIds.ts
+  docs:
+    - docs/dynamic_ui/dynamic_ui_system.md
+    - docs/dynamic_ui/dynamic_ui_developer_guide.md
+    - docs/dynamic_ui/006_dynamic_ui_seed.sql
+  related_tasks:
+    - DYNA-101 # Database system foundation
+    - DYNA-102 # Database schemas created
+    - DYNA-103 # Components converted to database schemas
+work_steps:
+  - step_id: 1
+    targets:
+      - src/features/taskInbox/hooks/useTaskActions.ts
+    instructions: Create a unified task action hook that handles all task-related actions (approve, reject, request review, etc.) through dynamic UI action handlers. This should replace the scattered action handling in various components.
+    constraints:
+      - Support all current task actions (approve, reject, request_review)
+      - Use consistent action handling patterns with dynamic UI
+      - Include proper error handling and loading states
+      - Provide action availability based on task state
+      - Integrate with the database-driven schema system using component_id lookups
+  - step_id: 2
+    targets:
+      - src/features/taskInbox/utils/actionRouter.ts
+    instructions: Create an action router utility that maps dynamic UI action keys to appropriate business logic handlers. This centralizes the routing of UI actions to backend operations.
+    constraints:
+      - Support dynamic action-to-handler mapping
+      - Include validation for action permissions
+      - Handle async operations with proper error boundaries
+      - Allow for action middleware (logging, analytics, etc.)
+      - Work with database-driven schemas accessed by component_id and their action definitions
+  - step_id: 3
+    targets:
+      - src/features/taskInbox/components/TaskDetailPanel.tsx
+    instructions: Refactor TaskDetailPanel to use a single, unified dynamic UI paradigm. Remove all remaining hardcoded UI state management and replace with dynamic action handling through the action router.
+    constraints:
+      - Remove hardcoded state management (isRequestingReview, etc.)
+      - Use dynamic UI action system for all user interactions
+      - Maintain existing user experience and workflows
+      - Ensure proper data flow between dynamic components
+      - Work entirely with database-driven schemas accessed by component_id
+  - step_id: 4
+    targets:
+      - src/features/taskInbox/components/TaskActionPanel.tsx
+    instructions: Create a new unified TaskActionPanel component that renders all available actions for a task using dynamic UI. This replaces the scattered action buttons across different components.
+    constraints:
+      - Use DynamicDisplay with database-stored actions schema accessed by component_id
+      - Support contextual actions based on task state
+      - Include proper action permissions and validation
+      - Maintain consistent styling with existing design system
+      - Use component_id values from the constants file (e.g., 'task-action-buttons')
+  - step_id: 5
+    targets:
+      - src/features/taskInbox/types/actions.ts
+    instructions: Create comprehensive TypeScript types for task actions, action handlers, and action context. This ensures type safety across the unified action system.
+    constraints:
+      - Define types for all supported actions
+      - Include action result and error types
+      - Support generic action handler patterns
+      - Ensure compatibility with dynamic UI action types
+      - Support database-driven action definitions accessed by component_id
+  - step_id: 6
+    targets:
+      - src/features/taskInbox/components/TaskDetailPanel.tsx
+      - src/features/taskInbox/components/TaskDetailHeader.tsx
+    instructions: Remove all remaining hardcoded action handling and replace with the unified dynamic action system. Update component interfaces to use action IDs instead of callback props.
+    constraints:
+      - Remove hardcoded onClick handlers
+      - Use action IDs for all user interactions
+      - Maintain backward compatibility where possible
+      - Update prop interfaces to reflect new paradigm
+      - Ensure all actions go through the action router with component_id-based schema lookups
+  - step_id: 7
+    targets:
+      - src/features/taskInbox/components/__tests__/TaskDetailPanel.test.tsx
+      - src/features/taskInbox/components/__tests__/TaskActionPanel.test.tsx
+    instructions: Update all tests to work with the unified dynamic UI action system. Mock the action router and test action handling through the new paradigm.
+    constraints:
+      - Maintain or improve test coverage
+      - Mock the action router appropriately
+      - Test all action scenarios through dynamic UI
+      - Ensure error handling tests are comprehensive
+      - Test with database-driven schemas using component_id lookups
+acceptance:
+  automated:
+    - command: "npm run typecheck"
+      description: "Verify no TypeScript errors in unified action system"
+    - command: "npm run test -- src/features/taskInbox/"
+      description: "Ensure all task inbox tests pass with unified actions"
+    - command: "npm run lint -- src/features/taskInbox/"
+      description: "Verify unified components pass linting"
+    - command: "npm run build"
+      description: "Ensure application builds with fully unified dynamic UI system"
+  manual:
+    - description: "Verify all task actions work through the unified dynamic UI system"
+    - description: "Verify no hardcoded action handling remains in components"
+    - description: "Verify action permissions are properly enforced"
+    - description: "Verify user experience remains consistent after paradigm unification"
+    - description: "Verify error handling works correctly for all action types"
+    - description: "Verify the entire task inbox operates exclusively through database-driven dynamic UI with component_id lookups"
+self_checklist:
+  - "All user interactions go through dynamic UI action system"
+  - "No hardcoded state management remains for UI interactions"
+  - "Action router handles all business logic mapping correctly"
+  - "TypeScript types ensure type safety across action system"
+  - "Component interfaces reflect the unified paradigm"
+  - "Test coverage validates the new action handling approach"
+  - "Entire feature operates through database-driven schemas with component_id lookups" 

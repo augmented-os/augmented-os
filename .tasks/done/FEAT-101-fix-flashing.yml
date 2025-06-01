@@ -1,0 +1,15 @@
+id: FEAT-101
+title: Eliminate flashing in ConfigPanel
+context_refs:
+  - .cursor/guides/ui/react-patterns.mdc
+  - src/features/workflowDesigner/components/configPanel/ConfigPanel.tsx
+work_steps:
+  - code: src/features/workflowDesigner/components/configPanel/ConfigPanel.tsx
+    instructions: Convert uncontrolled inputs to controlled `useState` fields and remove `key` props.
+    constraints: Avoid using `useEffect` to update state.
+acceptance:
+  - "npm run typecheck"
+  - "npm test --silent"
+self_checklist:
+  - "No refs remain for label, sublabel, or description fields"
+  - "Switching nodes no longer remounts inputs visually"
