@@ -4,7 +4,7 @@ import { DynamicDisplay } from '@/features/dynamicUI/components/DynamicDisplay';
 import { UIComponentSchema } from '@/features/dynamicUI/types';
 
 const meta: Meta<typeof DynamicForm> = {
-  title: 'Dynamic UI/🌟 Real-World Examples/Task Management',
+  title: 'Dynamic UI/Real-World Examples/Task Management',
   component: DynamicForm,
   parameters: {
     docs: {

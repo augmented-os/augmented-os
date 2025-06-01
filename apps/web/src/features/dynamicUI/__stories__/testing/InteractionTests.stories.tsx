@@ -4,7 +4,7 @@ import { DynamicForm } from '@/features/dynamicUI/components/DynamicForm';
 import { UIComponentSchema } from '@/features/dynamicUI/types';
 
 const meta: Meta<typeof DynamicForm> = {
-  title: 'Dynamic UI/🧪 Testing & Quality/Interaction Tests',
+  title: 'Dynamic UI/Testing & Quality/Interaction Tests',
   component: DynamicForm,
   parameters: {
     layout: 'centered',

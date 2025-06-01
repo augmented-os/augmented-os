@@ -251,7 +251,7 @@ const IntroductionDocs = () => (
 );
 
 const meta: Meta<typeof IntroductionDocs> = {
-  title: 'Dynamic UI/🎯 Getting Started/Introduction',
+  title: 'Dynamic UI/Getting Started/Introduction',
   component: IntroductionDocs,
   parameters: {
     layout: 'fullscreen',

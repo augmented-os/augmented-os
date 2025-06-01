@@ -5,7 +5,7 @@ import { DynamicDisplay } from '../../components/DynamicDisplay';
 import type { UIComponentSchema, FormField } from '../../types/schemas';
 
 const meta: Meta<typeof SchemaBuilder> = {
-  title: 'Dynamic UI/🛠️ Developer Tools/Schema Builder',
+  title: 'Dynamic UI/Developer Tools/Schema Builder',
   parameters: {
     docs: {
       description: {

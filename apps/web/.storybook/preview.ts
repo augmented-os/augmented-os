@@ -21,24 +21,24 @@ const customCSS = `
     /* Add display: inline-block; if vertical-align is not working as expected */
   }
 
-  /* Specific icons for Dynamic UI top-level folders using data-item-id */
-  div.sidebar-item[data-item-id="dynamic-ui-🎯-getting-started"]::before {
+  /* Specific icons for Dynamic UI top-level folders using sanitized data-item-id */
+  div.sidebar-item[data-item-id="dynamic-ui-getting-started"]::before {
     content: "🎯" !important;
   }
 
-  div.sidebar-item[data-item-id="dynamic-ui-📖-implementation-guides"]::before {
+  div.sidebar-item[data-item-id="dynamic-ui-implementation-guides"]::before {
     content: "📖" !important;
   }
 
-  div.sidebar-item[data-item-id="dynamic-ui-🌟-real-world-examples"]::before {
+  div.sidebar-item[data-item-id="dynamic-ui-real-world-examples"]::before {
     content: "🌟" !important;
   }
 
-  div.sidebar-item[data-item-id="dynamic-ui-🧪-testing-quality"]::before {
+  div.sidebar-item[data-item-id="dynamic-ui-testing-quality"]::before {
     content: "🧪" !important;
   }
 
-  div.sidebar-item[data-item-id="dynamic-ui-🛠️-developer-tools"]::before {
+  div.sidebar-item[data-item-id="dynamic-ui-developer-tools"]::before {
     content: "🛠️" !important;
   }
 `;
@@ -80,26 +80,26 @@ const preview: Preview = {
       storySort: {
         order: [
           'Dynamic UI', [
-            '🎯 Getting Started', [
+            'Getting Started', [
               'Introduction',
-              'Architecture Overview', 
+              'Architecture Overview',
               'Getting Started Guide'
             ],
-            '📖 Implementation Guides', [
+            'Implementation Guides', [
               'Schema Design Guide',
               'Validation System',
               'Performance Guide'
             ],
-            '🌟 Real-World Examples', [
+            'Real-World Examples', [
               'Business Workflows',
               'Task Management',
               'Advanced Patterns'
             ],
-            '🧪 Testing & Quality', [
+            'Testing & Quality', [
               'Interaction Tests',
               'Edge Case Tests'
             ],
-            '🛠️ Developer Tools', [
+            'Developer Tools', [
               'Schema Builder'
             ]
           ],

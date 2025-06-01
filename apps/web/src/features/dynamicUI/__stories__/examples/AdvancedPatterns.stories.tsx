@@ -5,7 +5,7 @@ import { UIComponentSchema } from '@/features/dynamicUI/types';
 import { useState } from 'react';
 
 const meta: Meta<typeof DynamicForm> = {
-  title: 'Dynamic UI/🌟 Real-World Examples/Advanced Patterns',
+  title: 'Dynamic UI/Real-World Examples/Advanced Patterns',
   component: DynamicForm,
   parameters: {
     docs: {
