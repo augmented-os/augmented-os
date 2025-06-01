@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DateInput } from './DateInput';
 
 const meta: Meta<typeof DateInput> = {
-  title: 'DynamicUI/Fields/DateInput',
+  title: 'Dynamic UI/Atomic Components/Form Fields/Date Input',
   component: DateInput,
   parameters: {
     layout: 'centered',

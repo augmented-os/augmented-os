@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { EmailInput } from './EmailInput';
 
 const meta: Meta<typeof EmailInput> = {
-  title: 'DynamicUI/Fields/EmailInput',
+  title: 'Dynamic UI/Atomic Components/Form Fields/Email Input',
   component: EmailInput,
   parameters: {
     layout: 'centered',

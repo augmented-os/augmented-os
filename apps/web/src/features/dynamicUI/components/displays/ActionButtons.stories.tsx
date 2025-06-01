@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ActionButtons } from './ActionButtons';
 
 const meta: Meta<typeof ActionButtons> = {
-  title: 'DynamicUI/Displays/ActionButtons',
+  title: 'Dynamic UI/Atomic Components/Display Components/Action Buttons',
   component: ActionButtons,
   parameters: {
     layout: 'padded',

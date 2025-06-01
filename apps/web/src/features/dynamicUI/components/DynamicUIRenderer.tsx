@@ -31,11 +31,14 @@ const DynamicUIRendererInner: React.FC<Omit<DynamicUIRendererProps, 'initialUISt
   onAction,
   className
 }) => {
+  // Only fetch from database when schema is not provided but componentId is
+  const shouldFetchSchema = !propSchema && Boolean(componentId);
+  
   // Use schema from props or fetch from database
   const { data: fetchedSchema, isLoading, error } = useSchema(
     componentId || '', 
     { 
-      enabled: Boolean(componentId),
+      enabled: shouldFetchSchema,
       fallbackSchema: propSchema 
     }
   );

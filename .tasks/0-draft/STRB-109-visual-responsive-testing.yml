@@ -1,0 +1,70 @@
+id: STRB-109
+title: Implement Dynamic UI Visual and Responsive Testing
+status: todo
+priority: medium
+assignee: agent
+dependencies:
+  - STRB-105 # Skeleton structure must be created first
+  - STRB-108 # Interactive testing provides foundation
+context:
+  code:
+    - apps/web/src/features/dynamicUI/__stories__/testing/
+    - apps/web/.storybook/main.ts
+    - apps/web/.storybook/preview.ts
+  docs:
+    - docs/architecture/components/web_application_service/design_system/overview.md
+work_steps:
+  - step_id: 1
+    targets:
+      - apps/web/.storybook/main.ts
+    instructions: Configure Storybook for visual regression testing with Chromatic integration. Set up viewport configurations, theme variations, and consistent rendering settings for reliable visual diff detection.
+    constraints:
+      - Configure Chromatic addon for visual regression testing
+      - Set up standard viewport sizes (mobile: 375px, tablet: 768px, desktop: 1200px)
+      - Configure theme variations (light/dark mode if applicable)
+      - Ensure consistent font loading and rendering
+      - Set up proper build configurations for visual testing
+  - step_id: 2
+    targets:
+      - apps/web/src/features/dynamicUI/__stories__/testing/VisualTests.stories.tsx
+    instructions: Replace skeleton content with comprehensive visual regression test stories covering all component states (loading, error, success), form layouts, display variations, and theme combinations. Focus on capturing visual consistency across updates.
+    constraints:
+      - Include all major component states for visual comparison
+      - Test form layouts with various field combinations
+      - Include error states and validation feedback visuals
+      - Test loading states and skeleton UI
+      - Capture modal and overlay component variations
+      - Include accessibility color contrast testing
+  - step_id: 3
+    targets:
+      - apps/web/src/features/dynamicUI/__stories__/testing/ResponsiveTests.stories.tsx
+    instructions: Implement responsive design testing stories that validate Dynamic UI components across mobile, tablet, and desktop breakpoints. Include touch interaction patterns and responsive layout adaptations.
+    constraints:
+      - Test all viewport sizes with realistic content
+      - Include touch interaction patterns for mobile devices
+      - Test responsive form layouts and field stacking
+      - Validate modal and dialog responsive behavior
+      - Include orientation change testing (portrait/landscape)
+      - Test content overflow and scrolling behavior
+acceptance:
+  automated:
+    - command: "cd apps/web && npm run build-storybook"
+      description: "Visual testing stories build without errors"
+    - command: "cd apps/web && npm run storybook:visual-test"
+      description: "Visual regression tests pass or changes are approved"
+    - command: "npm run typecheck"
+      description: "No TypeScript errors in visual test files"
+  manual:
+    - description: "Visual regression setup captures component states accurately"
+    - description: "Responsive tests validate mobile, tablet, and desktop layouts"
+    - description: "Theme variations render correctly in all test scenarios"
+    - description: "Visual testing workflow is documented and reliable"
+    - description: "Chromatic integration works properly for CI/CD pipeline"
+    - description: "Visual diffs are meaningful and catch real regressions"
+self_checklist:
+  - "Visual tests cover all critical component states and variations"
+  - "Responsive testing includes realistic device constraints"
+  - "Theme and accessibility color testing is comprehensive"
+  - "Visual regression detection is reliable and not prone to false positives"
+  - "Testing workflow is documented for team adoption"
+  - "Performance impact of visual testing is acceptable" 

@@ -24,11 +24,14 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   onCancel,
   className 
 }) => {
+  // Only fetch from database when schema is not provided but componentId is
+  const shouldFetchSchema = !propSchema && Boolean(componentId);
+  
   // Use schema from props or fetch from database
   const { data: fetchedSchema, isLoading, error } = useSchema(
     componentId || '', 
     { 
-      enabled: Boolean(componentId),
+      enabled: shouldFetchSchema,
       fallbackSchema: propSchema 
     }
   );
@@ -39,8 +42,16 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleFieldChange = useCallback((fieldKey: string, value: string | number | boolean | string[] | null) => {
-    setFormData(prev => ({ ...prev, [fieldKey]: value }));
+  const handleFieldChange = useCallback((fieldKey: string, value: string | number | boolean | string[] | FileList | null) => {
+    // Convert FileList to array of file names for storage
+    let processedValue: string | number | boolean | string[] | null;
+    if (value instanceof FileList) {
+      processedValue = Array.from(value).map(file => file.name);
+    } else {
+      processedValue = value;
+    }
+    
+    setFormData(prev => ({ ...prev, [fieldKey]: processedValue }));
     
     // Clear error when user starts typing
     if (errors[fieldKey]) {

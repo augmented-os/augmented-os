@@ -1,0 +1,73 @@
+id: STRB-110
+title: Implement Dynamic UI Business Workflow Examples
+status: todo
+priority: high
+assignee: agent
+dependencies:
+  - STRB-105 # Skeleton structure must be created first
+  - STRB-106 # Getting started content provides context
+  - STRB-107 # Implementation guides provide technical foundation
+context:
+  code:
+    - apps/web/src/features/dynamicUI/__stories__/examples/
+    - apps/web/src/features/dynamicUI/components/
+    - apps/web/src/features/dynamicUI/store/
+  docs:
+    - docs/architecture/components/web_application_service/implementation/dynamic_ui_system.md
+    - docs/architecture/components/web_application_service/user_experiences/task_management/task_execution.md
+work_steps:
+  - step_id: 1
+    targets:
+      - apps/web/src/features/dynamicUI/__stories__/examples/BusinessWorkflows.stories.tsx
+    instructions: Replace skeleton content with comprehensive business workflow examples demonstrating how Dynamic UI solves real business problems. Include complete workflows like employee onboarding, expense reporting, document approval, and customer support ticket handling.
+    constraints:
+      - Use schemas that match actual business processes from the architecture docs
+      - Include complete workflow examples from start to finish
+      - Show conditional logic based on business rules (e.g., approval workflows)
+      - Demonstrate multi-step processes with progressive disclosure
+      - Include realistic data volumes and field complexity
+      - Show integration with business logic and state management
+  - step_id: 2
+    targets:
+      - apps/web/src/features/dynamicUI/__stories__/examples/TaskManagement.stories.tsx
+    instructions: Implement detailed task management workflow examples that demonstrate the primary use case from the architecture documentation. Show how dynamic forms enable task execution without code changes, including different task types and conditional fields.
+    constraints:
+      - Focus on task management domain from architecture documentation
+      - Show different task types with conditional field visibility
+      - Include task creation, execution, approval, and completion workflows
+      - Demonstrate how schemas change based on task type and context
+      - Include realistic task data and user permission scenarios
+      - Show Redux state management integration for task workflows
+  - step_id: 3
+    targets:
+      - apps/web/src/features/dynamicUI/__stories__/examples/AdvancedPatterns.stories.tsx
+    instructions: Create advanced pattern examples showing complex Dynamic UI implementations including nested forms, cross-field validation, dynamic option loading, conditional sections, and performance optimization patterns.
+    constraints:
+      - Include complex conditional logic with multiple field dependencies
+      - Show dynamic option loading based on other field selections
+      - Demonstrate nested form sections and progressive disclosure
+      - Include performance optimization examples for large datasets
+      - Show cross-field validation and complex business rule validation
+      - Include examples of schema composition and reusable patterns
+acceptance:
+  automated:
+    - command: "cd apps/web && npm run build-storybook"
+      description: "Business workflow examples build without errors"
+    - command: "npm run typecheck"
+      description: "No TypeScript errors in example files"
+    - command: "cd apps/web && npm run test:examples"
+      description: "Example scenarios run without runtime errors"
+  manual:
+    - description: "Business workflows demonstrate clear value proposition of Dynamic UI"
+    - description: "Task management examples match architecture use cases accurately"
+    - description: "Advanced patterns show sophisticated Dynamic UI capabilities"
+    - description: "Examples use realistic data and business scenarios"
+    - description: "Conditional logic patterns are clearly demonstrated"
+    - description: "Performance considerations are visible in complex examples"
+self_checklist:
+  - "Examples solve real business problems that resonate with stakeholders"
+  - "Task management workflows match the architecture documentation scenarios"
+  - "Advanced patterns demonstrate the full potential of Dynamic UI"
+  - "Examples progress logically from simple to complex use cases"
+  - "Business logic integration is clearly demonstrated"
+  - "Performance implications of complex schemas are addressed" 

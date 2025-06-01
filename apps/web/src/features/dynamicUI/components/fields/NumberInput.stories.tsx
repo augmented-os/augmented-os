@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { NumberInput } from './NumberInput';
 
 const meta: Meta<typeof NumberInput> = {
-  title: 'DynamicUI/Fields/NumberInput',
+  title: 'Dynamic UI/Atomic Components/Form Fields/Number Input',
   component: NumberInput,
   parameters: {
     layout: 'centered',

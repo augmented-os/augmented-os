@@ -1,7 +1,7 @@
 id: STRB-105
-title: Setup Comprehensive Storybook Documentation and Testing
+title: Setup Dynamic UI Storybook Structure and Skeleton Documentation
 status: todo
-priority: low
+priority: medium
 assignee: agent
 dependencies:
   - STRB-102 # Field component stories completed
@@ -13,65 +13,115 @@ context:
     - apps/web/src/features/dynamicUI/
   docs:
     - docs/architecture/components/web_application_service/design_system/overview.md
+    - docs/architecture/components/web_application_service/implementation/dynamic_ui_system.md
+    - docs/architecture/components/web_application_service/implementation/dynamic_ui_developer_guide.md
 work_steps:
   - step_id: 1
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/Introduction.stories.mdx
-      - apps/web/src/features/dynamicUI/__stories__/GettingStarted.stories.mdx
-      - apps/web/src/features/dynamicUI/__stories__/SchemaGuide.stories.mdx
-    instructions: Create comprehensive MDX documentation pages that introduce the DynamicUI feature, explain how to get started with the components, and provide detailed guides for schema creation and customization.
+      - apps/web/src/features/dynamicUI/__stories__/
+    instructions: Create the complete directory structure for the new Dynamic UI documentation organization, ensuring all folders exist and are properly organized for the 6-section layout.
     constraints:
-      - Use MDX format for rich documentation with embedded examples
-      - Include code examples with proper syntax highlighting
-      - Create a logical flow from introduction to advanced usage
-      - Include links to relevant source code and types
+      - Create __stories__ directory at dynamicUI root level
+      - Set up subdirectories: gettingStarted/, guides/, examples/, testing/, development/
+      - Follow the naming conventions from the architecture docs
   - step_id: 2
     targets:
-      - apps/web/.storybook/preview.ts
-      - apps/web/src/features/dynamicUI/__stories__/testing/InteractionTests.stories.tsx
-    instructions: Enhanced Storybook configuration with interaction testing using @storybook/addon-interactions. Create comprehensive interaction tests for key user workflows like form submission, field validation, and display interactions.
+      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/Introduction.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/Architecture.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/GettingStarted.stories.mdx
+    instructions: Create skeleton MDX files for the Getting Started section with proper titles, navigation order, and placeholder content that explains what each section will contain. Include basic structure and navigation to show the intended flow.
     constraints:
-      - Use @storybook/test and play functions for interaction testing
-      - Include tests for accessibility keyboard navigation
-      - Test error scenarios and edge cases
-      - Ensure tests run reliably in CI environments
+      - Use proper Storybook meta configuration for MDX
+      - Set correct story titles for navigation hierarchy
+      - Include brief descriptions of what each section will cover
+      - Add placeholders for key sections (with TODO comments)
+      - Ensure files load without errors in Storybook
   - step_id: 3
     targets:
-      - apps/web/.storybook/main.ts
-      - apps/web/src/features/dynamicUI/__stories__/testing/VisualTests.stories.tsx
-    instructions: Setup visual regression testing capabilities with Chromatic integration. Configure stories specifically for visual testing with consistent viewport sizes and states.
+      - apps/web/src/features/dynamicUI/__stories__/guides/SchemaGuide.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/guides/ValidationSystem.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/guides/PerformanceGuide.stories.mdx
+    instructions: Create skeleton implementation guide MDX files with proper structure, headings, and placeholder content. Include TypeScript interface placeholders and example code blocks to show the intended content structure.
     constraints:
-      - Configure proper viewport sizes for visual testing
-      - Include stories for all major component states
-      - Setup consistent theme and styling for reliable visual diffs
-      - Document visual testing workflow for team
+      - Include proper MDX meta with titles and descriptions
+      - Add main section headings with TODO placeholders
+      - Include empty code blocks with comments about intended content
+      - Reference the developer guide documentation in placeholders
+      - Ensure proper navigation order within the Guides section
   - step_id: 4
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/examples/RealWorldExamples.stories.tsx
-      - apps/web/src/features/dynamicUI/__stories__/examples/PerformanceShowcase.stories.tsx
-    instructions: Create comprehensive real-world example stories that demonstrate the DynamicUI system in realistic scenarios. Include performance showcases with large datasets and complex schemas to validate scalability.
+      - apps/web/src/features/dynamicUI/__stories__/examples/BusinessWorkflows.stories.tsx
+      - apps/web/src/features/dynamicUI/__stories__/examples/TaskManagement.stories.tsx
+      - apps/web/src/features/dynamicUI/__stories__/examples/AdvancedPatterns.stories.tsx
+    instructions: Create skeleton story files for business examples with basic story structure, placeholder schemas, and TODO comments indicating the intended content. Set up the story configuration and basic component renders.
     constraints:
-      - Use realistic data and schemas from actual use cases
-      - Include performance monitoring and measurement examples
-      - Show integration with other parts of the application
-      - Document best practices and patterns discovered
+      - Use proper Storybook CSF3 format for story files
+      - Include placeholder schemas with TODO comments
+      - Set up basic story exports with descriptive names
+      - Add meta configuration with proper titles and descriptions
+      - Include comments explaining what each example will demonstrate
+  - step_id: 5
+    targets:
+      - apps/web/src/features/dynamicUI/__stories__/testing/InteractionTests.stories.tsx
+      - apps/web/src/features/dynamicUI/__stories__/testing/EdgeCaseTests.stories.tsx
+      - apps/web/src/features/dynamicUI/__stories__/testing/VisualTests.stories.tsx
+      - apps/web/src/features/dynamicUI/__stories__/testing/ResponsiveTests.stories.tsx
+    instructions: Create skeleton testing story files with basic interaction test structure, placeholder test scenarios, and proper Storybook testing addon configuration. Include TODO comments for specific test implementations.
+    constraints:
+      - Set up @storybook/test imports and basic play function structure
+      - Include placeholder test scenarios with descriptive names
+      - Add proper meta configuration for testing stories
+      - Include comments explaining test coverage goals
+      - Ensure testing addons are properly configured
+  - step_id: 6
+    targets:
+      - apps/web/src/features/dynamicUI/__stories__/development/SchemaBuilder.stories.tsx
+      - apps/web/src/features/dynamicUI/__stories__/development/DebuggingGuide.stories.tsx
+      - apps/web/src/features/dynamicUI/__stories__/development/MigrationPatterns.stories.tsx
+    instructions: Create skeleton developer tools story files with placeholder interactive components and basic structure for the schema builder and debugging tools. Include TODO comments for complex interactive features.
+    constraints:
+      - Set up basic React component structure for interactive tools
+      - Include placeholder UI components with TODO comments
+      - Add proper story meta configuration
+      - Include comments explaining intended functionality
+      - Set up basic state management structure for interactive features
+  - step_id: 7
+    targets:
+      - apps/web/.storybook/main.ts
+      - apps/web/.storybook/preview.ts
+    instructions: Update Storybook configuration to properly support the new MDX documentation and testing features. Ensure all addons are configured and the story loading patterns include the new __stories__ directory.
+    constraints:
+      - Add support for MDX files in the new directory structure
+      - Configure testing addons for interaction and visual testing
+      - Update story glob patterns to include new __stories__ location
+      - Ensure proper addon configuration for documentation features
+      - Test that all skeleton files load without errors
 acceptance:
   automated:
     - command: "cd apps/web && npm run build-storybook"
-      description: "Documentation and test stories build successfully"
-    - command: "cd apps/web && npm run test-storybook"
-      description: "Interaction tests pass in headless mode"
+      description: "All skeleton documentation files build successfully"
     - command: "npm run typecheck"
-      description: "No TypeScript errors in documentation files"
+      description: "No TypeScript errors in skeleton files"
+    - command: "cd apps/web && npm run storybook:serve-test"
+      description: "Storybook loads and displays complete navigation structure"
   manual:
-    - description: "Documentation provides clear guidance for developers"
-    - description: "Interaction tests demonstrate realistic user workflows"
-    - description: "Visual regression setup captures component states accurately"
-    - description: "Real-world examples are useful and representative"
-    - description: "Performance examples show system capabilities and limitations"
+    - description: "Complete Dynamic UI section structure is visible in Storybook navigation"
+    - description: "All 6 main sections appear with proper hierarchy and ordering"
+    - description: "Skeleton files load without errors and show planned content structure"
+    - description: "Navigation flow makes sense from user perspective"
+    - description: "Placeholder content clearly indicates what will be implemented"
+    - description: "Story titles and descriptions are consistent and professional"
 self_checklist:
-  - "Documentation is comprehensive and easy to follow"
-  - "Interaction tests cover critical user workflows"
-  - "Visual testing is properly configured and reliable"
-  - "Examples demonstrate real-world usage patterns"
-  - "Performance considerations are properly documented" 
+  - "Full navigation structure is immediately visible in Storybook"
+  - "All skeleton files load without errors or warnings"
+  - "Directory structure follows project conventions"
+  - "Placeholder content clearly communicates intended functionality"
+  - "Story meta configuration ensures proper navigation hierarchy"
+  - "Configuration supports all planned features (MDX, testing, interactivity)"
+follow_up_tasks:
+  - "STRB-106: Implement Getting Started Content (Introduction, Architecture, Getting Started guides)"
+  - "STRB-107: Implement Implementation Guides (Schema, Validation, Performance detailed content)"
+  - "STRB-108: Implement Interactive Testing Suite (comprehensive test scenarios)"
+  - "STRB-109: Implement Visual & Responsive Testing (regression and device testing)"
+  - "STRB-110: Implement Business Workflow Examples (realistic task management scenarios)"
+  - "STRB-111: Implement Developer Tools Platform (interactive Schema Builder and debugging tools)" 

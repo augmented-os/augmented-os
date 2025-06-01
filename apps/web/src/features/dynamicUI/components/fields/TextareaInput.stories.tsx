@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TextareaInput } from './TextareaInput';
 
 const meta: Meta<typeof TextareaInput> = {
-  title: 'DynamicUI/Fields/TextareaInput',
+  title: 'Dynamic UI/Atomic Components/Form Fields/Textarea Input',
   component: TextareaInput,
   parameters: {
     layout: 'centered',

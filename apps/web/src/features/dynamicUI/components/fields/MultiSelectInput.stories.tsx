@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { MultiSelectInput } from './MultiSelectInput';
 
 const meta: Meta<typeof MultiSelectInput> = {
-  title: 'DynamicUI/Fields/MultiSelectInput',
+  title: 'Dynamic UI/Atomic Components/Form Fields/Multi Select Input',
   component: MultiSelectInput,
   parameters: {
     layout: 'centered',

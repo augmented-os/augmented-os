@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { CardDisplay } from './CardDisplay';
 
 const meta: Meta<typeof CardDisplay> = {
-  title: 'DynamicUI/Displays/CardDisplay',
+  title: 'Dynamic UI/Atomic Components/Display Components/Card Display',
   component: CardDisplay,
   parameters: {
     layout: 'padded',
