@@ -4,6 +4,7 @@ import { DynamicDisplay } from './DynamicDisplay';
 import { DynamicUIErrorBoundary } from './DynamicUIErrorBoundary';
 import { UIComponentSchema } from '../types/schemas';
 import { useSchema } from '../hooks/useSchema';
+import { DynamicUIStateProvider, useDynamicUIState, useUIStateData } from '../contexts/DynamicUIStateContext';
 
 export interface DynamicUIRendererProps {
   schema?: UIComponentSchema;
@@ -14,13 +15,13 @@ export interface DynamicUIRendererProps {
   onCancel?: () => void;
   onAction?: (actionKey: string, data?: unknown) => void;
   className?: string;
+  initialUIState?: Record<string, unknown>;
 }
 
 /**
- * Main entry point component for the Dynamic UI system.
- * Routes to appropriate renderers based on componentType.
+ * Inner renderer component that uses the UI state context
  */
-export const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
+const DynamicUIRendererInner: React.FC<Omit<DynamicUIRendererProps, 'initialUIState'>> = ({
   schema: propSchema,
   componentId,
   initialData,
@@ -40,6 +41,38 @@ export const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
   );
 
   const schema = propSchema || fetchedSchema;
+  
+  // Get UI state context
+  const { updateUIState } = useDynamicUIState();
+  
+  // Combine data with UI state for conditional rendering
+  const dataWithUIState = useUIStateData(data || {});
+
+  // Enhanced action handler that manages UI state
+  const handleAction = (actionKey: string, actionData?: unknown) => {
+    // Handle UI state changes based on action
+    switch (actionKey) {
+      case 'request_review':
+        updateUIState({ showReviewForm: true });
+        break;
+      case 'cancel':
+      case 'submit':
+        updateUIState({ showReviewForm: false });
+        break;
+      case 'approve':
+        updateUIState({ showApprovalConfirmation: true });
+        break;
+      case 'reject':
+        updateUIState({ showRejectionForm: true });
+        break;
+      default:
+        // For other actions, don't change UI state
+        break;
+    }
+    
+    // Call the original action handler
+    onAction?.(actionKey, actionData);
+  };
 
   // Show loading state
   if (isLoading) {
@@ -91,8 +124,8 @@ export const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
         return (
           <DynamicDisplay
             schema={schema}
-            data={data || {}}
-            onAction={onAction}
+            data={dataWithUIState}
+            onAction={handleAction}
             className={className}
           />
         );
@@ -130,5 +163,21 @@ export const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
     <DynamicUIErrorBoundary>
       {renderComponent()}
     </DynamicUIErrorBoundary>
+  );
+};
+
+/**
+ * Main entry point component for the Dynamic UI system.
+ * Routes to appropriate renderers based on componentType.
+ * Provides UI state management for conditional rendering.
+ */
+export const DynamicUIRenderer: React.FC<DynamicUIRendererProps> = ({
+  initialUIState = {},
+  ...props
+}) => {
+  return (
+    <DynamicUIStateProvider initialState={initialUIState}>
+      <DynamicUIRendererInner {...props} />
+    </DynamicUIStateProvider>
   );
 }; 

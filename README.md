@@ -41,6 +41,8 @@ Augmented OS provides a complete business operating system built on four layers:
 
 ## Getting Started
 
+### Quick Start
+
 ```bash
 # Clone the repository
 git clone https://github.com/augmented-os/augmented-os.git
@@ -49,18 +51,54 @@ cd augmented-os
 # Install dependencies
 npm install
 
-# Set up your environment
-cp .env.example .env
-# Edit your .env file with your database credentials
+# Start everything with demo data (recommended for first-time setup)
+npm run dev:demo
 
-# Initialize the database
-npm run db:init
-
-# Start the development server
-npm run dev
-
-# Open http://localhost:3000 in your browser
+# Open http://localhost:5173 in your browser
 ```
+
+### Development Commands
+
+```bash
+# Start the full development environment
+npm run dev                 # Start database + web app
+
+# Demo data management
+npm run dev:demo           # Load demo data + start everything
+npm run dev:fresh          # Clean restart with demo data
+npm run demo               # Load YC demo data only
+
+# Individual services
+npm run db:start           # Start Supabase services
+npm run db:stop            # Stop Supabase services  
+npm run db:status          # Check Supabase status
+npm run db:studio          # Open Supabase Studio
+
+# Utilities
+npm run health             # Check all services are running
+npm run typecheck          # Run TypeScript checks
+npm run lint               # Run linting
+npm run gen:types          # Generate Supabase types
+```
+
+### Service URLs
+
+When running locally, access these services:
+
+- **Application**: http://localhost:5173
+- **Supabase Studio**: http://localhost:54323  
+- **API Gateway**: http://localhost:54321
+
+### Demo Environments
+
+Augmented OS comes with several pre-built demo environments to showcase different use cases:
+
+- **YC Demo** (`npm run demo:yc`): Term sheet review workflow for venture capital
+- **E-commerce Demo** (`npm run demo:ecommerce`): Order processing and inventory management
+- **Finance Demo** (`npm run demo:finance`): Financial document processing and compliance
+- **Coding Demo** (`npm run demo:coding`): Code review and deployment workflows
+
+Each demo includes sample data, workflows, and UI components to help you understand how Augmented OS works.
 
 ## Use Cases
 

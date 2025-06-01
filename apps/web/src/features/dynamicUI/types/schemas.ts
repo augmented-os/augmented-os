@@ -133,8 +133,8 @@ export interface LayoutConfig {
   order?: string[];
   
   // Task view layout properties
-  /** Type of layout: grid for multi-component layouts, single for single component */
-  type?: 'grid' | 'single';
+  /** Type of layout: grid for multi-component layouts, single for single component, conditional for state-driven layouts */
+  type?: 'grid' | 'single' | 'conditional';
   /** Array of layout areas for grid layouts */
   areas?: Array<{
     /** Component ID to render in this area */
@@ -143,11 +143,35 @@ export interface LayoutConfig {
     grid?: string;
     /** Visual order for this area */
     order?: number;
+    /** Conditional expression for when to show this area */
+    visibleIf?: string;
   }>;
   /** Single component ID for single layouts */
   component?: string;
   /** CSS class name to apply to the layout container */
   className?: string;
+  /** Default view configuration for conditional layouts */
+  defaultView?: {
+    /** Type of the default view layout */
+    type: 'grid' | 'single';
+    /** Areas configuration for grid default views */
+    areas?: Array<{
+      /** Component ID to render in this area */
+      component: string;
+      /** Grid span configuration (e.g., "span 8", "span 12") */
+      grid: string;
+      /** Visual order for this area */
+      order: number;
+      /** Conditional expression for when to show this area */
+      visibleIf?: string;
+    }>;
+    /** Single component ID for single default views */
+    component?: string;
+    /** Spacing variant for the default view */
+    spacing?: 'compact' | 'normal' | 'spacious' | 'sm' | 'md' | 'lg';
+    /** CSS class name to apply to the default view container */
+    className?: string;
+  };
 }
 
 /**

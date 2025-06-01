@@ -1,4 +1,98 @@
-import { Task, FlagType } from '../types';
+import { FlagType, TableDataItem } from '../types';
+
+/**
+ * Format task priority for display (universal function)
+ * @param priority Priority value from data
+ * @returns Formatted priority string
+ */
+export function formatTaskPriority(priority: unknown): string {
+  if (typeof priority === 'string') {
+    return priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase();
+  }
+  return 'Medium'; // default
+}
+
+/**
+ * Format task status for display (universal function)
+ * @param status Status value from data
+ * @returns Formatted status string
+ */
+export function formatTaskStatus(status: unknown): string {
+  if (typeof status === 'string') {
+    return status.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+  return 'Unknown';
+}
+
+/**
+ * Format due date for display (universal function)
+ * @param dueDate Due date value from data
+ * @returns Formatted date string
+ */
+export function formatDueDate(dueDate: unknown): string {
+  if (!dueDate) return 'No due date';
+  
+  try {
+    const date = new Date(dueDate as string | Date);
+    if (isNaN(date.getTime())) return 'Invalid date';
+    
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch {
+    return 'Invalid date';
+  }
+}
+
+/**
+ * Count problematic terms in data (universal function)
+ * @param data Data containing terms or other nested structures
+ * @returns Number of problematic items
+ */
+export function countProblematicTerms(data: TableDataItem): number {
+  // Check if data has extractedTerms array
+  if (Array.isArray(data.extractedTerms)) {
+    const terms = data.extractedTerms as Array<Record<string, unknown>>;
+    return terms.filter(term => {
+      const status = term.status;
+      return typeof status === 'string' && 
+             (status === 'Non-standard' || status === 'Problematic' || status === 'Violation');
+    }).length;
+  }
+
+  // Check if data has flags array
+  if (Array.isArray(data.flags)) {
+    const flags = data.flags as string[];
+    return flags.filter(flag => flag === 'error' || flag === 'warning').length;
+  }
+
+  return 0;
+}
+
+/**
+ * Get task summary for display (universal function)
+ * @param data Task data
+ * @returns Formatted summary object
+ */
+export function getTaskSummary(data: TableDataItem): {
+  title: string;
+  company: string;
+  priority: string;
+  status: string;
+  dueDate: string;
+  problematicCount: number;
+} {
+  return {
+    title: typeof data.title === 'string' ? data.title : 'Untitled Task',
+    company: typeof data.company === 'string' ? data.company : 'Unknown Company',
+    priority: formatTaskPriority(data.priority),
+    status: formatTaskStatus(data.status),
+    dueDate: formatDueDate(data.dueDate),
+    problematicCount: countProblematicTerms(data)
+  };
+}
 
 /**
  * Formats the flags count with proper pluralization
@@ -39,8 +133,10 @@ export function formatDate(dateString: string): string {
  * @param task The task object
  * @returns A summary string with key information
  */
-export function createTaskSummary(task: Task): string {
-  return `${task.company} • Due ${formatDate(task.dueDate)}`;
+export function createTaskSummary(task: TableDataItem): string {
+  const company = typeof task.company === 'string' ? task.company : 'Unknown Company';
+  const dueDate = formatDueDate(task.dueDate);
+  return `${company} • Due ${dueDate}`;
 }
 
 /**
@@ -54,15 +150,6 @@ export function formatNonStandardTermsMessage(flaggedTermsCount: number): string
   }
   
   return `This term sheet contains ${flaggedTermsCount} non-standard term${flaggedTermsCount !== 1 ? 's' : ''} that require${flaggedTermsCount === 1 ? 's' : ''} attention.`;
-}
-
-/**
- * Counts terms with problematic flags (error or warning)
- * @param extractedTerms Array of extracted terms
- * @returns Number of terms with error or warning flags
- */
-export function countProblematicTerms(extractedTerms: Array<{flag: FlagType}>): number {
-  return extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning').length;
 }
 
 /**

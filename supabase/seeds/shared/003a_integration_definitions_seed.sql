@@ -405,48 +405,7 @@ $$ {
 'oauth2',
 'https://cdn.simpleicons.org/rippling',
 NULL
-),
-('bookface', 'Bookface', 'Bookface integration to manage internal.', '0.1.0', 'integration',
-$$[]$$::jsonb,
-'{}'::jsonb,
-NULL,
-'custom',
-'https://cdn.simpleicons.org/ycombinator',
-NULL
-),
-('yc_crm', 'YC Portfolio CRM', 'YC Portfolio CRM integration to manage internal.', '0.1.0', 'integration',
-$$[]$$::jsonb,
-'{}'::jsonb,
-NULL,
-'custom',
-'https://cdn.simpleicons.org/ycombinator',
-NULL
-),
-('yc_investor_db', 'YC Investor DB', 'YC Investor DB integration to manage internal.', '0.1.0', 'integration',
-$$[]$$::jsonb,
-'{}'::jsonb,
-NULL,
-'custom',
-'https://cdn.simpleicons.org/ycombinator',
-NULL
-),
-('yc_deals_db', 'YC Deals DB', 'YC Deals DB integration to manage internal.', '0.1.0', 'integration',
-$$[]$$::jsonb,
-'{}'::jsonb,
-NULL,
-'custom',
-'https://cdn.simpleicons.org/ycombinator',
-NULL
-),
-('apply_yc', 'YC Application Portal', 'YC Application Portal integration to manage internal.', '0.1.0', 'integration',
-$$[]$$::jsonb,
-'{}'::jsonb,
-NULL,
-'custom',
-'https://cdn.simpleicons.org/ycombinator',
-NULL
-);
-
+)
 -- Add other integrations like Xero, Discord, GitHub, Telegram, Dropbox, Stripe, Twilio, ClickUp, RSS if needed, matching the format
 
 -- ------------------------------------------------------------------

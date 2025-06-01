@@ -41,13 +41,13 @@ const mockTaskDetails: TaskDetail = {
       term: 'Valuation',
       value: '$10M',
       standard: '$8M',
-      flag: 'warning'
+      status: 'Non-standard'
     },
     {
       term: 'Board Seats',
       value: '2',
       standard: '1',
-      flag: 'success'
+      status: 'Compliant'
     }
   ]
 };
@@ -170,7 +170,9 @@ export function testLoadingAndErrorStates() {
  * Helper function for testing review message generation
  */
 export function testGenerateReviewMessage(task: Task, taskDetails: TaskDetail): string {
-  const nonStandardTerms = taskDetails.extractedTerms.filter(term => term.flag === 'error' || term.flag === 'warning');
+  const nonStandardTerms = taskDetails.extractedTerms.filter(term => 
+    term.status === 'Non-standard' || term.status === 'Violation'
+  );
   const termDescriptions = nonStandardTerms
     .map((term, index) => `${index + 1}. ${term.value} ${term.term} (we require ${term.standard})`)
     .join('\n');

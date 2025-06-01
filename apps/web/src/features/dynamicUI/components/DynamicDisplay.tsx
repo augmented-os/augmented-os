@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
 import { DisplayActions } from './DisplayActions';
 import { renderTemplate } from '../utils/templates';
+import { evaluateCondition } from '../utils/conditions';
 import { UIComponentSchema } from '../types/schemas';
 import { useSchema } from '../hooks/useSchema';
 import { cn } from '@/lib/utils';
 import { TableDisplay, CardDisplay, ActionButtons } from './displays';
+import { DynamicForm } from './DynamicForm';
 
 interface DynamicDisplayProps {
   schema?: UIComponentSchema;
@@ -41,12 +43,6 @@ const LayoutArea: React.FC<{
     return 'col-span-12';
   };
 
-  console.log('LayoutArea rendering:', {
-    component,
-    dataKeys: Object.keys(data),
-    extractedTermsLength: Array.isArray(data.extractedTerms) ? data.extractedTerms.length : 'N/A'
-  });
-
   return (
     <div 
       className={`layout-area ${getGridClass(grid)}`}
@@ -61,27 +57,61 @@ const LayoutArea: React.FC<{
   );
 };
 
-// Component for rendering grid layouts
+// Component for rendering grid layouts with conditional areas
 const GridLayout: React.FC<{
-  areas: Array<{ component: string; grid?: string; order?: number }>;
+  areas: Array<{
+    component: string;
+    grid: string;
+    order: number;
+    visibleIf?: string;
+  }>;
   spacing?: string;
   className?: string;
   data: Record<string, unknown>;
   onAction?: (actionKey: string, data?: unknown) => void;
-}> = ({ areas, spacing, className, data, onAction }) => {
-  const spacingClass = spacing === 'lg' ? 'gap-8' : spacing === 'md' ? 'gap-6' : 'gap-4';
-  
+}> = ({ areas, spacing = 'md', className, data, onAction }) => {
+  // Filter areas based on visibleIf conditions
+  const visibleAreas = areas.filter(area => {
+    if (!area.visibleIf) return true;
+    return evaluateCondition(area.visibleIf, data);
+  });
+
+  // Sort by order
+  const sortedAreas = [...visibleAreas].sort((a, b) => a.order - b.order);
+
+  const getSpacingClass = (spacing: string): string => {
+    switch (spacing) {
+      case 'sm': return 'gap-2';
+      case 'md': return 'gap-4';
+      case 'lg': return 'gap-6';
+      case 'xl': return 'gap-8';
+      default: return 'gap-4';
+    }
+  };
+
+  // Convert grid span format (e.g., "span 8") to Tailwind classes
+  const getGridClass = (grid: string) => {
+    if (!grid) return 'col-span-12';
+    
+    const spanMatch = grid.match(/span\s+(\d+)/);
+    if (spanMatch) {
+      const span = spanMatch[1];
+      return `col-span-${span}`;
+    }
+    
+    return 'col-span-12';
+  };
+
   return (
-    <div className={`grid grid-cols-12 ${spacingClass} ${className || ''}`}>
-      {areas.map((area, index) => (
-        <LayoutArea
-          key={`${area.component}-${index}`}
-          component={area.component}
-          grid={area.grid}
-          order={area.order}
-          data={data}
-          onAction={onAction}
-        />
+    <div className={cn('grid grid-cols-12', getSpacingClass(spacing), className)}>
+      {sortedAreas.map((area, index) => (
+        <div key={`${area.component}-${index}`} className={getGridClass(area.grid)}>
+          <DynamicDisplay 
+            componentId={area.component}
+            data={data}
+            onAction={onAction}
+          />
+        </div>
       ))}
     </div>
   );
@@ -110,12 +140,6 @@ const DynamicDisplayContent: React.FC<DynamicDisplayContentProps> = ({
   data, 
   onAction 
 }) => {
-  console.log('DynamicDisplayContent rendering:', {
-    componentId: schema.componentId,
-    customProps: schema.customProps,
-    dataKeys: Object.keys(data || {})
-  });
-
   // Handle atomic component configurations from custom_props
   if (schema.customProps?.displayType) {
     const { displayType } = schema.customProps;
@@ -153,7 +177,19 @@ const DynamicDisplayContent: React.FC<DynamicDisplayContentProps> = ({
             return {
               ...col,
               render: (value: unknown, row: Record<string, unknown>) => {
-                const flagValue = value as string;
+                const rawValue = value as string;
+                
+                // Import mapping functions dynamically to avoid circular dependencies
+                const STATUS_TO_FLAG_MAP: Record<string, string> = {
+                  'Compliant': 'success',
+                  'Non-standard': 'warning', 
+                  'Violation': 'error',
+                  'Under Review': 'pending',
+                  'Reference': 'info'
+                };
+                
+                // Convert business status to flag if it's a business value
+                const flagValue = STATUS_TO_FLAG_MAP[rawValue] || rawValue;
                 
                 // Use flag configuration if available
                 if (flagConfig && flagConfig.badgeConfigs && flagConfig.badgeConfigs[flagValue]) {
@@ -186,18 +222,6 @@ const DynamicDisplayContent: React.FC<DynamicDisplayContentProps> = ({
 
         const dataKey = typeof schema.customProps.dataKey === 'string' ? schema.customProps.dataKey : null;
         const tableData = dataKey ? data[dataKey] : data;
-
-        // Enhanced debugging for table data resolution
-        console.log('Table data resolution:', {
-          componentId: schema.componentId,
-          dataKey: dataKey,
-          hasDataKey: !!dataKey,
-          dataKeys: Object.keys(data),
-          tableDataType: Array.isArray(tableData) ? 'array' : typeof tableData,
-          tableDataLength: Array.isArray(tableData) ? tableData.length : 'N/A',
-          rawTableData: Array.isArray(tableData) ? tableData.slice(0, 2) : tableData,
-          dataKeyValue: dataKey ? data[dataKey] : 'no dataKey'
-        });
 
         // Ensure we have valid table data
         const finalTableData = Array.isArray(tableData) ? tableData : [];
@@ -343,6 +367,37 @@ export const DynamicDisplay: React.FC<DynamicDisplayProps> = ({
     );
   }
 
+  // Handle Form components that are used within Display contexts
+  if (schema.componentType === 'Form') {
+    // Apply the same layout styling logic as main displays
+    const getLayoutStyling = (className?: string): string => {
+      const baseClasses = 'min-h-full w-full';
+      
+      if (className?.includes('task-review-layout')) {
+        return `${baseClasses} p-6 max-w-6xl mx-auto`;
+      }
+      
+      if (className?.includes('review-request-layout')) {
+        return `${baseClasses} p-6 max-w-4xl mx-auto`;
+      }
+      
+      // Default layout styling
+      return `${baseClasses} p-4 max-w-full mx-auto`;
+    };
+
+    const formClassName = `${getLayoutStyling(schema.layout?.className)} ${className || ''}`.trim();
+    
+    return (
+      <DynamicForm
+        schema={schema}
+        initialData={data}
+        onSubmit={onAction ? (formData) => onAction('submit', formData) : () => {}}
+        onCancel={onAction ? () => onAction('cancel', {}) : undefined}
+        className={formClassName}
+      />
+    );
+  }
+
   // Handle layout-based rendering for task views
   if (schema.layout) {
     // Apply styling based on semantic className patterns
@@ -363,7 +418,77 @@ export const DynamicDisplay: React.FC<DynamicDisplayProps> = ({
 
     const layoutClassName = `${getLayoutStyling(schema.layout.className)} ${className || ''}`.trim();
     
+    // Handle conditional layout type
+    if (schema.layout.type === 'conditional' && schema.layout.defaultView) {
+      const defaultView = schema.layout.defaultView;
+      if (defaultView.type === 'grid' && defaultView.areas) {
+        return (
+          <div className={layoutClassName}>
+            {/* Header with title and actions */}
+            {(schema.title || (schema.actions && schema.actions.length > 0)) && (
+              <div className="mb-6 flex justify-between items-center">
+                {schema.title && (
+                  <div className="flex flex-col">
+                    <h1 className="text-3xl font-bold text-gray-900">
+                      {renderTemplate(schema.title, data)}
+                    </h1>
+                    {/* Universal task reference subtitle */}
+                    {data.task_reference && (
+                      <p className="text-sm text-gray-500 mt-1">
+                        {String(data.task_reference)}
+                      </p>
+                    )}
+                  </div>
+                )}
+                
+                {/* Actions in header */}
+                {schema.actions && schema.actions.length > 0 && (
+                  <DisplayActions
+                    actions={schema.actions}
+                    onAction={handleAction}
+                    data={data}
+                  />
+                )}
+              </div>
+            )}
+            
+            {/* Conditional grid layout content */}
+            <div className="flex-1">
+              <GridLayout 
+                areas={defaultView.areas}
+                spacing={defaultView.spacing}
+                className={defaultView.className}
+                data={data}
+                onAction={onAction}
+              />
+            </div>
+          </div>
+        );
+      }
+    }
+    
     if (schema.layout.type === 'grid' && schema.layout.areas) {
+      // Convert old format to new format for compatibility
+      const normalizedAreas = schema.layout.areas.map((area, index) => ({
+        component: area.component,
+        grid: area.grid || 'span 12',
+        order: area.order || index + 1,
+        visibleIf: area.visibleIf
+      }));
+      
+      // Convert grid span format (e.g., "span 8") to Tailwind classes
+      const getGridClass = (grid: string) => {
+        if (!grid) return 'col-span-12';
+        
+        const spanMatch = grid.match(/span\s+(\d+)/);
+        if (spanMatch) {
+          const span = spanMatch[1];
+          return `col-span-${span}`;
+        }
+        
+        return 'col-span-12';
+      };
+      
       return (
         <div className={layoutClassName}>
           {/* Header with title and actions */}
@@ -396,13 +521,23 @@ export const DynamicDisplay: React.FC<DynamicDisplayProps> = ({
           
           {/* Grid layout content */}
           <div className="flex-1">
-            <GridLayout 
-              areas={schema.layout.areas}
-              spacing={schema.layout.spacing}
-              className={schema.layout.className}
-              data={data}
-              onAction={onAction}
-            />
+            <div className={cn('grid grid-cols-12', schema.layout.spacing === 'lg' ? 'gap-6' : 'gap-4', schema.layout.className)}>
+              {normalizedAreas
+                .filter(area => {
+                  if (!area.visibleIf) return true;
+                  return evaluateCondition(area.visibleIf, data);
+                })
+                .sort((a, b) => a.order - b.order)
+                .map((area, index) => (
+                  <div key={`${area.component}-${index}`} className={getGridClass(area.grid)}>
+                    <DynamicDisplay 
+                      componentId={area.component}
+                      data={data}
+                      onAction={onAction}
+                    />
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       );

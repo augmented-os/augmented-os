@@ -1,4 +1,4 @@
-import { Task, TaskDetail } from './';
+import { TableDataItem } from './';
 
 /**
  * Core action types supported by the task inbox system
@@ -19,8 +19,8 @@ export type TaskActionType =
  * Context information available to action handlers
  */
 export interface TaskActionContext {
-  task: Task;
-  taskDetails?: TaskDetail;
+  task: TableDataItem;
+  taskDetails?: TableDataItem;
   userId?: string;
   userRole?: string;
   permissions?: string[];
