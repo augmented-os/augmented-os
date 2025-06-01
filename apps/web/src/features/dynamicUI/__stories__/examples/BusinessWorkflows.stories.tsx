@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { DynamicUIRenderer } from '../../components/DynamicUIRenderer';
 
 const meta: Meta<typeof DynamicUIRenderer> = {
-  title: 'Dynamic UI/🌟 Real-World Examples/Business Workflows',
+  title: 'Dynamic UI/Real-World Examples/Business Workflows',
   component: DynamicUIRenderer,
   parameters: {
     layout: 'centered',

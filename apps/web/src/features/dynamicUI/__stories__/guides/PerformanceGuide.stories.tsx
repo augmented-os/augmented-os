@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {
-  title: 'Dynamic UI/📖 Implementation Guides/Performance Guide',
+  title: 'Dynamic UI/Implementation Guides/Performance Guide',
   parameters: {
     docs: {
       page: () => (
