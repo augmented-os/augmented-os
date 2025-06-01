@@ -1,6 +1,7 @@
 import React from 'react';
 import { DynamicForm } from './DynamicForm';
 import { DynamicDisplay } from './DynamicDisplay';
+import { DynamicTabs } from './displays/DynamicTabs';
 import { DynamicUIErrorBoundary } from './DynamicUIErrorBoundary';
 import { UIComponentSchema } from '../types/schemas';
 import { useSchema } from '../hooks/useSchema';
@@ -142,14 +143,29 @@ const DynamicUIRendererInner: React.FC<Omit<DynamicUIRendererProps, 'initialUISt
           </div>
         );
 
-      case 'Custom':
-        console.warn(`Custom component type not yet implemented for schema: ${schema.componentId}`);
+      case 'Custom': {
+        // Handle custom component types based on displayType
+        const displayType = schema.customProps?.displayType as string;
+        
+        if (displayType === 'tabs') {
+          return (
+            <DynamicTabs
+              schema={schema}
+              data={dataWithUIState}
+              onAction={handleAction}
+              className={className}
+            />
+          );
+        }
+        
+        console.warn(`Custom component displayType '${displayType}' not yet implemented for schema: ${schema.componentId}`);
         return (
           <div className="error-placeholder">
-            <p>Custom components are not yet supported.</p>
+            <p>Custom component displayType '{displayType}' is not yet supported.</p>
             <p>Component ID: {schema.componentId}</p>
           </div>
         );
+      }
 
       default:
         console.warn(`Unsupported component type: ${schema.componentType} for schema: ${schema.componentId}`);
