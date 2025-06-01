@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "gen:types": "npx supabase gen types typescript --db-url postgresql://postgres:postgres@localhost:54322/postgres > src/types/supabaseTypes.ts",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -70,6 +72,16 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@storybook/addon-a11y": "^8.4.7",
+    "@storybook/addon-actions": "^8.4.7",
+    "@storybook/addon-controls": "^8.4.7",
+    "@storybook/addon-docs": "^8.4.7",
+    "@storybook/addon-essentials": "^8.4.7",
+    "@storybook/addon-interactions": "^8.4.7",
+    "@storybook/manager-api": "^8.4.7",
+    "@storybook/react": "^8.4.7",
+    "@storybook/react-vite": "^8.4.7",
+    "@storybook/theming": "^8.4.7",
     "@tailwindcss/typography": "^0.5.15",
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.3",
@@ -87,6 +99,7 @@
     "inquirer": "^12.6.3",
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
+    "storybook": "^8.4.7",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.0.1",

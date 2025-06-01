@@ -15,6 +15,8 @@
     "web:dev": "wait-on tcp:54321 && cd apps/web && npm run dev",
     "web:build": "cd apps/web && npm run build",
     "web:preview": "cd apps/web && npm run preview",
+    "storybook": "cd apps/web && npm run storybook",
+    "build-storybook": "cd apps/web && npm run build-storybook",
     "demo:yc": "./scripts/load-demo-data.sh yc",
     "demo:ecommerce": "./scripts/load-demo-data.sh ecommerce",
     "demo:finance": "./scripts/load-demo-data.sh finance",
