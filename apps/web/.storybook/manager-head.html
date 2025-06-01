@@ -1,22 +1,79 @@
-<style>
-  /* Hide folder icons specifically for Dynamic UI sections */
-  [data-item-id*="dynamic-ui"] [data-testid="icon"]:not([data-testid*="document"]) {
-    display: none !important;
-  }
-  
-  /* Alternative targeting for folder icons */
-  .sidebar-subheading [data-testid="icon"],
-  .sidebar-item[data-nodetype="group"] [data-testid="icon"],
-  .sidebar-item[data-nodetype="component"] [data-testid="icon"] {
-    visibility: hidden !important;
-  }
-  
-  /* More specific targeting for folder icons in Dynamic UI */
-  [title*="🎯 Getting Started"] [data-testid="icon"],
-  [title*="📖 Implementation Guides"] [data-testid="icon"],
-  [title*="🌟 Real-World Examples"] [data-testid="icon"],
-  [title*="🧪 Testing & Quality"] [data-testid="icon"],
-  [title*="🛠️ Developer Tools"] [data-testid="icon"] {
-    display: none !important;
-  }
-</style> 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for Storybook's UI to fully render
+    setTimeout(function() {
+      console.log('--- Storybook Sidebar DOM Inspection ---');
+      try {
+        // Attempt to find all sidebar items. Storybook's internal class names can change,
+        // so we'll try a few common selectors for sidebar items or links.
+        const sidebarItems = document.querySelectorAll('.sidebar-item, [data-nodetype="component"], [data-nodetype="group"], [id^="story--"], a[href^="#"]');
+        
+        if (sidebarItems.length === 0) {
+          console.log('No sidebar items found with common selectors. The selectors might need adjustment.');
+        } else {
+          console.log(`Found ${sidebarItems.length} potential sidebar items.`);
+        }
+
+        let dynamicUIFoldersFound = 0;
+
+        sidebarItems.forEach(function(item, index) {
+          const title = item.getAttribute('title');
+          const id = item.id;
+          const className = item.className;
+          const textContent = item.textContent ? item.textContent.trim() : '';
+          const nodeType = item.getAttribute('data-nodetype');
+
+          // Log items that might be related to "Dynamic UI" based on title or text
+          if ( (title && title.includes('Dynamic UI')) || (textContent && textContent.includes('Dynamic UI')) ) {
+            dynamicUIFoldersFound++;
+            console.log({
+              index: index,
+              id: id,
+              className: className,
+              title: title,
+              textContent: textContent,
+              nodeType: nodeType,
+              outerHTML: item.outerHTML.substring(0, 200) + '...' // Log a snippet of the HTML
+            });
+          } else if (textContent && (textContent.startsWith('🎯') || textContent.startsWith('📖') || textContent.startsWith('🌟') || textContent.startsWith('🧪') || textContent.startsWith('🛠️'))) {
+            // Also log items that start with the icons we're interested in
+            dynamicUIFoldersFound++;
+            console.log('Possible icon-named item:', {
+              index: index,
+              id: id,
+              className: className,
+              title: title,
+              textContent: textContent,
+              nodeType: nodeType,
+              outerHTML: item.outerHTML.substring(0, 200) + '...'
+            });
+          }
+        });
+
+        if (dynamicUIFoldersFound > 0) {
+          console.log(`Found ${dynamicUIFoldersFound} items potentially related to "Dynamic UI" or its subfolders.`);
+        } else {
+          console.log('Could not find any items clearly related to "Dynamic UI" or starting with the target icons based on current selectors. You might need to inspect the DOM manually to find the correct elements.');
+        }
+        
+        // Specifically look for the top-level "Dynamic UI" expandable section
+        const topLevelDynamicUI = document.querySelector('[id*="dynamic-ui"]');
+        if (topLevelDynamicUI) {
+            console.log('Found a top-level "Dynamic UI" item by ID search:', {
+              id: topLevelDynamicUI.id,
+              className: topLevelDynamicUI.className,
+              title: topLevelDynamicUI.getAttribute('title'),
+              textContent: topLevelDynamicUI.textContent ? topLevelDynamicUI.textContent.trim() : '',
+              outerHTML: topLevelDynamicUI.outerHTML.substring(0, 200) + '...'
+            });
+        } else {
+            console.log('Could not find a top-level "Dynamic UI" item by a simple ID search (e.g., [id*="dynamic-ui"]).');
+        }
+
+      } catch (e) {
+        console.error('Error during sidebar inspection:', e);
+      }
+      console.log('--- End of Storybook Sidebar DOM Inspection ---');
+    }, 2000); // Adjust timeout if necessary
+  });
+</script>

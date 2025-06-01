@@ -7,31 +7,39 @@ import { ThemeProvider } from 'next-themes';
 
 // Custom CSS to hide folder icons
 const customCSS = `
-  /* Hide default Storybook folder icons for Dynamic UI sections */
-  [data-nodeid*="dynamic-ui"] [data-testid="icon"] {
+  /* Hide default Storybook folder icons globally initially */
+  .sidebar-item [data-testid="icon"] {
     display: none !important;
   }
-  
-  /* Alternative: Hide folder icons globally in sidebar */
-  .sidebar-item[data-ref-id*="dynamic-ui"] [data-testid="icon"] {
-    display: none !important;
+
+  /* Style for custom icons - targeting elements by data-item-id */
+  /* This general rule sets up the space, but the content will be specific */
+  div.sidebar-item[data-item-id^="dynamic-ui-"]::before {
+    margin-right: 8px; /* Space between icon and text */
+    font-size: 1.2em; /* Adjust size as needed */
+    vertical-align: middle; /* Align icon with text */
+    /* Add display: inline-block; if vertical-align is not working as expected */
   }
-  
-  /* More comprehensive targeting */
-  [data-item-id*="dynamic-ui"] .sidebar-item-icon,
-  [data-item-id*="dynamic-ui"] .sidebar-item [data-testid="icon"],
-  [data-item-id*="dynamic-ui"] .sidebar-item svg[data-testid*="folder"],
-  .sidebar-item[title*="Dynamic UI"] [data-testid="icon"] {
-    display: none !important;
+
+  /* Specific icons for Dynamic UI top-level folders using data-item-id */
+  div.sidebar-item[data-item-id="dynamic-ui-🎯-getting-started"]::before {
+    content: "🎯" !important;
   }
-  
-  /* Target specific Dynamic UI sections */
-  [data-item-id*="getting-started"] [data-testid="icon"],
-  [data-item-id*="implementation-guides"] [data-testid="icon"],
-  [data-item-id*="real-world-examples"] [data-testid="icon"],
-  [data-item-id*="testing-quality"] [data-testid="icon"],
-  [data-item-id*="developer-tools"] [data-testid="icon"] {
-    display: none !important;
+
+  div.sidebar-item[data-item-id="dynamic-ui-📖-implementation-guides"]::before {
+    content: "📖" !important;
+  }
+
+  div.sidebar-item[data-item-id="dynamic-ui-🌟-real-world-examples"]::before {
+    content: "🌟" !important;
+  }
+
+  div.sidebar-item[data-item-id="dynamic-ui-🧪-testing-quality"]::before {
+    content: "🧪" !important;
+  }
+
+  div.sidebar-item[data-item-id="dynamic-ui-🛠️-developer-tools"]::before {
+    content: "🛠️" !important;
   }
 `;
 
