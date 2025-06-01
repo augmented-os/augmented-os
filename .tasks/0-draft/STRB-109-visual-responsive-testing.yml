@@ -35,6 +35,9 @@ work_steps:
       - Test loading states and skeleton UI
       - Capture modal and overlay component variations
       - Include accessibility color contrast testing
+      - Use TSX format with proper Meta configuration for visual testing
+      - Include TypeScript types for visual test scenarios
+      - Ensure consistent visual test data and component states
   - step_id: 3
     targets:
       - apps/web/src/features/dynamicUI/__stories__/testing/ResponsiveTests.stories.tsx
@@ -46,6 +49,9 @@ work_steps:
       - Validate modal and dialog responsive behavior
       - Include orientation change testing (portrait/landscape)
       - Test content overflow and scrolling behavior
+      - Use TSX format with viewport-specific test configurations
+      - Include proper TypeScript typing for responsive test scenarios
+      - Ensure consistent responsive test data across viewports
 acceptance:
   automated:
     - command: "cd apps/web && npm run build-storybook"
@@ -61,10 +67,14 @@ acceptance:
     - description: "Visual testing workflow is documented and reliable"
     - description: "Chromatic integration works properly for CI/CD pipeline"
     - description: "Visual diffs are meaningful and catch real regressions"
+    - description: "TSX visual test stories load correctly in Storybook"
+    - description: "Visual test scenarios are properly typed and maintainable"
 self_checklist:
   - "Visual tests cover all critical component states and variations"
   - "Responsive testing includes realistic device constraints"
   - "Theme and accessibility color testing is comprehensive"
   - "Visual regression detection is reliable and not prone to false positives"
   - "Testing workflow is documented for team adoption"
-  - "Performance impact of visual testing is acceptable" 
+  - "Performance impact of visual testing is acceptable"
+  - "TSX format enables better visual test maintainability"
+  - "Visual test data is consistent and representative of real usage" 

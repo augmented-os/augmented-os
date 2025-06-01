@@ -29,6 +29,9 @@ work_steps:
       - Include template library with pre-built schema patterns
       - Provide import/export functionality for schema sharing
       - Include performance profiling for complex schemas
+      - Use TSX format with comprehensive interactive tool implementation
+      - Include full TypeScript typing for schema builder functionality
+      - Ensure tool integrates seamlessly with existing Dynamic UI components
   - step_id: 2
     targets:
       - apps/web/src/features/dynamicUI/__stories__/development/DebuggingGuide.stories.tsx
@@ -40,6 +43,9 @@ work_steps:
       - Include validation rule testing and debugging utilities
       - Create troubleshooting guide for common schema issues
       - Add logging and debugging utilities for production troubleshooting
+      - Use TSX format with interactive debugging tool components
+      - Include proper TypeScript types for debugging utilities
+      - Ensure debugging tools work with production Dynamic UI components
   - step_id: 3
     targets:
       - apps/web/src/features/dynamicUI/__stories__/development/MigrationPatterns.stories.tsx
@@ -51,6 +57,9 @@ work_steps:
       - Add rollback and recovery procedures
       - Create tools for testing schema changes in isolation
       - Include guidelines for breaking vs non-breaking changes
+      - Use TSX format with comprehensive migration tool implementation
+      - Include TypeScript types for migration and versioning utilities
+      - Ensure migration tools integrate with existing schema management
 acceptance:
   automated:
     - command: "cd apps/web && npm run build-storybook"
@@ -66,10 +75,15 @@ acceptance:
     - description: "Debugging tools help identify and resolve schema issues"
     - description: "Migration tools provide confidence in schema evolution"
     - description: "Developer tools enhance productivity for Dynamic UI development"
+    - description: "TSX developer tool stories load correctly in Storybook"
+    - description: "Developer tools are properly typed and maintainable"
+    - description: "Tools integrate seamlessly with existing Dynamic UI ecosystem"
 self_checklist:
   - "Schema Builder is intuitive and accelerates schema development"
   - "Live preview accurately represents final rendered components"
   - "Export functionality generates production-ready code"
   - "Debugging tools address real developer pain points"
   - "Migration tools support safe schema evolution"
-  - "Tools integrate seamlessly with existing development workflow" 
+  - "Tools integrate seamlessly with existing development workflow"
+  - "TSX format enables better tool maintainability and extensibility"
+  - "Developer tools provide production-ready utilities for team adoption" 

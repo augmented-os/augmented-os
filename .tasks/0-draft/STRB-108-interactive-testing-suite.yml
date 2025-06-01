@@ -34,6 +34,8 @@ work_steps:
       - Test conditional field visibility and dynamic schema changes
       - Include keyboard navigation and accessibility interaction patterns
       - Test error scenarios and recovery workflows
+      - Use TSX format with proper Meta configuration and play functions
+      - Include TypeScript types for test scenarios and assertions
   - step_id: 3
     targets:
       - apps/web/src/features/dynamicUI/__stories__/testing/EdgeCaseTests.stories.tsx
@@ -45,6 +47,8 @@ work_steps:
       - Include schema parsing error scenarios
       - Test memory usage with complex nested forms
       - Include browser compatibility edge cases
+      - Use TSX format with comprehensive error scenario testing
+      - Include proper TypeScript typing for edge case scenarios
 acceptance:
   automated:
     - command: "cd apps/web && npm run build-storybook"
@@ -60,10 +64,14 @@ acceptance:
     - description: "Accessibility testing validates keyboard navigation"
     - description: "Performance tests identify potential bottlenecks"
     - description: "Error scenarios test graceful degradation"
+    - description: "TSX test stories load correctly in Storybook"
+    - description: "Test interactions are properly typed and maintainable"
 self_checklist:
   - "Tests cover critical user workflows from architecture use cases"
   - "Edge cases include realistic production failure scenarios"
   - "Test data represents real-world complexity and volume"
   - "Accessibility testing covers keyboard and screen reader usage"
   - "Performance tests measure actual rendering and interaction speed"
-  - "Tests are reliable and don't have false positives" 
+  - "Tests are reliable and don't have false positives"
+  - "TSX format enables better test maintainability and type safety"
+  - "Test stories integrate seamlessly with Storybook testing ecosystem" 

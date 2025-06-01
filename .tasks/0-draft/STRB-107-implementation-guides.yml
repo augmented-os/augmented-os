@@ -17,7 +17,7 @@ context:
 work_steps:
   - step_id: 1
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/guides/SchemaGuide.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/guides/SchemaGuide.stories.tsx
     instructions: Replace skeleton content with comprehensive schema design guide including complete TypeScript interfaces, field type reference, layout configuration options, and practical design patterns. Include real-world schema examples from simple to complex.
     constraints:
       - Include complete TypeScript interfaces from developer guide
@@ -26,9 +26,11 @@ work_steps:
       - Include conditional logic examples (visibleIf usage)
       - Document layout options (sections, columns, spacing)
       - Include schema versioning best practices
+      - Use TSX format with proper Meta configuration for Storybook
+      - Include working component examples demonstrating schema usage
   - step_id: 2
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/guides/ValidationSystem.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/guides/ValidationSystem.stories.tsx
     instructions: Create detailed validation system documentation covering both inline validation rules and database-referenced validation rules. Include validation rule types, error handling patterns, and custom validation implementation.
     constraints:
       - Document all supported validation rule types with examples
@@ -37,9 +39,11 @@ work_steps:
       - Show conditional validation based on other field values
       - Document error message customization and internationalization
       - Include performance considerations for complex validation
+      - Use TSX format with interactive validation examples
+      - Include live validation testing components
   - step_id: 3
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/guides/PerformanceGuide.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/guides/PerformanceGuide.stories.tsx
     instructions: Implement performance guide covering optimization techniques, monitoring metrics, caching strategies, and scalability considerations. Include performance testing examples and troubleshooting guides.
     constraints:
       - Include specific optimization techniques from developer guide
@@ -48,6 +52,8 @@ work_steps:
       - Include guidance on handling large datasets and complex schemas
       - Document memory usage optimization for form rendering
       - Include performance testing examples and benchmarking
+      - Use TSX format with performance measurement components
+      - Include interactive performance testing tools
 acceptance:
   automated:
     - command: "cd apps/web && npm run build-storybook"
@@ -63,10 +69,14 @@ acceptance:
     - description: "TypeScript examples are accurate and compile correctly"
     - description: "Real-world examples demonstrate practical implementation patterns"
     - description: "Troubleshooting sections address common developer pain points"
+    - description: "TSX format stories load correctly in Storybook"
+    - description: "Interactive examples work correctly and demonstrate concepts effectively"
 self_checklist:
   - "All TypeScript interfaces match actual implementation"
   - "Schema examples are tested and work correctly"
   - "Validation examples cover edge cases and complex scenarios"
   - "Performance recommendations are based on actual measurements"
   - "Documentation serves as practical developer reference"
-  - "Content bridges theory from architecture docs to practical implementation" 
+  - "Content bridges theory from architecture docs to practical implementation"
+  - "TSX stories are properly formatted and display in Storybook"
+  - "Interactive components enhance learning experience" 

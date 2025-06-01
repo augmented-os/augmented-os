@@ -27,6 +27,9 @@ work_steps:
       - Demonstrate multi-step processes with progressive disclosure
       - Include realistic data volumes and field complexity
       - Show integration with business logic and state management
+      - Use TSX format with proper Meta configuration for business examples
+      - Include TypeScript types for business workflow schemas and data
+      - Ensure examples are production-ready and demonstrate best practices
   - step_id: 2
     targets:
       - apps/web/src/features/dynamicUI/__stories__/examples/TaskManagement.stories.tsx
@@ -38,6 +41,9 @@ work_steps:
       - Demonstrate how schemas change based on task type and context
       - Include realistic task data and user permission scenarios
       - Show Redux state management integration for task workflows
+      - Use TSX format with comprehensive task management examples
+      - Include proper TypeScript typing for task schemas and workflows
+      - Demonstrate integration with the broader task management system
   - step_id: 3
     targets:
       - apps/web/src/features/dynamicUI/__stories__/examples/AdvancedPatterns.stories.tsx
@@ -49,6 +55,9 @@ work_steps:
       - Include performance optimization examples for large datasets
       - Show cross-field validation and complex business rule validation
       - Include examples of schema composition and reusable patterns
+      - Use TSX format with advanced pattern implementations
+      - Include comprehensive TypeScript types for complex scenarios
+      - Document performance implications and optimization strategies
 acceptance:
   automated:
     - command: "cd apps/web && npm run build-storybook"
@@ -64,10 +73,15 @@ acceptance:
     - description: "Examples use realistic data and business scenarios"
     - description: "Conditional logic patterns are clearly demonstrated"
     - description: "Performance considerations are visible in complex examples"
+    - description: "TSX business workflow stories load correctly in Storybook"
+    - description: "Examples are properly typed and maintainable"
+    - description: "Business logic integration is clearly demonstrated"
 self_checklist:
   - "Examples solve real business problems that resonate with stakeholders"
   - "Task management workflows match the architecture documentation scenarios"
   - "Advanced patterns demonstrate the full potential of Dynamic UI"
   - "Examples progress logically from simple to complex use cases"
   - "Business logic integration is clearly demonstrated"
-  - "Performance implications of complex schemas are addressed" 
+  - "Performance implications of complex schemas are addressed"
+  - "TSX format enables better example maintainability and type safety"
+  - "Examples serve as production-ready templates for developers" 
