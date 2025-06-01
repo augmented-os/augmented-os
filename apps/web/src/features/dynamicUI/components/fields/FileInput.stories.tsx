@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { FileInput } from './FileInput';
 
 const meta: Meta<typeof FileInput> = {
-  title: 'Dynamic UI/Atomic Components/Form Fields/File Input',
+  title: 'Components/Atomic Components/Form Fields/File Input',
   component: FileInput,
   parameters: {
     layout: 'centered',

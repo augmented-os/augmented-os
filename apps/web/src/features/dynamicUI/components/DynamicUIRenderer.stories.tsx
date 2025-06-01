@@ -4,7 +4,7 @@ import type { UIComponentSchema } from '../types/schemas';
 import { DynamicUIErrorBoundary } from '../components/DynamicUIErrorBoundary';
 
 const meta: Meta<typeof DynamicUIRenderer> = {
-  title: 'Dynamic UI/System Integration/UI Renderer',
+  title: 'Components/Dynamic UI Components/UI Renderer',
   component: DynamicUIRenderer,
   parameters: {
     layout: 'padded',

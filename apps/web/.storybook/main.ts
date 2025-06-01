@@ -2,7 +2,10 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import { mergeConfig } from 'vite';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: [
+    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../src/**/*.stories.mdx'
+  ],
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-controls',
@@ -29,6 +32,10 @@ const config: StorybookConfig = {
         alias: {
           '@': new URL('../src', import.meta.url).pathname,
         },
+      },
+      define: {
+        // Enable development features for Dynamic UI stories
+        'process.env.STORYBOOK_DYNAMIC_UI_DEV': JSON.stringify(true),
       },
     });
   },

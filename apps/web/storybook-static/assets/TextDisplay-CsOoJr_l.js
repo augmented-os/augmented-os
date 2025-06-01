@@ -1,0 +1,1 @@
+import{j as s}from"./jsx-runtime-BT65X5dW.js";import{c as i}from"./utils-CytzSlOG.js";const x=({label:t,value:e,className:r})=>s.jsxs("div",{className:i("text-display",r),children:[t&&s.jsx("div",{className:"text-sm font-medium text-gray-500 mb-1",children:t}),s.jsx("div",{className:"text-sm text-gray-900",children:String(e||"")})]});export{x as T};

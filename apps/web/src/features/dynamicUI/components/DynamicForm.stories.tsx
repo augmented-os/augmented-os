@@ -3,7 +3,7 @@ import { DynamicForm } from './DynamicForm';
 import type { UIComponentSchema } from '../types/schemas';
 
 const meta: Meta<typeof DynamicForm> = {
-  title: 'Dynamic UI/Composite Components/Dynamic Form',
+  title: 'Components/Composite Components/Dynamic Form',
   component: DynamicForm,
   parameters: {
     layout: 'padded',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TableDisplay } from './TableDisplay';
 
 const meta: Meta<typeof TableDisplay> = {
-  title: 'Dynamic UI/Atomic Components/Display Components/Table Display',
+  title: 'Components/Atomic Components/Display Components/Table Display',
   component: TableDisplay,
   parameters: {
     layout: 'padded',

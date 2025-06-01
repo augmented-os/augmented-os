@@ -3,7 +3,7 @@ import { FormActions } from './FormActions';
 import type { ActionButton } from '../types/schemas';
 
 const meta: Meta<typeof FormActions> = {
-  title: 'Dynamic UI/Composite Components/Form Actions',
+  title: 'Components/Composite Components/Form Actions',
   component: FormActions,
   parameters: {
     layout: 'padded',

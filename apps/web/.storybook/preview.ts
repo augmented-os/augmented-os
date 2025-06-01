@@ -5,6 +5,43 @@ import '../src/index.css';
 import { DynamicUIStateProvider } from '../src/features/dynamicUI/contexts/DynamicUIStateContext';
 import { ThemeProvider } from 'next-themes';
 
+// Custom CSS to hide folder icons
+const customCSS = `
+  /* Hide default Storybook folder icons for Dynamic UI sections */
+  [data-nodeid*="dynamic-ui"] [data-testid="icon"] {
+    display: none !important;
+  }
+  
+  /* Alternative: Hide folder icons globally in sidebar */
+  .sidebar-item[data-ref-id*="dynamic-ui"] [data-testid="icon"] {
+    display: none !important;
+  }
+  
+  /* More comprehensive targeting */
+  [data-item-id*="dynamic-ui"] .sidebar-item-icon,
+  [data-item-id*="dynamic-ui"] .sidebar-item [data-testid="icon"],
+  [data-item-id*="dynamic-ui"] .sidebar-item svg[data-testid*="folder"],
+  .sidebar-item[title*="Dynamic UI"] [data-testid="icon"] {
+    display: none !important;
+  }
+  
+  /* Target specific Dynamic UI sections */
+  [data-item-id*="getting-started"] [data-testid="icon"],
+  [data-item-id*="implementation-guides"] [data-testid="icon"],
+  [data-item-id*="real-world-examples"] [data-testid="icon"],
+  [data-item-id*="testing-quality"] [data-testid="icon"],
+  [data-item-id*="developer-tools"] [data-testid="icon"] {
+    display: none !important;
+  }
+`;
+
+// Inject custom CSS
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.textContent = customCSS;
+  document.head.appendChild(style);
+}
+
 // Create a default QueryClient for Storybook
 const createQueryClient = () => new QueryClient({
   defaultOptions: {
@@ -26,6 +63,46 @@ const preview: Preview = {
     },
     backgrounds: {
       disable: true, // Disable Storybook's background control since we're using next-themes
+    },
+    docs: {
+      autodocs: 'tag',
+      defaultName: 'Documentation',
+    },
+    options: {
+      storySort: {
+        order: [
+          'Dynamic UI', [
+            '🎯 Getting Started', [
+              'Introduction',
+              'Architecture Overview', 
+              'Getting Started Guide'
+            ],
+            '📖 Implementation Guides', [
+              'Schema Design Guide',
+              'Validation System',
+              'Performance Guide'
+            ],
+            '🌟 Real-World Examples', [
+              'Business Workflows',
+              'Task Management',
+              'Advanced Patterns'
+            ],
+            '🧪 Testing & Quality', [
+              'Interaction Tests',
+              'Edge Case Tests'
+            ],
+            '🛠️ Developer Tools', [
+              'Schema Builder'
+            ]
+          ],
+          'Components', [
+            'Dynamic UI Components',
+            'Composite Components', 
+            'Atomic Components'
+          ],
+          '*'
+        ],
+      },
     },
     viewport: {
       viewports: {

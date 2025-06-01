@@ -3,7 +3,7 @@ import { DisplayField } from './DisplayField';
 import type { DisplayFieldConfig } from './DisplayField';
 
 const meta: Meta<typeof DisplayField> = {
-  title: 'Dynamic UI/Atomic Components/Display Components/Display Field',
+  title: 'Components/Atomic Components/Display Components/Display Field',
   component: DisplayField,
   parameters: {
     layout: 'padded',

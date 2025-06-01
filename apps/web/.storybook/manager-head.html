@@ -1,0 +1,22 @@
+<style>
+  /* Hide folder icons specifically for Dynamic UI sections */
+  [data-item-id*="dynamic-ui"] [data-testid="icon"]:not([data-testid*="document"]) {
+    display: none !important;
+  }
+  
+  /* Alternative targeting for folder icons */
+  .sidebar-subheading [data-testid="icon"],
+  .sidebar-item[data-nodetype="group"] [data-testid="icon"],
+  .sidebar-item[data-nodetype="component"] [data-testid="icon"] {
+    visibility: hidden !important;
+  }
+  
+  /* More specific targeting for folder icons in Dynamic UI */
+  [title*="🎯 Getting Started"] [data-testid="icon"],
+  [title*="📖 Implementation Guides"] [data-testid="icon"],
+  [title*="🌟 Real-World Examples"] [data-testid="icon"],
+  [title*="🧪 Testing & Quality"] [data-testid="icon"],
+  [title*="🛠️ Developer Tools"] [data-testid="icon"] {
+    display: none !important;
+  }
+</style> 

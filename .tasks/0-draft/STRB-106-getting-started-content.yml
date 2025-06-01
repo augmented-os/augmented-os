@@ -16,7 +16,7 @@ context:
 work_steps:
   - step_id: 1
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/Introduction.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/Introduction.stories.tsx
     instructions: Replace skeleton content with comprehensive introduction explaining what Dynamic UI is, why it exists, and the business value it provides. Include the problem statement (static forms vs database-driven UI), use cases in task management, and clear value proposition.
     constraints:
       - Start with the "why" before explaining the "how"
@@ -24,9 +24,10 @@ work_steps:
       - Reference the task execution use case from architecture docs
       - Keep content accessible to non-technical stakeholders
       - Include clear navigation to next steps
+      - Use TSX format with proper Meta configuration for Storybook
   - step_id: 2
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/Architecture.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/Architecture.stories.tsx
     instructions: Implement detailed architecture overview explaining the 3-phase development approach, component hierarchy (Atomic → Composite → System), and how schemas drive rendering. Include diagrams and component relationship explanations.
     constraints:
       - Explain the "start simple, build complexity" philosophy
@@ -34,9 +35,10 @@ work_steps:
       - Show progression from Phase 1 MVP to Phase 4 optimization
       - Link schema storage (database) to component rendering
       - Include integration points with Redux and API services
+      - Use TSX format with proper component examples
   - step_id: 3
     targets:
-      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/GettingStarted.stories.mdx
+      - apps/web/src/features/dynamicUI/__stories__/gettingStarted/GettingStarted.stories.tsx
     instructions: Create hands-on getting started guide with step-by-step schema creation examples. Include basic form schema, field types overview, validation setup, and first schema implementation with live preview.
     constraints:
       - Provide copy-paste ready schema examples
@@ -45,6 +47,7 @@ work_steps:
       - Include validation examples and error handling
       - Link to Schema Builder tool for interactive creation
       - Include troubleshooting section for common issues
+      - Use TSX format with working component examples
 acceptance:
   automated:
     - command: "cd apps/web && npm run build-storybook"
@@ -60,10 +63,12 @@ acceptance:
     - description: "Live examples work correctly and demonstrate key concepts"
     - description: "Navigation flow guides users logically through learning process"
     - description: "Content is accessible to both technical and non-technical audiences"
+    - description: "TSX format stories load correctly in Storybook"
 self_checklist:
   - "Content explains the 'why' before diving into technical details"
   - "Examples progress logically from simple to complex"
   - "All embedded live examples work correctly"
   - "Links to relevant architecture documentation are accurate"
   - "Troubleshooting section addresses common developer questions"
-  - "Content is engaging and maintains reader interest" 
+  - "Content is engaging and maintains reader interest"
+  - "TSX stories are properly formatted and display in Storybook" 

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TextDisplay } from './TextDisplay';
 
 const meta: Meta<typeof TextDisplay> = {
-  title: 'Dynamic UI/Atomic Components/Display Components/Text Display',
+  title: 'Components/Atomic Components/Display Components/Text Display',
   component: TextDisplay,
   parameters: {
     layout: 'padded',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TextInput } from './TextInput';
 
 const meta: Meta<typeof TextInput> = {
-  title: 'Dynamic UI/Atomic Components/Form Fields/Text Input',
+  title: 'Components/Atomic Components/Form Fields/Text Input',
   component: TextInput,
   parameters: {
     layout: 'centered',

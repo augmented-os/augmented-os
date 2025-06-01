@@ -3,7 +3,7 @@ import { DynamicUIRenderer } from '../DynamicUIRenderer';
 import { UIComponentSchema } from '../../types/schemas';
 
 const meta: Meta<typeof DynamicUIRenderer> = {
-  title: 'Dynamic UI/System Integration/Schema Patterns',
+  title: 'Components/Dynamic UI Components/Schema Patterns',
   component: DynamicUIRenderer,
   parameters: {
     docs: {

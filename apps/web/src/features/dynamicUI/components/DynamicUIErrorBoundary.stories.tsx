@@ -13,7 +13,7 @@ const ErrorBoundaryWrapper: React.FC<{
 );
 
 const meta: Meta<typeof ErrorBoundaryWrapper> = {
-  title: 'Dynamic UI/System Integration/Error Boundary',
+  title: 'Components/Dynamic UI Components/Error Boundary',
   component: ErrorBoundaryWrapper,
   parameters: {
     layout: 'padded',

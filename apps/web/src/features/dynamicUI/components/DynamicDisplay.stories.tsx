@@ -3,7 +3,7 @@ import { DynamicDisplay } from './DynamicDisplay';
 import type { UIComponentSchema } from '../types/schemas';
 
 const meta: Meta<typeof DynamicDisplay> = {
-  title: 'Dynamic UI/Composite Components/Dynamic Display',
+  title: 'Components/Composite Components/Dynamic Display',
   component: DynamicDisplay,
   parameters: {
     layout: 'padded',

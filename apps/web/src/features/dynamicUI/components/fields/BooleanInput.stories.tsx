@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { BooleanInput } from './BooleanInput';
 
 const meta: Meta<typeof BooleanInput> = {
-  title: 'Dynamic UI/Atomic Components/Form Fields/Boolean Input',
+  title: 'Components/Atomic Components/Form Fields/Boolean Input',
   component: BooleanInput,
   parameters: {
     layout: 'centered',

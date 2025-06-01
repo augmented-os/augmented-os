@@ -3,7 +3,7 @@ import { FormSection } from './FormSection';
 import type { FormSection as FormSectionType, FormField } from '../types/schemas';
 
 const meta: Meta<typeof FormSection> = {
-  title: 'Dynamic UI/Composite Components/Form Section',
+  title: 'Components/Composite Components/Form Section',
   component: FormSection,
   parameters: {
     layout: 'padded',
