@@ -1,9 +1,10 @@
 export { TextInput } from './TextInput';
 export { NumberInput } from './NumberInput';
-export { SelectInput } from './SelectInput';
-export { TextareaInput } from './TextareaInput';
 export { BooleanInput } from './BooleanInput';
+export { SelectInput } from './SelectInput';
+export { ComboboxInput } from './ComboboxInput';
+export { MultiSelectInput } from './MultiSelectInput';
+export { TextareaInput } from './TextareaInput';
 export { DateInput } from './DateInput';
 export { FileInput } from './FileInput';
-export { MultiSelectInput } from './MultiSelectInput';
 export { EmailInput } from './EmailInput'; 

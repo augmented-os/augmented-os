@@ -37,7 +37,7 @@ export interface FormField {
   /** Display label for the field */
   label: string;
   /** Type of input field to render */
-  type: 'text' | 'number' | 'boolean' | 'select' | 'multi-select' | 'textarea' | 'date' | 'file' | 'email';
+  type: 'text' | 'number' | 'boolean' | 'select' | 'combobox' | 'multi-select' | 'textarea' | 'date' | 'file' | 'email';
   /** Placeholder text shown when field is empty */
   placeholder?: string;
   /** Default value for the field */

@@ -11,31 +11,45 @@ const meta: Meta<typeof DynamicUIRenderer> = {
         component: `
 # Process Receipt Workflow
 
-Complete receipt processing system with 3 core workflow states using form-based editing.
+Complete receipt processing system with 3 core workflow states using form-based editing and enhanced supplier selection.
 
 **Workflow States:**
 
 **1. Edit Receipt Fields**
 - Receipt details: All fields editable for data entry and correction
+- **Supplier selection**: Searchable combobox with 20+ predefined suppliers + custom entry
 - Line items: All fields editable except category (hidden during initial entry)
 
 **2. Match Supplier** 
-- Receipt details: All fields editable with supplier field highlighted
+- Receipt details: All fields editable with supplier combobox highlighted
+- **Enhanced matching**: Search through supplier database or add new suppliers instantly
 - Line items: All fields editable except category (hidden during supplier matching)
 
 **3. Assign Line Items**
 - Receipt details: Form disabled (read-only) during categorization
 - Line items: Only category fields editable, other fields disabled
 
-**Features:**
+**Key Features:**
+- **🔍 Searchable Supplier Selection** - ComboboxInput with real-time search
+- **📝 Custom Supplier Entry** - Add new suppliers not in the predefined list
+- **⚠️ Smart Validation** - Warning states guide users through verification
+- **📋 Comprehensive Database** - 20+ common business suppliers included
 - **Form-based Editing** - Both tabs use proper forms with field-level control
 - **Dynamic Field States** - Fields enabled/disabled based on workflow state
 - **Category Assignment** - Selective editing for line item categorization
 - **Template-based Titles** - Dynamic titles with data interpolation
 - **Context-sensitive Actions** - Different action buttons per workflow state
 
+**Supplier Options Include:**
+- Technology: Adobe, Microsoft, GitHub, Slack, AWS, Google Cloud
+- Business Tools: Atlassian, JetBrains, Figma, Notion, Zoom, Dropbox
+- Office Supplies: TechSupplies Inc, Office Solutions Ltd, Business Depot
+- Travel & Hospitality: Grand Hotel London
+- Enterprise: Salesforce, Enterprise Supplies Co
+
 **Technical Implementation:**
 - Uses Dynamic Tabs component for tabbed interface
+- ComboboxInput provides searchable supplier selection with custom value support
 - Each tab contains form components with state-specific field configurations
 - Schema-driven field enablement and validation
 - Integration with existing Dynamic UI form primitives
@@ -84,13 +98,39 @@ const createReceiptDetailsSchema = (state: 'edit' | 'match' | 'assign'): UICompo
     { 
       fieldKey: 'supplier', 
       label: 'Supplier', 
-      type: 'text',
+      type: 'combobox',
       required: true,
-      helpText: state === 'match' ? '⚠️ Please verify this supplier matches your records' : undefined,
-      customProps: { 
+      options: [
+        { value: 'techsupplies-inc', label: 'TechSupplies Inc' },
+        { value: 'office-solutions-ltd', label: 'Office Solutions Ltd' },
+        { value: 'business-depot', label: 'Business Depot' },
+        { value: 'enterprise-supplies', label: 'Enterprise Supplies Co' },
+        { value: 'digital-services', label: 'Digital Services Group' },
+        { value: 'grand-hotel-london', label: 'Grand Hotel London' },
+        { value: 'tech-solutions-corp', label: 'Tech Solutions Corp' },
+        { value: 'adobe-systems', label: 'Adobe Systems Inc' },
+        { value: 'microsoft-corp', label: 'Microsoft Corporation' },
+        { value: 'slack-technologies', label: 'Slack Technologies' },
+        { value: 'amazon-web-services', label: 'Amazon Web Services' },
+        { value: 'google-cloud', label: 'Google Cloud Platform' },
+        { value: 'atlassian', label: 'Atlassian' },
+        { value: 'jetbrains', label: 'JetBrains' },
+        { value: 'github-inc', label: 'GitHub Inc' },
+        { value: 'figma-inc', label: 'Figma Inc' },
+        { value: 'notion-labs', label: 'Notion Labs Inc' },
+        { value: 'zoom-video', label: 'Zoom Video Communications' },
+        { value: 'dropbox-inc', label: 'Dropbox Inc' },
+        { value: 'salesforce', label: 'Salesforce Inc' }
+      ],
+      placeholder: 'Select or search supplier...',
+      customProps: {
         disabled: state === 'assign',
-        warning: state === 'match'
-      }
+        warning: state === 'match',
+        searchPlaceholder: 'Search suppliers...',
+        emptyMessage: 'No suppliers found. You can type a new supplier name.',
+        allowCustomValue: true
+      },
+      helpText: state === 'match' ? '⚠️ Please verify this supplier matches your records' : 'Select existing supplier or type a new one'
     },
     { 
       fieldKey: 'totalAmount', 
@@ -269,7 +309,7 @@ export const EditReceiptFields: Story = {
       // Receipt details
       receiptNumber: 'RCP-2024-001234',
       date: '2024-01-15',
-      supplier: 'TechSupplies Inc',
+      supplier: 'techsupplies-inc',
       totalAmount: 245.99,
       currency: 'GBP',
       paymentMethod: 'company-card',
@@ -294,7 +334,7 @@ export const EditReceiptFields: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Initial receipt editing state - all fields editable, no categories shown for line items.'
+        story: 'Initial receipt editing state - all fields editable, no categories shown for line items. Supplier field now searchable with predefined options.'
       }
     }
   }
@@ -308,7 +348,7 @@ export const MatchSupplier: Story = {
       // Receipt details (supplier highlighted)
       receiptNumber: 'RCP-2024-001567',
       date: '2024-01-20',
-      supplier: 'Tech Solutions Corp',
+      supplier: 'tech-solutions-corp',
       totalAmount: 2850.00,
       currency: 'GBP',
       paymentMethod: 'bank-transfer',
@@ -333,10 +373,10 @@ export const MatchSupplier: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Supplier matching state - supplier field highlighted for verification, receipts tab badged.'
-      }
-    }
-  }
+        story: 'Supplier matching state - supplier combobox highlighted for verification with search capability. Users can search through supplier list or type new names.',
+      },
+    },
+  },
 };
 
 export const AssignLineItems: Story = {
@@ -347,7 +387,7 @@ export const AssignLineItems: Story = {
       // Receipt details (disabled/read-only)
       receiptNumber: 'RCP-2024-001890',
       date: '2024-01-22',
-      supplier: 'Grand Hotel London',
+      supplier: 'grand-hotel-london',
       totalAmount: 387.50,
       currency: 'GBP',
       paymentMethod: 'personal-card',
@@ -375,8 +415,8 @@ export const AssignLineItems: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Category assignment state - receipt details read-only, only line item categories editable. Line items tab badged with count.'
-      }
-    }
-  }
+        story: 'Category assignment state - receipt details read-only with supplier locked during categorization. Line items tab badged with count.',
+      },
+    },
+  },
 }; 

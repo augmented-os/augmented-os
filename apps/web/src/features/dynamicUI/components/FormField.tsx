@@ -11,6 +11,7 @@ import { EmailInput } from './fields/EmailInput';
 import { evaluateCondition } from '../utils/conditions';
 import { FormField as FormFieldType } from '../types/schemas';
 import { cn } from '@/lib/utils';
+import { ComboboxInput } from './fields/ComboboxInput';
 
 interface FormFieldProps {
   field: FormFieldType;
@@ -110,6 +111,28 @@ export const FormField: React.FC<FormFieldProps> = ({
             onChange={handleChange}
             options={field.options || []}
             placeholder={field.placeholder}
+            required={field.required || field.validationRules?.some(rule => 
+              typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
+            )}
+            error={error}
+            helpText={field.helpText}
+            disabled={isDisabled}
+            warning={hasWarning}
+          />
+        );
+
+      case 'combobox':
+        return (
+          <ComboboxInput
+            id={field.fieldKey}
+            label={field.label}
+            value={String(value ?? field.default ?? '')}
+            onChange={handleChange}
+            options={field.options || []}
+            placeholder={field.placeholder}
+            searchPlaceholder={field.customProps?.searchPlaceholder as string}
+            emptyMessage={field.customProps?.emptyMessage as string}
+            allowCustomValue={field.customProps?.allowCustomValue !== false}
             required={field.required || field.validationRules?.some(rule => 
               typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
             )}

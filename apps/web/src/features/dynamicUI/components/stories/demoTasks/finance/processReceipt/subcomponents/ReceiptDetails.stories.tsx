@@ -72,9 +72,37 @@ const receiptDetailsFormSchema: UIComponentSchema = {
     { 
       fieldKey: 'supplier', 
       label: 'Supplier', 
-      type: 'text',
+      type: 'combobox',
       required: true,
-      helpText: 'Company or individual that issued the receipt'
+      options: [
+        { value: 'techsupplies-inc', label: 'TechSupplies Inc' },
+        { value: 'office-solutions-ltd', label: 'Office Solutions Ltd' },
+        { value: 'business-depot', label: 'Business Depot' },
+        { value: 'enterprise-supplies', label: 'Enterprise Supplies Co' },
+        { value: 'digital-services', label: 'Digital Services Group' },
+        { value: 'grand-hotel-london', label: 'Grand Hotel London' },
+        { value: 'tech-solutions-corp', label: 'Tech Solutions Corp' },
+        { value: 'adobe-systems', label: 'Adobe Systems Inc' },
+        { value: 'microsoft-corp', label: 'Microsoft Corporation' },
+        { value: 'slack-technologies', label: 'Slack Technologies' },
+        { value: 'amazon-web-services', label: 'Amazon Web Services' },
+        { value: 'google-cloud', label: 'Google Cloud Platform' },
+        { value: 'atlassian', label: 'Atlassian' },
+        { value: 'jetbrains', label: 'JetBrains' },
+        { value: 'github-inc', label: 'GitHub Inc' },
+        { value: 'figma-inc', label: 'Figma Inc' },
+        { value: 'notion-labs', label: 'Notion Labs Inc' },
+        { value: 'zoom-video', label: 'Zoom Video Communications' },
+        { value: 'dropbox-inc', label: 'Dropbox Inc' },
+        { value: 'salesforce', label: 'Salesforce Inc' }
+      ],
+      placeholder: 'Select or search supplier...',
+      customProps: {
+        searchPlaceholder: 'Search suppliers...',
+        emptyMessage: 'No suppliers found. You can type a new supplier name.',
+        allowCustomValue: true
+      },
+      helpText: 'Select existing supplier or type a new one'
     },
     { 
       fieldKey: 'category', 
@@ -157,7 +185,7 @@ export const EditReceiptFields: Story = {
     initialData: {
       receiptNumber: 'RCP-2024-001234',
       date: '2024-01-15',
-      supplier: 'Office Supplies Ltd',
+      supplier: 'office-solutions-ltd',
       category: 'office-supplies',
       totalAmount: 245.67,
       currency: 'GBP',
@@ -170,7 +198,7 @@ export const EditReceiptFields: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Fully editable form for initial receipt data entry and editing.'
+        story: 'Fully editable form for initial receipt data entry and editing. Supplier field now searchable with autocomplete.'
       }
     }
   }
@@ -187,7 +215,7 @@ export const MatchSupplier: Story = {
           return {
             ...field,
             helpText: '⚠️ Please verify this supplier matches your records',
-            customProps: { warning: true }
+            customProps: { ...field.customProps, warning: true }
           };
         }
         return field;
@@ -196,7 +224,7 @@ export const MatchSupplier: Story = {
     initialData: {
       receiptNumber: 'RCP-2024-001567',
       date: '2024-01-20',
-      supplier: 'Tech Solutions Corp',
+      supplier: 'tech-solutions-corp',
       category: 'software',
       totalAmount: 2850.00,
       currency: 'GBP',
@@ -209,7 +237,7 @@ export const MatchSupplier: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Form with supplier field highlighted for verification and matching.'
+        story: 'Form with supplier combobox highlighted for verification and matching. Search functionality available for large supplier lists.'
       }
     }
   }
@@ -223,7 +251,7 @@ export const AssignLineItems: Story = {
       title: 'Receipt Information (Read-Only)',
       fields: receiptDetailsFormSchema.fields?.map(field => ({
         ...field,
-        customProps: { disabled: true }
+        customProps: { ...field.customProps, disabled: true }
       })),
       actions: [
         { actionKey: 'back', label: 'Back to Line Items', style: 'secondary' },
@@ -233,7 +261,7 @@ export const AssignLineItems: Story = {
     initialData: {
       receiptNumber: 'RCP-2024-001890',
       date: '2024-01-22',
-      supplier: 'Grand Hotel London',
+      supplier: 'grand-hotel-london',
       category: 'travel',
       totalAmount: 387.50,
       currency: 'GBP',
@@ -246,7 +274,7 @@ export const AssignLineItems: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Read-only form state during line item categorization workflow.'
+        story: 'Read-only form state during line item categorization workflow. Supplier field locked but still shows search functionality when enabled.'
       }
     }
   }
