@@ -49,8 +49,9 @@ const DynamicUIRendererInner: React.FC<Omit<DynamicUIRendererProps, 'initialUISt
   // Get UI state context
   const { updateUIState } = useDynamicUIState();
   
-  // Combine data with UI state for conditional rendering
-  const dataWithUIState = useUIStateData(data || {});
+  // Combine initialData, data, and UI state for comprehensive data access
+  const combinedData = { ...(initialData || {}), ...(data || {}) };
+  const dataWithUIState = useUIStateData(combinedData);
 
   // Enhanced action handler that manages UI state
   const handleAction = (actionKey: string, actionData?: unknown) => {
@@ -152,6 +153,7 @@ const DynamicUIRendererInner: React.FC<Omit<DynamicUIRendererProps, 'initialUISt
             <DynamicTabs
               schema={schema}
               data={dataWithUIState}
+              initialData={initialData}
               onAction={handleAction}
               className={className}
             />

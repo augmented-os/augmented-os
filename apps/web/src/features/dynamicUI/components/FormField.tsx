@@ -32,6 +32,19 @@ export const FormField: React.FC<FormFieldProps> = ({
     return null;
   }
 
+  // Check if field is disabled from customProps
+  const isDisabled = field.customProps?.disabled === true;
+  
+  // Check if field has warning state from customProps
+  const hasWarning = field.customProps?.warning === true || field.customProps?.highlighted === true;
+  
+  // Handle onChange for disabled fields
+  const handleChange = (newValue: string | number | boolean | string[] | FileList | null) => {
+    if (!isDisabled) {
+      onChange(newValue);
+    }
+  };
+
   const renderInput = () => {
     switch (field.type) {
       case 'text':
@@ -40,7 +53,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={String(value ?? field.default ?? '')}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             type="text"
             placeholder={field.placeholder}
             required={field.required || field.validationRules?.some(rule => 
@@ -48,6 +61,8 @@ export const FormField: React.FC<FormFieldProps> = ({
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
+            warning={hasWarning}
           />
         );
 
@@ -57,13 +72,15 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={String(value ?? field.default ?? '')}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             placeholder={field.placeholder}
             required={field.required || field.validationRules?.some(rule => 
               typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
+            warning={hasWarning}
           />
         );
       
@@ -73,13 +90,14 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={typeof value === 'number' ? value : (value === '' ? '' : Number(value ?? field.default ?? ''))}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             placeholder={field.placeholder}
             required={field.required || field.validationRules?.some(rule => 
               typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
           />
         );
       
@@ -89,7 +107,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={String(value ?? field.default ?? '')}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             options={field.options || []}
             placeholder={field.placeholder}
             required={field.required || field.validationRules?.some(rule => 
@@ -97,6 +115,8 @@ export const FormField: React.FC<FormFieldProps> = ({
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
+            warning={hasWarning}
           />
         );
 
@@ -106,13 +126,14 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={Array.isArray(value) ? value : (value ? [String(value)] : (field.default as string[]) || [])}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             options={field.options || []}
             required={field.required || field.validationRules?.some(rule => 
               typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
           />
         );
       
@@ -122,13 +143,14 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={String(value ?? field.default ?? '')}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             placeholder={field.placeholder}
             required={field.required || field.validationRules?.some(rule => 
               typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
           />
         );
       
@@ -138,12 +160,13 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={Boolean(value ?? field.default ?? false)}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             required={field.required || field.validationRules?.some(rule => 
               typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
           />
         );
       
@@ -153,13 +176,14 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={String(value ?? field.default ?? '')}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             placeholder={field.placeholder}
             required={field.required || field.validationRules?.some(rule => 
               typeof rule === 'object' ? rule.type === 'required' : rule === 'required'
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
           />
         );
       
@@ -169,7 +193,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={value instanceof FileList ? value : null}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             accept={field.customProps?.accept as string}
             multiple={field.customProps?.multiple as boolean}
             required={field.required || field.validationRules?.some(rule => 
@@ -177,6 +201,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
           />
         );
       
@@ -187,7 +212,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             id={field.fieldKey}
             label={field.label}
             value={String(value ?? field.default ?? '')}
-            onChange={(newValue) => onChange(newValue)}
+            onChange={handleChange}
             type="text"
             placeholder={field.placeholder}
             required={field.required || field.validationRules?.some(rule => 
@@ -195,6 +220,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             )}
             error={error}
             helpText={field.helpText}
+            disabled={isDisabled}
           />
         );
     }
@@ -203,7 +229,8 @@ export const FormField: React.FC<FormFieldProps> = ({
   return (
     <div className={cn(
       "space-y-2",
-      error && "text-destructive"
+      error && "text-destructive",
+      isDisabled && "opacity-60 pointer-events-none"
     )}>
       {renderInput()}
     </div>

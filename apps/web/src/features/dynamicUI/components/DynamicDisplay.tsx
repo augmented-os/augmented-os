@@ -12,6 +12,7 @@ interface DynamicDisplayProps {
   schema?: UIComponentSchema;
   componentId?: string;
   data: Record<string, unknown>;
+  initialData?: Record<string, unknown>;
   onAction?: (actionKey: string, data?: unknown) => void;
   className?: string;
 }
@@ -316,6 +317,7 @@ export const DynamicDisplay: React.FC<DynamicDisplayProps> = ({
   schema: propSchema, 
   componentId,
   data, 
+  initialData,
   onAction,
   className 
 }) => {
@@ -393,7 +395,7 @@ export const DynamicDisplay: React.FC<DynamicDisplayProps> = ({
     return (
       <DynamicForm
         schema={schema}
-        initialData={data}
+        initialData={initialData || data}
         onSubmit={onAction ? (formData) => onAction('submit', formData) : () => {}}
         onCancel={onAction ? () => onAction('cancel', {}) : undefined}
         className={formClassName}

@@ -13,6 +13,7 @@ export interface TabConfig {
 export interface DynamicTabsProps {
   schema: UIComponentSchema;
   data: Record<string, unknown>;
+  initialData?: Record<string, unknown>;
   onAction?: (actionKey: string, data?: unknown) => void;
   className?: string;
 }
@@ -20,6 +21,7 @@ export interface DynamicTabsProps {
 export const DynamicTabs: React.FC<DynamicTabsProps> = ({ 
   schema, 
   data, 
+  initialData,
   onAction,
   className 
 }) => {
@@ -79,6 +81,7 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({
             <DynamicTabContent
               tab={tab}
               data={data}
+              initialData={initialData}
               onAction={handleAction}
             />
           </TabsContent>
@@ -119,17 +122,19 @@ export const DynamicTabs: React.FC<DynamicTabsProps> = ({
 interface DynamicTabContentProps {
   tab: TabConfig;
   data: Record<string, unknown>;
+  initialData?: Record<string, unknown>;
   onAction?: (actionKey: string, data?: unknown) => void;
 }
 
-const DynamicTabContent: React.FC<DynamicTabContentProps> = ({ tab, data, onAction }) => {
+const DynamicTabContent: React.FC<DynamicTabContentProps> = ({ tab, data, initialData, onAction }) => {
   const { component } = tab;
 
-  // Always delegate to DynamicDisplay for consistency and to support all display types
+  // Always delegate to DynamicUIRenderer for consistency and to support all display types
   return (
     <DynamicDisplay
       schema={component}
       data={data}
+      initialData={initialData}
       onAction={onAction}
     />
   );

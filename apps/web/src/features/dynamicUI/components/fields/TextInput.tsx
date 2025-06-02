@@ -13,6 +13,8 @@ interface TextInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
+  warning?: boolean;
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -24,7 +26,9 @@ export const TextInput: React.FC<TextInputProps> = ({
   placeholder,
   required,
   error,
-  helpText
+  helpText,
+  disabled,
+  warning
 }) => {
   return (
     <div className="space-y-2">
@@ -32,7 +36,8 @@ export const TextInput: React.FC<TextInputProps> = ({
         htmlFor={id} 
         className={cn(
           "text-sm font-medium text-foreground",
-          required && "after:content-['*'] after:ml-1 after:text-destructive"
+          required && "after:content-['*'] after:ml-1 after:text-destructive",
+          warning && !error && "text-amber-600 dark:text-amber-400"
         )}
       >
         {label}
@@ -44,9 +49,11 @@ export const TextInput: React.FC<TextInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
+        disabled={disabled}
         className={cn(
           "w-full",
-          error && "border-destructive focus:ring-destructive"
+          error && "border-destructive focus:ring-destructive",
+          warning && !error && "border-amber-400 focus:ring-amber-400 bg-amber-50 dark:bg-amber-950/20"
         )}
         aria-describedby={error ? `${id}-error` : helpText ? `${id}-help` : undefined}
       />
@@ -56,7 +63,10 @@ export const TextInput: React.FC<TextInputProps> = ({
         </div>
       )}
       {helpText && !error && (
-        <div id={`${id}-help`} className="text-sm text-muted-foreground">
+        <div id={`${id}-help`} className={cn(
+          "text-sm text-muted-foreground",
+          warning && "text-amber-600 dark:text-amber-400"
+        )}>
           {helpText}
         </div>
       )}

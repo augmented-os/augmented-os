@@ -12,6 +12,8 @@ interface EmailInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
+  warning?: boolean;
 }
 
 export const EmailInput: React.FC<EmailInputProps> = ({
@@ -22,7 +24,9 @@ export const EmailInput: React.FC<EmailInputProps> = ({
   placeholder = 'Enter email address',
   required,
   error,
-  helpText
+  helpText,
+  disabled,
+  warning
 }) => {
   // Basic email validation for visual feedback
   const isValidEmail = (email: string): boolean => {
@@ -40,7 +44,8 @@ export const EmailInput: React.FC<EmailInputProps> = ({
         htmlFor={id} 
         className={cn(
           "text-sm font-medium text-foreground",
-          required && "after:content-['*'] after:ml-1 after:text-destructive"
+          required && "after:content-['*'] after:ml-1 after:text-destructive",
+          warning && !displayError && "text-amber-600 dark:text-amber-400"
         )}
       >
         {label}
@@ -53,9 +58,11 @@ export const EmailInput: React.FC<EmailInputProps> = ({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           required={required}
+          disabled={disabled}
           className={cn(
             "w-full pr-10",
-            displayError && "border-destructive focus:ring-destructive"
+            displayError && "border-destructive focus:ring-destructive",
+            warning && !displayError && "border-amber-400 focus:ring-amber-400 bg-amber-50 dark:bg-amber-950/20"
           )}
           aria-describedby={displayError ? `${id}-error` : helpText ? `${id}-help` : undefined}
         />
@@ -85,10 +92,13 @@ export const EmailInput: React.FC<EmailInputProps> = ({
         </div>
       )}
       {helpText && !displayError && (
-        <div id={`${id}-help`} className="text-sm text-muted-foreground">
+        <div id={`${id}-help`} className={cn(
+          "text-sm text-muted-foreground",
+          warning && "text-amber-600 dark:text-amber-400"
+        )}>
           {helpText}
         </div>
       )}
     </div>
   );
-}; 
+};

@@ -18,19 +18,23 @@ interface MultiSelectInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
 }
 
 export const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
   id,
   label,
-  value,
+  value = [],
   onChange,
   options,
   required,
   error,
-  helpText
+  helpText,
+  disabled
 }) => {
   const handleChange = (optionValue: string, checked: boolean) => {
+    if (disabled) return;
+    
     if (checked) {
       onChange([...value, optionValue]);
     } else {
@@ -74,7 +78,7 @@ export const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
                   className={cn(
                     "flex items-center space-x-3 px-3 py-2 hover:bg-accent cursor-pointer",
                     "border-b border-border last:border-b-0",
-                    option.disabled && "cursor-not-allowed opacity-50"
+                    (disabled || option.disabled) && "cursor-not-allowed opacity-50"
                   )}
                   onClick={() => !option.disabled && handleChange(option.value, !isSelected)}
                 >
@@ -82,14 +86,17 @@ export const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
                     id={checkboxId}
                     checked={isSelected}
                     onCheckedChange={(checked) => handleChange(option.value, checked === true)}
-                    disabled={option.disabled}
+                    disabled={disabled || option.disabled}
                     className={cn(
                       error && "border-destructive data-[state=checked]:bg-destructive"
                     )}
                   />
                   <Label
                     htmlFor={checkboxId}
-                    className="text-sm cursor-pointer flex-1"
+                    className={cn(
+                      "text-sm cursor-pointer flex-1",
+                      (disabled || option.disabled) && "opacity-50 cursor-not-allowed"
+                    )}
                   >
                     {option.label}
                   </Label>

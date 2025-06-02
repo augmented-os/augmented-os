@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
 
 interface FileInputProps {
   id: string;
@@ -13,6 +14,7 @@ interface FileInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
 }
 
 export const FileInput: React.FC<FileInputProps> = ({
@@ -24,7 +26,8 @@ export const FileInput: React.FC<FileInputProps> = ({
   multiple = false,
   required,
   error,
-  helpText
+  helpText,
+  disabled
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -92,6 +95,7 @@ export const FileInput: React.FC<FileInputProps> = ({
           accept={accept}
           multiple={multiple}
           className="hidden"
+          disabled={disabled}
         />
         
         <div className="space-y-3">

@@ -12,6 +12,7 @@ interface NumberInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
 }
 
 export const NumberInput: React.FC<NumberInputProps> = ({
@@ -22,7 +23,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   placeholder,
   required,
   error,
-  helpText
+  helpText,
+  disabled
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -54,6 +56,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         onChange={handleChange}
         placeholder={placeholder}
         required={required}
+        disabled={disabled}
         className={cn(
           "w-full",
           error && "border-destructive focus:ring-destructive"

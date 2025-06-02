@@ -12,6 +12,7 @@ interface DateInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
 }
 
 export const DateInput: React.FC<DateInputProps> = ({
@@ -22,7 +23,8 @@ export const DateInput: React.FC<DateInputProps> = ({
   placeholder,
   required,
   error,
-  helpText
+  helpText,
+  disabled
 }) => {
   return (
     <div className="space-y-2">
@@ -42,6 +44,7 @@ export const DateInput: React.FC<DateInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
+        disabled={disabled}
         className={cn(
           "w-full",
           error && "border-destructive focus:ring-destructive"

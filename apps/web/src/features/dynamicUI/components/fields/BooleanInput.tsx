@@ -11,6 +11,7 @@ interface BooleanInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
 }
 
 export const BooleanInput: React.FC<BooleanInputProps> = ({
@@ -20,7 +21,8 @@ export const BooleanInput: React.FC<BooleanInputProps> = ({
   onChange,
   required,
   error,
-  helpText
+  helpText,
+  disabled
 }) => {
   return (
     <div className="space-y-2">
@@ -30,6 +32,7 @@ export const BooleanInput: React.FC<BooleanInputProps> = ({
           checked={value}
           onCheckedChange={(checked) => onChange(checked === true)}
           required={required}
+          disabled={disabled}
           className={cn(
             error && "border-destructive data-[state=checked]:bg-destructive"
           )}

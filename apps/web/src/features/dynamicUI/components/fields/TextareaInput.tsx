@@ -12,6 +12,7 @@ interface TextareaInputProps {
   required?: boolean;
   error?: string;
   helpText?: string;
+  disabled?: boolean;
 }
 
 export const TextareaInput: React.FC<TextareaInputProps> = ({
@@ -22,7 +23,8 @@ export const TextareaInput: React.FC<TextareaInputProps> = ({
   placeholder,
   required,
   error,
-  helpText
+  helpText,
+  disabled
 }) => {
   return (
     <div className="space-y-2">
@@ -41,6 +43,7 @@ export const TextareaInput: React.FC<TextareaInputProps> = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
+        disabled={disabled}
         className={cn(
           "w-full min-h-[80px] resize-y",
           error && "border-destructive focus:ring-destructive"

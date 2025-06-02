@@ -1,34 +1,40 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { DynamicDisplay } from '../../../../../DynamicDisplay';
+import { DynamicUIRenderer } from '../../../../../DynamicUIRenderer';
 import { UIComponentSchema } from '../../../../../../types/schemas';
 
-const meta: Meta<typeof DynamicDisplay> = {
+const meta: Meta<typeof DynamicUIRenderer> = {
   title: 'Demo Tasks/Finance/Process Receipt/Subcomponents/Receipt Details',
-  component: DynamicDisplay,
+  component: DynamicUIRenderer,
   parameters: {
     docs: {
       description: {
         component: `
-# Receipt Details Component
+# Receipt Details Form Component
 
-Displays basic receipt information in a form-style layout for the receipt processing workflow.
+Editable form for receipt information in the receipt processing workflow.
 
 **Features:**
-- Form-style field display
-- Receipt metadata (dates, amounts, vendors)
-- Status indicators
-- Read-only display format
+- Form-based receipt editing
+- Conditional field highlighting
+- State-dependent editability
+- Receipt metadata management
+
+**Workflow States:**
+- **Edit Receipt Fields**: All fields editable for initial data entry
+- **Match Supplier**: Supplier field highlighted for verification
+- **Assign Line Items**: Form disabled (read-only) during categorization
 
 **Use Cases:**
-- Receipt review interface
-- Finance approval workflows
-- Expense tracking systems
+- Receipt data entry and editing
+- Supplier matching workflow
+- Read-only review during line item assignment
         `
       }
     },
     layout: 'padded'
   },
   argTypes: {
+    onSubmit: { action: 'form submitted' },
     onAction: { action: 'action triggered' },
   },
   decorators: [
@@ -41,131 +47,206 @@ Displays basic receipt information in a form-style layout for the receipt proces
 };
 
 export default meta;
-type Story = StoryObj<typeof DynamicDisplay>;
+type Story = StoryObj<typeof DynamicUIRenderer>;
 
-const receiptDetailsSchema: UIComponentSchema = {
-  componentId: 'receipt-details',
-  name: 'Receipt Details',
-  componentType: 'Display',
+// Base form schema for receipt details
+const receiptDetailsFormSchema: UIComponentSchema = {
+  componentId: 'receipt-details-form',
+  name: 'Receipt Details Form',
+  componentType: 'Form',
   title: 'Receipt Information',
-  customProps: {
-    displayType: 'card',
-    layout: 'list',
-    fields: [
-      { key: 'receiptNumber', label: 'Receipt Number' },
-      { key: 'date', label: 'Date' },
-      { key: 'vendor', label: 'Vendor' },
-      { key: 'category', label: 'Category' },
-      { key: 'totalAmount', label: 'Total Amount' },
-      { key: 'currency', label: 'Currency' },
-      { key: 'paymentMethod', label: 'Payment Method' },
-      { key: 'submittedBy', label: 'Submitted By' },
-      { key: 'submissionDate', label: 'Submission Date' },
-      { key: 'status', label: 'Status' }
-    ]
-  },
-  actions: []
+  fields: [
+    { 
+      fieldKey: 'receiptNumber', 
+      label: 'Receipt Number', 
+      type: 'text',
+      required: true,
+      helpText: 'Unique identifier for this receipt'
+    },
+    { 
+      fieldKey: 'date', 
+      label: 'Date', 
+      type: 'date',
+      required: true 
+    },
+    { 
+      fieldKey: 'supplier', 
+      label: 'Supplier', 
+      type: 'text',
+      required: true,
+      helpText: 'Company or individual that issued the receipt'
+    },
+    { 
+      fieldKey: 'category', 
+      label: 'Category', 
+      type: 'select',
+      options: [
+        { value: 'office-supplies', label: 'Office Supplies' },
+        { value: 'software', label: 'Software & Licenses' },
+        { value: 'travel', label: 'Travel & Accommodation' },
+        { value: 'meals', label: 'Meals & Entertainment' },
+        { value: 'equipment', label: 'Office Equipment' },
+        { value: 'training', label: 'Training & Development' },
+        { value: 'marketing', label: 'Marketing & Advertising' },
+        { value: 'other', label: 'Other Business Expense' }
+      ],
+      required: true
+    },
+    { 
+      fieldKey: 'totalAmount', 
+      label: 'Total Amount', 
+      type: 'number',
+      required: true,
+      placeholder: '0.00'
+    },
+    { 
+      fieldKey: 'currency', 
+      label: 'Currency', 
+      type: 'select',
+      options: [
+        { value: 'GBP', label: 'GBP (£)' },
+        { value: 'USD', label: 'USD ($)' },
+        { value: 'EUR', label: 'EUR (€)' }
+      ],
+      default: 'GBP',
+      required: true
+    },
+    { 
+      fieldKey: 'paymentMethod', 
+      label: 'Payment Method', 
+      type: 'select',
+      options: [
+        { value: 'company-card', label: 'Company Credit Card' },
+        { value: 'personal-card', label: 'Personal Card (Reimbursable)' },
+        { value: 'bank-transfer', label: 'Bank Transfer' },
+        { value: 'cash', label: 'Cash' },
+        { value: 'other', label: 'Other' }
+      ],
+      required: true
+    },
+    { 
+      fieldKey: 'submittedBy', 
+      label: 'Submitted By', 
+      type: 'text',
+      required: true 
+    },
+    { 
+      fieldKey: 'submissionDate', 
+      label: 'Submission Date', 
+      type: 'date',
+      required: true 
+    },
+    { 
+      fieldKey: 'notes', 
+      label: 'Notes', 
+      type: 'textarea',
+      placeholder: 'Additional notes or comments about this receipt...',
+      helpText: 'Optional notes for reviewers or additional context'
+    }
+  ],
+  actions: [
+    { actionKey: 'save', label: 'Save Changes', style: 'primary' },
+    { actionKey: 'cancel', label: 'Cancel', style: 'secondary' }
+  ]
 };
 
-export const Basic: Story = {
-  name: 'Basic Receipt Details',
+export const EditReceiptFields: Story = {
+  name: 'Edit Receipt Fields',
   args: {
-    schema: receiptDetailsSchema,
-    data: {
+    schema: receiptDetailsFormSchema,
+    initialData: {
       receiptNumber: 'RCP-2024-001234',
       date: '2024-01-15',
-      vendor: 'Office Supplies Ltd',
-      category: 'Office Equipment',
-      totalAmount: '£245.67',
+      supplier: 'Office Supplies Ltd',
+      category: 'office-supplies',
+      totalAmount: 245.67,
       currency: 'GBP',
-      paymentMethod: 'Company Credit Card',
+      paymentMethod: 'company-card',
       submittedBy: 'John Smith',
       submissionDate: '2024-01-16',
-      status: 'Under Review'
+      notes: 'Monthly office supplies order for the development team.'
     }
   },
   parameters: {
     docs: {
       description: {
-        story: 'Basic receipt details showing all standard fields for a typical expense receipt.'
+        story: 'Fully editable form for initial receipt data entry and editing.'
       }
     }
   }
 };
 
-export const HighValueReceipt: Story = {
-  name: 'High Value Receipt',
+export const MatchSupplier: Story = {
+  name: 'Match Supplier',
   args: {
-    schema: receiptDetailsSchema,
-    data: {
+    schema: {
+      ...receiptDetailsFormSchema,
+      title: 'Match Supplier - Receipt Information',
+      fields: receiptDetailsFormSchema.fields?.map(field => {
+        if (field.fieldKey === 'supplier') {
+          return {
+            ...field,
+            helpText: '⚠️ Please verify this supplier matches your records',
+            customProps: { warning: true }
+          };
+        }
+        return field;
+      })
+    },
+    initialData: {
       receiptNumber: 'RCP-2024-001567',
       date: '2024-01-20',
-      vendor: 'Tech Solutions Corp',
-      category: 'Software & Licenses',
-      totalAmount: '£2,850.00',
+      supplier: 'Tech Solutions Corp',
+      category: 'software',
+      totalAmount: 2850.00,
       currency: 'GBP',
-      paymentMethod: 'Bank Transfer',
+      paymentMethod: 'bank-transfer',
       submittedBy: 'Sarah Johnson',
       submissionDate: '2024-01-20',
-      status: 'Pending Approval'
+      notes: 'Annual software license renewal - requires supplier verification.'
     }
   },
   parameters: {
     docs: {
       description: {
-        story: 'High-value receipt that typically requires additional approval steps.'
+        story: 'Form with supplier field highlighted for verification and matching.'
       }
     }
   }
 };
 
-export const TravelExpense: Story = {
-  name: 'Travel Expense',
+export const AssignLineItems: Story = {
+  name: 'Assign Line Items',
   args: {
-    schema: receiptDetailsSchema,
-    data: {
+    schema: {
+      ...receiptDetailsFormSchema,
+      title: 'Receipt Information (Read-Only)',
+      fields: receiptDetailsFormSchema.fields?.map(field => ({
+        ...field,
+        customProps: { disabled: true }
+      })),
+      actions: [
+        { actionKey: 'back', label: 'Back to Line Items', style: 'secondary' },
+        { actionKey: 'continue', label: 'Continue', style: 'primary' }
+      ]
+    },
+    initialData: {
       receiptNumber: 'RCP-2024-001890',
       date: '2024-01-22',
-      vendor: 'Grand Hotel London',
-      category: 'Travel & Accommodation',
-      totalAmount: '£387.50',
+      supplier: 'Grand Hotel London',
+      category: 'travel',
+      totalAmount: 387.50,
       currency: 'GBP',
-      paymentMethod: 'Personal Card (Reimbursable)',
+      paymentMethod: 'personal-card',
       submittedBy: 'Mike Davis',
       submissionDate: '2024-01-25',
-      status: 'Approved'
+      notes: 'Business trip accommodation for client meeting in London.'
     }
   },
   parameters: {
     docs: {
       description: {
-        story: 'Travel expense receipt showing approved reimbursable expense.'
-      }
-    }
-  }
-};
-
-export const RejectedReceipt: Story = {
-  name: 'Rejected Receipt',
-  args: {
-    schema: receiptDetailsSchema,
-    data: {
-      receiptNumber: 'RCP-2024-001445',
-      date: '2024-01-18',
-      vendor: 'Personal Retailer',
-      category: 'Miscellaneous',
-      totalAmount: '£85.20',
-      currency: 'GBP',
-      paymentMethod: 'Personal Card',
-      submittedBy: 'Alex Wilson',
-      submissionDate: '2024-01-19',
-      status: 'Rejected'
-    }
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Rejected receipt showing a personal expense incorrectly submitted for reimbursement.'
+        story: 'Read-only form state during line item categorization workflow.'
       }
     }
   }
